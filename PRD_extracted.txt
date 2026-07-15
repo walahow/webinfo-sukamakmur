@@ -1,0 +1,126 @@
+PRODUCT REQUIREMENTS DOCUMENT
+Sistem Informasi Desa Berbasis Website
+Program Kerja KKN – Divisi PDD
+Disusun oleh
+Walaho
+Tanggal
+14 Juli 2026
+Status
+Draft – untuk direview
+Versi
+1.0
+1. Ringkasan
+Dokumen ini merangkum kebutuhan pengembangan website profil dan informasi desa sebagai salah satu program kerja (proker) KKN. Website ini dikembangkan berdasarkan hasil riset terhadap website desa-desa lain, dengan tujuan menyediakan informasi profil desa, data infografis, katalog UMKM/wisata, berita, dan dokumen publik (PPID) secara terpusat dan mudah diakses oleh warga maupun pihak luar.
+Pengembangan dilakukan oleh 2 orang secara paralel: satu orang menangani frontend, satu orang menangani backend, dengan pendekatan contract-first agar integrasi antar bagian berjalan lancar.
+2. Tujuan
+Menyediakan informasi profil, sejarah, dan struktur organisasi desa secara digital.
+Menyajikan data infografis desa (penduduk, APBDes, stunting, bansos, IDM, SDG) secara visual dan mudah dipahami.
+Mempromosikan UMKM dan destinasi wisata desa melalui katalog interaktif berbasis peta.
+Menyediakan kanal publikasi berita dan dokumentasi kegiatan desa.
+Memenuhi keterbukaan informasi publik (PPID) melalui bank dokumen yang terkategorisasi.
+Menyediakan kanal pengaduan warga yang mudah diakses tanpa mengganggu pengalaman pengguna.
+3. Ruang Lingkup Halaman
+3.1 Profile Page
+Hero section
+Ucapan sambutan dari Kepala Desa
+Peta desa
+Struktur organisasi
+Sejarah desa
+Peta lokasi desa
+3.2 Infografis Page
+Data penduduk (berdasarkan kategori tertentu, mis. dusun/usia/gender)
+APBDes
+Data stunting
+Data bantuan sosial (bansos)
+IDM – Indeks Desa Membangun
+SDG Score – Sustainable Development Goals
+3.3 Catalogue Page
+Peta interaktif dengan interest point
+Katalog desa (UMKM, wisata, dan lainnya)
+3.4 News Page
+Halaman daftar & detail berita
+Halaman admin untuk kelola berita (CRUD)
+3.5 PPID Page
+Bank dokumen (peraturan desa, hasil notulensi, dan dokumen publik lainnya)
+Kategori dan tahun dokumen belum final – menunggu diskusi lanjutan dengan perangkat desa
+3.6 Halaman Tambahan (hasil diskusi)
+Galeri kegiatan – dokumentasi visual kegiatan desa
+Kalender/agenda kegiatan desa
+Kontak & pengaduan – penempatan perlu diperhatikan agar mudah diakses namun tidak mengganggu UX
+Search bar global – pencarian lintas berita, katalog, dan dokumen PPID
+Produk hukum desa (Perdes/SK) – digabung ke dalam PPID document bank untuk tahap awal
+3.7 Di Luar Cakupan (Out of Scope) Saat Ini
+Layanan mandiri (permohonan surat online) – di-skip untuk tahap ini
+4. Tech Stack
+Kebutuhan
+Pilihan
+Alasan Singkat
+Frontend
+Next.js (App Router) + Tailwind CSS + shadcn/ui
+SSR/SSG untuk SEO, komponen admin cepat dibuat
+Backend
+Next.js API Routes / Server Actions
+Satu repo full-stack, cukup untuk skala proker KKN
+Database
+PostgreSQL
+JSONB untuk data semi-terstruktur (IDM/SDG), query analitik lebih kuat
+ORM
+Prisma
+Terintegrasi baik dengan Postgres & TypeScript
+Storage
+Vercel Blob / Cloudinary
+Penyimpanan foto galeri & dokumen PPID
+Auth
+NextAuth.js
+Login admin untuk kelola berita & dokumen
+Peta
+Leaflet.js
+Open-source, gratis, cukup untuk peta desa & katalog
+Chart/Infografis
+Recharts
+Visualisasi data penduduk, APBDes, dsb.
+Hosting
+Vercel + Supabase/Neon (Postgres)
+Free tier cukup untuk kebutuhan proker KKN
+Catatan: pendekatan dibangun secara custom (tidak menggunakan sistem siap pakai seperti OpenSID) agar dapat menjadi showcase kemampuan teknis sekaligus disesuaikan dengan kebutuhan spesifik desa.
+5. Entity Relationship Diagram (ERD)
+ERD berikut menggambarkan skema database awal yang mencakup seluruh modul: profil desa, berita, dokumen PPID, katalog UMKM/wisata, galeri, kegiatan, pengaduan, dan data infografis.
+Catatan: nama field dan tipe data pada ERD di atas masih dapat berubah menyesuaikan hasil diskusi dengan perangkat desa, khususnya pada modul PPID dan infografis.
+6. Strategi Implementasi Bertahap
+Desain skema (ERD) disepakati secara menyeluruh di awal untuk menghindari design flaw pada relasi antar tabel. Namun implementasi/coding dilakukan bertahap per fase agar progres mudah diukur dan diuji end-to-end.
+Fase 0 – Desain
+Finalisasi ERD & skema Prisma untuk seluruh entitas.
+Fase 1 – Foundation
+USER (autentikasi admin)
+VILLAGE_PROFILE & STRUKTUR_ORGANISASI
+Fase 2 – Modul Independen
+NEWS (+ admin CRUD)
+DOCUMENT_CATEGORY & DOCUMENT (PPID)
+KATALOG_CATEGORY, KATALOG, GALERI, KEGIATAN
+PENGADUAN
+Fase 3 – Modul Infografis
+PENDUDUK_STAT, APBDES, IDM_SDG_SCORE, STUNTING_BANSOS
+Ditempatkan di akhir karena data source masih menunggu diskusi lanjutan dengan perangkat desa
+Setiap fase mengikuti alur: migrate tabel → seed dummy data → bangun API → bangun UI → pengujian → lanjut ke tabel berikutnya.
+7. Alur Kerja Tim (Pengembangan Paralel)
+Pembagian peran: Frontend dikerjakan oleh Walaho, backend dikerjakan oleh rekan tim. Untuk memungkinkan pengembangan paralel tanpa hambatan integrasi, tim menyepakati pendekatan contract-first.
+7.1 Kontrak yang Disepakati di Awal
+Prisma schema sebagai single source of truth untuk struktur data.
+Bentuk API response didokumentasikan per endpoint (contoh: struktur data, nama field, format tanggal ISO 8601).
+Konvensi penamaan field diseragamkan (camelCase pada response JSON).
+Struktur error response diseragamkan.
+Folder types/ berisi TypeScript interfaces yang digunakan bersama oleh frontend & backend.
+7.2 Alur Kerja Harian
+Frontend membangun UI menggunakan dummy data (mock JSON) yang mengikuti kontrak response yang telah disepakati.
+Backend membangun API sesuai kontrak, diuji menggunakan Postman/Thunder Client.
+Perubahan kontrak di tengah jalan harus diperbarui di dokumen kontrak bersama sebelum diimplementasikan oleh kedua pihak.
+Pada tahap integrasi, pemanggilan data dummy digantikan dengan pemanggilan API sesungguhnya.
+8. Isu Terbuka / Perlu Diskusi Lanjutan
+Kategori dokumen PPID (jenis peraturan, notulensi, laporan keuangan, dll) belum ditentukan – menunggu diskusi dengan perangkat desa.
+Detail sumber data infografis (penduduk, APBDes, stunting, bansos, IDM, SDG) belum dikonfirmasi – memengaruhi struktur kolom detail/JSONB pada tabel terkait.
+Penempatan UI untuk fitur pengaduan agar tetap mudah diakses tanpa mengganggu pengalaman pengguna – perlu dirancang lebih lanjut pada tahap desain UI.
+9. Catatan Teknis Tambahan
+Desain mobile-first – mayoritas warga desa mengakses melalui perangkat seluler.
+Preview dokumen PDF ditampilkan langsung di browser (menggunakan react-pdf), bukan hanya tautan unduhan.
+Admin panel disediakan tidak hanya untuk berita, namun juga untuk konten lain (opsional, tergantung waktu pengembangan).
+Aspek aksesibilitas (kontras warna, alt text gambar) dipertimbangkan namun bukan prioritas utama pada tahap ini.
