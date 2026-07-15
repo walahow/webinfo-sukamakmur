@@ -54,7 +54,7 @@ export const mockStrukturOrganisasi: StrukturOrganisasi[] = [
   }
 ];
 
-export const mockBerita: Berita[] = [
+export const mockBerita: News[] = [
   {
     id: 'berita-001',
     judul: 'Musrenbangdes Walaho Tahun 2024 Berjalan Lancar',
