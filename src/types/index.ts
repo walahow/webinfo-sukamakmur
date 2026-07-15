@@ -40,11 +40,12 @@ export interface StrukturOrganisasi {
 // Additional types for future phases based on ERD
 export interface News {
   id: string;
-  author_id: string;
+  penulis_id: string;
   judul: string;
-  isi: string;
-  status: 'DRAFT' | 'PUBLISHED';
-  published_at: string;
+  slug: string;
+  konten: string;
+  status?: 'DRAFT' | 'PUBLISHED';
+  tanggal_publikasi: string;
   cover_url?: string;
 }
 
