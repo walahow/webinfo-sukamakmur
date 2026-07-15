@@ -93,6 +93,8 @@ export interface Document {
   judul: string;
   file_url: string;
   published_at: string;
+  size?: string;
+  format?: string;
 }
 
 export interface Pengaduan {

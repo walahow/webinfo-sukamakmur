@@ -168,21 +168,27 @@ export const mockDocument: Document[] = [
     category_id: 'dc-001',
     judul: 'RPJMDes Tahun 2024 - 2030',
     file_url: '#',
-    published_at: '2024-01-15'
+    published_at: '2024-01-15',
+    size: '2.5 MB',
+    format: 'PDF'
   },
   {
     id: 'doc-002',
     category_id: 'dc-002',
     judul: 'Laporan Realisasi APBDes Semester 1 2026',
     file_url: '#',
-    published_at: '2026-07-01'
+    published_at: '2026-07-01',
+    size: '1.1 MB',
+    format: 'XLSX'
   },
   {
     id: 'doc-003',
     category_id: 'dc-003',
     judul: 'Perdes No. 4 Tahun 2025 Tentang Pengelolaan BUMDes',
     file_url: '#',
-    published_at: '2025-05-10'
+    published_at: '2025-05-10',
+    size: '850 KB',
+    format: 'PDF'
   }
 ];
 

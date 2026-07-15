@@ -118,20 +118,33 @@ export function Navbar() {
       </div>
 
       {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden absolute top-20 left-0 right-0 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shadow-xl p-4 flex flex-col gap-2">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-4 py-3 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-            >
-              {link.name}
-            </Link>
-          ))}
-        </div>
-      )}
+      <div 
+        className={cn(
+          "md:hidden absolute top-20 left-0 right-0 p-4 flex flex-col gap-2 border-b transition-all duration-300 ease-in-out origin-top",
+          mobileMenuOpen 
+            ? "opacity-100 translate-y-0 pointer-events-auto" 
+            : "opacity-0 -translate-y-4 pointer-events-none",
+          isScrolled 
+            ? "bg-white/90 backdrop-blur-md border-slate-200/50 dark:bg-slate-950/90 dark:border-slate-800 shadow-xl" 
+            : "bg-transparent border-transparent shadow-none"
+        )}
+      >
+        {navLinks.map((link) => (
+          <Link
+            key={link.name}
+            href={link.href}
+            onClick={() => setMobileMenuOpen(false)}
+            className={cn(
+              "px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+              isScrolled 
+                ? "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                : "text-white hover:bg-white/10"
+            )}
+          >
+            {link.name}
+          </Link>
+        ))}
+      </div>
     </header>
   );
 }

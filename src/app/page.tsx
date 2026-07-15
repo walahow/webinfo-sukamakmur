@@ -109,7 +109,7 @@ export default function Home() {
               </p>
               <Link 
                 href="/profil" 
-                className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
+                className="inline-flex items-center gap-2 px-8 py-4 mt-2 w-fit rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 border border-primary hover:border-primary/90 ring-1 ring-primary hover:ring-primary/90 transform-gpu"
               >
                 Baca Selengkapnya <ArrowRight size={18} />
               </Link>
@@ -169,7 +169,7 @@ export default function Home() {
           <div className="mt-12 text-center">
             <Link 
               href="/infografis" 
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-100 text-slate-900 hover:bg-slate-200 font-medium transition-colors dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 border border-primary hover:border-primary/90 ring-1 ring-primary hover:ring-primary/90 transform-gpu"
             >
               Lihat Laporan Lengkap <ArrowRight size={18} />
             </Link>
@@ -207,7 +207,7 @@ export default function Home() {
           <div className="mt-12 text-center">
             <Link 
               href="/katalog" 
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-100 text-slate-900 hover:bg-slate-200 font-medium transition-colors dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 border border-primary hover:border-primary/90 ring-1 ring-primary hover:ring-primary/90 transform-gpu"
             >
               Eksplor Peta Desa <ArrowRight size={18} />
             </Link>
@@ -266,7 +266,7 @@ export default function Home() {
           <div className="mt-12 text-center">
             <Link 
               href="/berita" 
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-100 text-slate-900 hover:bg-slate-200 font-medium transition-colors dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 border border-primary hover:border-primary/90 ring-1 ring-primary hover:ring-primary/90 transform-gpu"
             >
               Indeks Berita <ArrowRight size={18} />
             </Link>
@@ -288,24 +288,57 @@ export default function Home() {
             Sebagai wujud transparansi, kami menyediakan akses mudah ke berbagai dokumen resmi desa mulai dari peraturan, perancangan keuangan, hingga notulensi rapat.
           </p>
           
-          {/* Document Previews */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 pb-4 text-left">
-            {mockDocument.slice(0, 3).map((doc) => (
-              <div key={doc.id} className="bg-white dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-slate-700/50 rounded-2xl p-6 flex flex-col hover:border-primary/50 dark:hover:border-slate-600 transition-all group cursor-pointer shadow-sm hover:shadow-xl">
-                <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center mb-5 text-primary group-hover:scale-110 group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-all">
-                  <FileText size={24} />
-                </div>
-                <h3 className="text-slate-900 dark:text-white font-semibold text-lg line-clamp-2 mb-2 flex-1 group-hover:text-primary transition-colors">{doc.judul}</h3>
-                <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100 dark:border-slate-700/50">
-                  <span className="text-sm text-slate-500 dark:text-slate-400">
-                    {new Date(doc.published_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' })}
-                  </span>
-                  <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center group-hover:bg-primary transition-colors">
-                    <Download size={14} className="text-slate-400 dark:text-slate-300 group-hover:text-white transition-colors" />
-                  </div>
-                </div>
+          {/* Document Previews Table */}
+          <div className="w-full pt-8 pb-4">
+            <div className="bg-transparent md:bg-white md:dark:bg-slate-900 md:border md:border-slate-200 md:dark:border-slate-800 rounded-none md:rounded-2xl overflow-hidden shadow-none md:shadow-sm">
+              <div className="overflow-x-visible md:overflow-x-auto">
+                <table className="block md:table w-full text-left md:border-collapse min-w-0 md:min-w-[700px]">
+                  <thead className="hidden md:table-header-group">
+                    <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700/50 text-slate-500 dark:text-slate-400 text-sm">
+                      <th className="py-4 px-6 font-medium whitespace-nowrap">Nama Dokumen</th>
+                      <th className="py-4 px-6 font-medium whitespace-nowrap">Format</th>
+                      <th className="py-4 px-6 font-medium whitespace-nowrap">Ukuran</th>
+                      <th className="py-4 px-6 font-medium whitespace-nowrap">Tanggal Rilis</th>
+                      <th className="py-4 px-6 font-medium text-right whitespace-nowrap">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="flex flex-col gap-4 md:table-row-group md:gap-0 divide-y-0 md:divide-y divide-slate-100 dark:divide-slate-800/50">
+                    {mockDocument.slice(0, 5).map((doc) => (
+                      <tr key={doc.id} className="flex flex-col md:table-row hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 md:bg-transparent md:border-none md:dark:bg-transparent md:dark:border-none rounded-2xl md:rounded-none p-5 md:p-0 shadow-sm md:shadow-none">
+                        <td className="md:py-4 md:px-6 block md:table-cell pb-4 border-b border-slate-100 dark:border-slate-800 md:border-none">
+                          <div className="flex items-center gap-4 md:gap-3">
+                            <div className="w-12 h-12 md:w-10 md:h-10 bg-primary/10 dark:bg-primary/20 rounded-xl md:rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shrink-0">
+                              <FileText size={20} className="md:w-5 md:h-5 w-6 h-6" />
+                            </div>
+                            <span className="font-bold md:font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors line-clamp-2 leading-tight">{doc.judul}</span>
+                          </div>
+                        </td>
+                        <td className="md:py-4 md:px-6 flex justify-between items-center md:table-cell py-3 border-b border-slate-100 dark:border-slate-800 md:border-none">
+                          <span className="md:hidden text-sm font-medium text-slate-500">Format</span>
+                          <span className="px-3 py-1 md:px-2.5 md:py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-md border border-slate-200 dark:border-slate-700">
+                            {doc.format || 'PDF'}
+                          </span>
+                        </td>
+                        <td className="md:py-4 md:px-6 flex justify-between items-center md:table-cell py-3 border-b border-slate-100 dark:border-slate-800 md:border-none text-slate-600 dark:text-slate-400 text-sm whitespace-nowrap font-medium md:font-normal">
+                          <span className="md:hidden text-sm font-medium text-slate-500">Ukuran</span>
+                          <span>{doc.size || '-'}</span>
+                        </td>
+                        <td className="md:py-4 md:px-6 flex justify-between items-center md:table-cell py-3 border-b border-slate-100 dark:border-slate-800 md:border-none text-slate-600 dark:text-slate-400 text-sm whitespace-nowrap font-medium md:font-normal">
+                          <span className="md:hidden text-sm font-medium text-slate-500">Tanggal Rilis</span>
+                          <span>{new Date(doc.published_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                        </td>
+                        <td className="md:py-4 md:px-6 flex justify-end md:table-cell pt-4 text-right">
+                          <a href={doc.file_url} className="inline-flex w-full md:w-auto justify-center items-center gap-2 px-4 py-2.5 md:py-2 rounded-xl md:rounded-lg bg-primary/10 text-primary md:bg-slate-100 md:dark:bg-slate-800 md:text-slate-700 md:dark:text-slate-300 hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-colors text-sm font-semibold">
+                            <Download size={16} />
+                            <span>Unduh Dokumen</span>
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ))}
+            </div>
           </div>
 
           <div className="pt-8 flex justify-center">
