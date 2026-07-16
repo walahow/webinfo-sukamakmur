@@ -28,7 +28,7 @@ export default function ProfilPage() {
       </section>
 
       {/* 2. PERANGKAT DESA (Moved to top as requested) */}
-      <section id="perangkat" className="w-full py-24 px-4 scroll-margin-top bg-white dark:bg-black">
+      <section id="perangkat" className="w-full py-24 px-4 scroll-margin-top bg-white/90 dark:bg-black/90 backdrop-blur-md">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Pemerintahan Desa</h2>
@@ -77,7 +77,7 @@ export default function ProfilPage() {
         </div>
       </section>
 
-      <div className="w-full bg-slate-50 dark:bg-slate-950">
+      <div className="w-full bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md">
         <div className="container mx-auto max-w-6xl px-4 py-16 md:py-24 space-y-24">
           
           {/* 3. VISI & MISI */}
@@ -151,7 +151,7 @@ export default function ProfilPage() {
       </div>
 
       {/* 5. GEOGRAFIS DESA & MAP */}
-      <section id="geografis" className="w-full bg-white dark:bg-black py-24 px-4 scroll-margin-top">
+      <section id="geografis" className="w-full bg-white/90 dark:bg-black/90 backdrop-blur-md py-24 px-4 scroll-margin-top">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Wilayah</h2>

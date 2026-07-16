@@ -55,7 +55,7 @@ export default function Home() {
 
 
       {/* 2. SAMBUTAN & PROFIL TEASER */}
-      <section id="profile" className="w-full py-24 scroll-margin-top px-4 bg-white dark:bg-black">
+      <section id="profile" className="w-full py-24 scroll-margin-top px-4 bg-white/90 dark:bg-black/90 backdrop-blur-md">
         <div className="container mx-auto max-w-6xl">
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
             
@@ -115,7 +115,7 @@ export default function Home() {
       </section>
 
       {/* 3. INFOGRAFIS SECTION */}
-      <section id="infografis" className="w-full py-24 scroll-margin-top px-4 bg-slate-50 dark:bg-slate-950">
+      <section id="infografis" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Transparansi Data</h2>
@@ -173,7 +173,7 @@ export default function Home() {
       </section>
 
       {/* 4. KATALOG SECTION (SKELETON) */}
-      <section id="catalogue" className="w-full py-24 scroll-margin-top px-4 bg-white dark:bg-black">
+      <section id="catalogue" className="w-full py-24 scroll-margin-top px-4 bg-white/90 dark:bg-black/90 backdrop-blur-md">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Potensi Desa</h2>
@@ -211,7 +211,7 @@ export default function Home() {
       </section>
 
       {/* 5. NEWS SECTION (SKELETON) */}
-      <section id="news" className="w-full py-24 scroll-margin-top px-4 bg-slate-50 dark:bg-slate-950">
+      <section id="news" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Kabar Terbaru</h2>
@@ -270,7 +270,7 @@ export default function Home() {
       </section>
 
       {/* 6. PPID SECTION */}
-      <section id="ppid" className="w-full py-24 scroll-margin-top px-4 bg-white dark:bg-slate-900 text-slate-900 dark:text-white relative overflow-hidden">
+      <section id="ppid" className="w-full py-24 scroll-margin-top px-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-slate-900 dark:text-white relative overflow-hidden">
         {/* Decorative background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
         
