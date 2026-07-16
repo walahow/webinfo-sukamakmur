@@ -27,7 +27,7 @@ export default function RootLayout({
       className={cn("h-full scroll-smooth", "antialiased", inter.variable)}
     >
       <body className="min-h-full flex flex-col font-sans selection:bg-primary/20 selection:text-primary relative">
-        <div className="fixed inset-0 z-[-1] pointer-events-none flex items-center justify-center opacity-[0.03] dark:opacity-[0.05] overflow-hidden">
+        <div className="fixed inset-0 z-0 pointer-events-none flex items-center justify-center opacity-[0.35] dark:opacity-[0.15] overflow-hidden">
           <div className="relative w-[120vw] h-[120vh] max-w-[800px] max-h-[800px]">
             <Image
               src="/deliSerdang.png"
@@ -38,11 +38,13 @@ export default function RootLayout({
             />
           </div>
         </div>
-        <Navbar />
-        <div className="flex-1 flex flex-col">
-          {children}
+        <div className="relative z-10 flex-1 flex flex-col">
+          <Navbar />
+          <div className="flex-1 flex flex-col">
+            {children}
+          </div>
+          <Footer />
         </div>
-        <Footer />
       </body>
     </html>
   );
