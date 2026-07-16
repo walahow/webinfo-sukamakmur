@@ -6,7 +6,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import Image from "next/image";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   title: "Desa Walaho - Portal Informasi Resmi",
@@ -27,7 +27,7 @@ export default function RootLayout({
       className={cn("h-full scroll-smooth", "antialiased", inter.variable)}
     >
       <body className="min-h-full flex flex-col font-sans selection:bg-primary/20 selection:text-primary relative">
-        <div className="fixed inset-0 z-0 pointer-events-none flex items-center justify-center opacity-[0.35] dark:opacity-[0.15] overflow-hidden">
+        <div className="fixed inset-0 z-0 pointer-events-none flex items-center justify-center opacity-[0.95] dark:opacity-[0.75] overflow-hidden">
           <div className="relative w-[120vw] h-[120vh] max-w-[800px] max-h-[800px]">
             <Image
               src="/deliSerdang.png"
