@@ -24,9 +24,14 @@ export interface User {
 export interface VillageProfile {
   id: string;
   sejarah: string;
+  visi: string;
+  misi: string[];
   sambutan_kepdes: string;
   peta_url?: string;
   koordinat?: string;
+  batas_desa?: string;
+  luas_wilayah?: string;
+  jumlah_penduduk?: number;
 }
 
 export interface StrukturOrganisasi {

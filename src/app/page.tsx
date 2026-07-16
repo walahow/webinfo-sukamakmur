@@ -52,75 +52,70 @@ export default function Home() {
         </a>
       </section>
 
-      {/* 1.5. VILLAGE HEAD WELCOME */}
-      <section className="w-full py-20 px-4 bg-white dark:bg-black">
-        <div className="container mx-auto max-w-4xl text-center">
-          <div className="w-24 h-24 mx-auto rounded-full overflow-hidden border-4 border-slate-100 dark:border-slate-800 shadow-md mb-6 relative">
-             <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${mockStrukturOrganisasi[0]?.foto_url})` }} />
-          </div>
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">Sambutan Kepala Desa</h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400 italic leading-relaxed">
-            &quot;{mockVillageProfile.sambutan_kepdes}&quot;
-          </p>
-          <div className="mt-4 font-medium text-slate-900 dark:text-white">
-            - {mockStrukturOrganisasi[0]?.nama_pejabat}
-          </div>
-        </div>
-      </section>
 
-      {/* 1.75. VILLAGE OFFICIALS */}
-      <section id="officials" className="w-full py-24 scroll-margin-top px-4 bg-slate-50 dark:bg-slate-950">
+
+      {/* 2. SAMBUTAN & PROFIL TEASER */}
+      <section id="profile" className="w-full py-24 scroll-margin-top px-4 bg-white/90 dark:bg-black/90 backdrop-blur-md">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Pemerintahan Desa</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Aparatur Desa Walaho</h3>
-            <p className="text-slate-600 dark:text-slate-400 mt-4">Mengenal lebih dekat para pelayan masyarakat yang berdedikasi membangun desa.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-            {mockStrukturOrganisasi.map((official) => (
-              <div key={official.id} className="flex flex-col items-center group">
-                <div className="w-40 h-40 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-800 mb-6 shadow-lg relative ring-4 ring-transparent group-hover:ring-primary/20 transition-all duration-300">
-                  {official.foto_url ? (
-                    <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${official.foto_url})` }} />
-                  ) : (
-                    <div className="absolute inset-0 bg-slate-200 animate-pulse" />
-                  )}
-                </div>
-                <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-1 text-center">{official.nama_pejabat}</h4>
-                <p className="text-sm text-primary font-medium text-center">{official.jabatan}</p>
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
+            
+            {/* Left: Kepala Desa & Sambutan */}
+            <div className="flex-1 w-full flex flex-col items-center lg:items-start text-center lg:text-left bg-slate-50 dark:bg-slate-900/50 p-8 md:p-12 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 relative shadow-sm">
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-800 shadow-xl mb-6 relative ring-4 ring-primary/20 shrink-0">
+                {mockStrukturOrganisasi[0]?.foto_url ? (
+                  <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${mockStrukturOrganisasi[0].foto_url}')` }} />
+                ) : (
+                  <div className="absolute inset-0 bg-slate-200 animate-pulse" />
+                )}
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 2. PROFILE SECTION (SKELETON) */}
-      <section id="profile" className="w-full py-24 scroll-margin-top px-4 bg-white dark:bg-black">
-        <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col md:flex-row gap-16 items-center">
-            <div className="flex-1 space-y-6">
-              <h2 className="text-sm font-bold tracking-widest uppercase text-primary">Profil Desa</h2>
-              <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight">
-                Sejarah & Visi Misi Desa Walaho
-              </h3>
-              <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed line-clamp-4">
-                {mockVillageProfile.sejarah}
+              <div className="inline-flex px-4 py-1.5 rounded-full bg-primary/10 text-primary font-bold text-xs tracking-wide uppercase mb-3">
+                {mockStrukturOrganisasi[0]?.jabatan || "Kepala Desa"}
+              </div>
+              <h4 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-6">
+                {mockStrukturOrganisasi[0]?.nama_pejabat}
+              </h4>
+              <p className="text-slate-600 dark:text-slate-400 text-base md:text-lg italic leading-relaxed relative">
+                <span className="text-5xl text-primary/20 absolute -top-4 -left-4 font-serif">&quot;</span>
+                {mockVillageProfile.sambutan_kepdes}
+                <span className="text-5xl text-primary/20 absolute -bottom-6 -right-2 font-serif">&quot;</span>
               </p>
-              <Link 
-                href="/profil" 
-                className="inline-flex items-center gap-2 px-8 py-4 mt-2 w-fit rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 border border-primary hover:border-primary/90 ring-1 ring-primary hover:ring-primary/90 transform-gpu"
-              >
-                Baca Selengkapnya <ArrowRight size={18} />
-              </Link>
             </div>
-            <ProfileImageStack />
+
+            {/* Right: Sejarah Snippet & Action */}
+            <div className="flex-1 w-full space-y-6">
+              <div>
+                <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-2">Sekilas Profil</h2>
+                <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
+                  Sejarah & Visi Misi Desa Walaho
+                </h3>
+              </div>
+              
+              <div className="hidden sm:block py-2">
+                 <ProfileImageStack />
+              </div>
+
+              <div>
+                <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed line-clamp-4">
+                  {mockVillageProfile.sejarah}
+                </p>
+              </div>
+
+              <div className="pt-2">
+                <Link 
+                  href="/profil" 
+                  className="inline-flex items-center justify-center w-full sm:w-auto gap-2 px-8 py-4 rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 border border-primary hover:border-primary/90 ring-1 ring-primary hover:ring-primary/90 transform-gpu"
+                >
+                  Baca Selengkapnya <ArrowRight size={18} />
+                </Link>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
 
       {/* 3. INFOGRAFIS SECTION */}
-      <section id="infografis" className="w-full py-24 scroll-margin-top px-4 bg-slate-50 dark:bg-slate-950">
+      <section id="infografis" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Transparansi Data</h2>
@@ -178,7 +173,7 @@ export default function Home() {
       </section>
 
       {/* 4. KATALOG SECTION (SKELETON) */}
-      <section id="catalogue" className="w-full py-24 scroll-margin-top px-4 bg-white dark:bg-black">
+      <section id="catalogue" className="w-full py-24 scroll-margin-top px-4 bg-white/90 dark:bg-black/90 backdrop-blur-md">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Potensi Desa</h2>
@@ -216,7 +211,7 @@ export default function Home() {
       </section>
 
       {/* 5. NEWS SECTION (SKELETON) */}
-      <section id="news" className="w-full py-24 scroll-margin-top px-4 bg-slate-50 dark:bg-slate-950">
+      <section id="news" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Kabar Terbaru</h2>
@@ -275,7 +270,7 @@ export default function Home() {
       </section>
 
       {/* 6. PPID SECTION */}
-      <section id="ppid" className="w-full py-24 scroll-margin-top px-4 bg-white dark:bg-slate-900 text-slate-900 dark:text-white relative overflow-hidden">
+      <section id="ppid" className="w-full py-24 scroll-margin-top px-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-slate-900 dark:text-white relative overflow-hidden">
         {/* Decorative background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
         

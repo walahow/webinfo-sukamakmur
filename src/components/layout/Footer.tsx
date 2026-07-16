@@ -17,7 +17,7 @@ export function Footer() {
     <footer className="bg-slate-950 text-slate-300 pt-16 pb-8 border-t border-slate-800">
       <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-12 lg:gap-8 mb-12">
-          
+
           {/* Column 1: Info (Always visible) */}
           <div className="space-y-6 mb-8 md:mb-0 lg:col-span-1">
             <div className="flex items-center gap-3">
@@ -46,16 +46,16 @@ export function Footer() {
 
           {/* Column 2: Contact */}
           <div className="border-t border-slate-800 md:border-none pt-4 md:pt-0">
-            <button 
+            <button
               onClick={() => toggleSection('contact')}
               className="w-full flex items-center justify-between md:cursor-default md:pointer-events-none group"
             >
               <h4 className="text-white font-bold text-lg md:mb-6">Hubungi Kami</h4>
-              <ChevronDown 
+              <ChevronDown
                 className={cn(
                   "md:hidden transition-transform duration-300 text-slate-500 group-hover:text-white",
                   openSection === 'contact' ? "rotate-180 text-white" : ""
-                )} 
+                )}
               />
             </button>
             <div className={cn(
@@ -81,22 +81,42 @@ export function Footer() {
                   </div>
                   Kanal Resmi Desa
                 </a>
+                <div className="flex flex-col gap-3 pt-4 border-t border-slate-800/50">
+                  <a href="#" className="flex items-center gap-3 hover:text-white transition-colors group">
+                    <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+                      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-slate-300 group-hover:text-white"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                    </div>
+                    <span>@pemdeswalaho</span>
+                  </a>
+                  <a href="#" className="flex items-center gap-3 hover:text-white transition-colors group">
+                    <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-pink-600 transition-colors">
+                      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-slate-300 group-hover:text-white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    </div>
+                    <span>@pemdes.walaho</span>
+                  </a>
+                  <a href="#" className="flex items-center gap-3 hover:text-white transition-colors group">
+                    <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-sky-500 transition-colors">
+                      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-slate-300 group-hover:text-white"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
+                    </div>
+                    <span>@pemdes_walaho</span>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Column 3: Emergency */}
           <div className="border-t border-slate-800 md:border-none pt-4 md:pt-0">
-            <button 
+            <button
               onClick={() => toggleSection('emergency')}
               className="w-full flex items-center justify-between md:cursor-default md:pointer-events-none group"
             >
               <h4 className="text-white font-bold text-lg md:mb-6">Nomor Telepon Penting</h4>
-              <ChevronDown 
+              <ChevronDown
                 className={cn(
                   "md:hidden transition-transform duration-300 text-slate-500 group-hover:text-white",
                   openSection === 'emergency' ? "rotate-180 text-white" : ""
-                )} 
+                )}
               />
             </button>
             <div className={cn(
@@ -122,16 +142,16 @@ export function Footer() {
 
           {/* Column 4: Masukan / Feedback */}
           <div className="border-t border-slate-800 md:border-none pt-4 md:pt-0">
-            <button 
+            <button
               onClick={() => toggleSection('masukan')}
               className="w-full flex items-center justify-between md:cursor-default md:pointer-events-none group"
             >
               <h4 className="text-white font-bold text-lg md:mb-6">Kotak Masukan</h4>
-              <ChevronDown 
+              <ChevronDown
                 className={cn(
                   "md:hidden transition-transform duration-300 text-slate-500 group-hover:text-white",
                   openSection === 'masukan' ? "rotate-180 text-white" : ""
-                )} 
+                )}
               />
             </button>
             <div className={cn(
@@ -141,17 +161,17 @@ export function Footer() {
               <div className="space-y-4 pb-4 md:pb-0">
                 <p className="text-sm text-slate-400">Punya saran atau keluhan? Sampaikan kepada kami untuk Desa Walaho yang lebih baik.</p>
                 <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
-                  <input 
-                    type="text" 
-                    placeholder="Nama (Opsional)" 
+                  <input
+                    type="text"
+                    placeholder="Nama (Opsional)"
                     className="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                   />
-                  <textarea 
-                    placeholder="Pesan Anda..." 
+                  <textarea
+                    placeholder="Pesan Anda..."
                     rows={3}
                     className="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none"
                   ></textarea>
-                  <button 
+                  <button
                     type="button"
                     className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-lg text-sm transition-colors"
                   >

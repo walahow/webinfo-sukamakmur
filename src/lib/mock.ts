@@ -18,9 +18,20 @@ import {
 export const mockVillageProfile: VillageProfile = {
   id: 'vp-001',
   sejarah: 'Desa Walaho berdiri sejak awal abad ke-19, bermula dari perkampungan agraris kecil di lembah hijau. Seiring berjalannya waktu, Walaho berkembang menjadi desa mandiri yang memadukan kearifan lokal dengan inovasi berkelanjutan, mempertahankan warisan budaya leluhur sambil terus beradaptasi dengan kemajuan teknologi.',
+  visi: 'Menjadi Desa yang Mandiri, Sejahtera, dan Berbudaya melalui Tata Kelola Pemerintahan yang Inovatif dan Transparan.',
+  misi: [
+    'Meningkatkan kualitas pelayanan publik berbasis teknologi informasi.',
+    'Mendorong pertumbuhan ekonomi kerakyatan melalui pemberdayaan UMKM lokal.',
+    'Menjaga dan melestarikan nilai-nilai budaya dan kearifan lokal masyarakat desa.',
+    'Meningkatkan ketersediaan dan kualitas infrastruktur desa yang berkelanjutan.',
+    'Mewujudkan lingkungan desa yang bersih, sehat, dan asri.'
+  ],
   sambutan_kepdes: 'Selamat datang di portal resmi Desa Walaho. Melalui website ini, kami berkomitmen mewujudkan tata kelola desa yang transparan, inovatif, dan responsif. Kami berharap sistem informasi ini dapat mendekatkan pelayanan kepada masyarakat dan membuka potensi desa ke kancah yang lebih luas.',
   peta_url: 'https://maps.google.com/...',
-  koordinat: '-6.200000, 106.816666'
+  koordinat: '-6.200000, 106.816666',
+  batas_desa: 'Utara: Desa Beringin Jaya, Selatan: Sungai Walaho, Timur: Hutan Lindung, Barat: Kecamatan Beringin.',
+  luas_wilayah: '450 Hektar',
+  jumlah_penduduk: 2450
 };
 
 export const mockStrukturOrganisasi: StrukturOrganisasi[] = [
