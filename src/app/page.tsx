@@ -63,8 +63,17 @@ export default async function Home() {
 
       {/* 2. SAMBUTAN & PROFIL TEASER */}
       <section id="profile" className="w-full py-24 scroll-margin-top px-4 bg-white/90 dark:bg-black/90 backdrop-blur-md">
-        <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
+        <div className="container mx-auto max-w-6xl flex flex-col gap-12">
+          {/* Top: Title Centered */}
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Sekilas Profil</h2>
+            <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight">
+              Sejarah & Visi Misi Desa Walaho
+            </h3>
+          </div>
+
+          {/* Middle: 2 Columns */}
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-stretch">
             
             {/* Left: Kepala Desa & Sambutan */}
             <div className="flex-1 w-full flex flex-col items-center lg:items-start text-center lg:text-left bg-slate-50 dark:bg-slate-900/50 p-8 md:p-12 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 relative shadow-sm">
@@ -88,35 +97,28 @@ export default async function Home() {
               </p>
             </div>
 
-            {/* Right: Sejarah Snippet & Action */}
-            <div className="flex-1 w-full space-y-6">
-              <div>
-                <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-2">Sekilas Profil</h2>
-                <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
-                  Sejarah & Visi Misi Desa Walaho
-                </h3>
-              </div>
-              
+            {/* Right: Images and Desc */}
+            <div className="flex-1 w-full flex flex-col space-y-6 justify-center">
               <div className="hidden sm:block py-2">
                  <ProfileImageStack />
               </div>
 
               <div>
-                <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed line-clamp-4">
+                <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed line-clamp-4 text-center lg:text-left">
                   {mockVillageProfile.sejarah}
                 </p>
               </div>
-
-              <div className="pt-2">
-                <Link 
-                  href="/profil" 
-                  className="inline-flex items-center justify-center w-full sm:w-auto gap-2 px-8 py-4 rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 border border-primary hover:border-primary/90 ring-1 ring-primary hover:ring-primary/90 transform-gpu"
-                >
-                  Baca Selengkapnya <ArrowRight size={18} />
-                </Link>
-              </div>
             </div>
+          </div>
 
+          {/* Bottom: Action Centered */}
+          <div className="flex justify-center mt-2">
+            <Link 
+              href="/profil" 
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 border border-primary hover:border-primary/90 ring-1 ring-primary hover:ring-primary/90 transform-gpu"
+            >
+              Baca Selengkapnya <ArrowRight size={18} />
+            </Link>
           </div>
         </div>
       </section>
@@ -250,8 +252,9 @@ export default async function Home() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div 
-              className="aspect-square md:aspect-[4/3] lg:aspect-auto rounded-3xl bg-slate-200 dark:bg-slate-800 bg-cover bg-center relative overflow-hidden group cursor-pointer"
+            <Link 
+              href={`/berita/${mockBerita[0].slug}`}
+              className="aspect-square md:aspect-[4/3] lg:aspect-auto rounded-3xl bg-slate-200 dark:bg-slate-800 bg-cover bg-center relative overflow-hidden group cursor-pointer block"
               style={{ backgroundImage: `url('${mockBerita[0].cover_url}')` }}
             >
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
@@ -266,11 +269,11 @@ export default async function Home() {
                   {mockBerita[0].konten}
                 </p>
               </div>
-            </div>
+            </Link>
             
             <div className="flex flex-col gap-8 justify-between">
               {mockBerita.slice(1).map((berita) => (
-                <div key={berita.id} className="flex gap-6 items-center group cursor-pointer">
+                <Link href={`/berita/${berita.slug}`} key={berita.id} className="flex gap-6 items-center group cursor-pointer">
                   <div 
                     className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl shrink-0 bg-slate-200 dark:bg-slate-800 bg-cover bg-center"
                     style={{ backgroundImage: `url('${berita.cover_url}')` }}
@@ -283,7 +286,7 @@ export default async function Home() {
                       {berita.judul}
                     </h4>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

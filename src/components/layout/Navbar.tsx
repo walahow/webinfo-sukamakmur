@@ -8,12 +8,12 @@ import { cn } from '@/lib/utils';
 import { Menu, X } from 'lucide-react';
 
 const navLinks = [
-  { name: 'Beranda', href: '/#hero' },
-  { name: 'Profil', href: '/#profile' },
-  { name: 'Infografis', href: '/#infografis' },
-  { name: 'Katalog', href: '/#catalogue' },
-  { name: 'Berita', href: '/#news' },
-  { name: 'PPID', href: '/#ppid' },
+  { name: 'Beranda', href: '/#hero', matchPath: '/' },
+  { name: 'Profil', href: '/#profile', matchPath: '/profil' },
+  { name: 'Infografis', href: '/#infografis', matchPath: '/infografis' },
+  { name: 'Katalog', href: '/#catalogue', matchPath: '/katalog' },
+  { name: 'Berita', href: '/#news', matchPath: '/berita' },
+  { name: 'PPID', href: '/#ppid', matchPath: '/ppid' },
 ];
 
 export function Navbar() {
@@ -88,7 +88,7 @@ export function Navbar() {
           {navLinks.map((link) => {
             const isActive = pathname === '/' 
               ? activeSection === link.href 
-              : pathname.startsWith(link.href.split('#')[0]); // Fallback for subpages
+              : link.matchPath !== '/' && pathname.startsWith(link.matchPath);
             
             return (
               <Link
@@ -131,21 +131,30 @@ export function Navbar() {
             : "bg-transparent border-transparent shadow-none"
         )}
       >
-        {navLinks.map((link) => (
-          <Link
-            key={link.name}
-            href={link.href}
-            onClick={() => setMobileMenuOpen(false)}
-            className={cn(
-              "px-4 py-3 rounded-lg text-sm font-medium transition-colors",
-              isSolid 
-                ? "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                : "text-white hover:bg-white/10"
-            )}
-          >
-            {link.name}
-          </Link>
-        ))}
+        {navLinks.map((link) => {
+          const isActive = pathname === '/' 
+            ? activeSection === link.href 
+            : link.matchPath !== '/' && pathname.startsWith(link.matchPath);
+
+          return (
+            <Link
+              key={link.name}
+              href={link.href}
+              onClick={() => setMobileMenuOpen(false)}
+              className={cn(
+                "px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+                isActive
+                  ? (isSolid ? "bg-primary/10 text-primary dark:bg-primary/20" : "bg-white/20 text-white")
+                  : (isSolid 
+                      ? "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                      : "text-white hover:bg-white/10"
+                    )
+              )}
+            >
+              {link.name}
+            </Link>
+          );
+        })}
       </div>
     </header>
   );

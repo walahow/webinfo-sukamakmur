@@ -70,7 +70,7 @@ export const mockBerita: News[] = [
     id: 'berita-001',
     judul: 'Musrenbangdes Walaho Tahun 2024 Berjalan Lancar',
     slug: 'musrenbangdes-walaho-2024',
-    konten: 'Musyawarah Perencanaan Pembangunan Desa (Musrenbangdes) Walaho untuk tahun anggaran 2024 telah sukses diselenggarakan...',
+    konten: 'Musyawarah Perencanaan Pembangunan Desa (Musrenbangdes) Walaho untuk tahun anggaran 2024 telah sukses diselenggarakan dengan fokus pada pembangunan infrastruktur dan pemulihan ekonomi.',
     tanggal_publikasi: '2024-01-15T08:00:00Z',
     penulis_id: 'user-001',
     cover_url: '/mock-data/news-musrenbang.jpg'
@@ -79,7 +79,7 @@ export const mockBerita: News[] = [
     id: 'berita-002',
     judul: 'Pelatihan Kewirausahaan untuk UMKM Desa',
     slug: 'pelatihan-kewirausahaan-umkm',
-    konten: 'Dalam rangka meningkatkan taraf ekonomi warga, Pemerintah Desa Walaho bekerja sama dengan dinas terkait mengadakan pelatihan kewirausahaan...',
+    konten: 'Dalam rangka meningkatkan taraf ekonomi warga, Pemerintah Desa Walaho bekerja sama dengan dinas terkait mengadakan pelatihan kewirausahaan digital bagi para pelaku usaha kecil mikro.',
     tanggal_publikasi: '2024-02-02T09:30:00Z',
     penulis_id: 'user-001',
     cover_url: '/mock-data/news-umkm.jpg'
@@ -88,12 +88,39 @@ export const mockBerita: News[] = [
     id: 'berita-003',
     judul: 'Gotong Royong Membersihkan Saluran Irigasi Menjelang Musim Tanam',
     slug: 'gotong-royong-irigasi',
-    konten: 'Menjelang musim tanam padi, warga Desa Walaho beramai-ramai turun ke sawah untuk membersihkan saluran irigasi utama...',
+    konten: 'Menjelang musim tanam padi, warga Desa Walaho beramai-ramai turun ke sawah untuk membersihkan saluran irigasi utama guna memastikan pasokan air lancar ke seluruh lahan pertanian.',
     tanggal_publikasi: '2024-02-28T07:15:00Z',
     penulis_id: 'user-002',
     cover_url: '/mock-data/news-gotong-royong.jpg'
+  },
+  {
+    id: 'berita-004',
+    judul: 'Penyaluran Bantuan Sosial Lansia dan Balita Periode Maret',
+    slug: 'penyaluran-bansos-lansia-balita',
+    konten: 'Pemerintah Desa Walaho kembali menyalurkan program bantuan sosial kepada para lansia dan balita berupa paket nutrisi tambahan guna menekan angka stunting serta menjamin kesejahteraan.',
+    tanggal_publikasi: '2024-03-05T09:00:00Z',
+    penulis_id: 'user-001',
+    cover_url: '/mock-data/village-profile.jpg'
+  },
+  {
+    id: 'berita-005',
+    judul: 'Pembangunan Jembatan Penghubung Antar Dusun Walaho Rampung',
+    slug: 'pembangunan-jembatan-antardusun-rampung',
+    konten: 'Akses transportasi antar dusun di Desa Walaho kini semakin mudah dengan rampungnya proyek pembangunan jembatan gantung baru yang ramah lingkungan dan aman dilalui warga.',
+    tanggal_publikasi: '2024-03-12T10:00:00Z',
+    penulis_id: 'user-001',
+    cover_url: '/mock-data/katalog-wisata.jpg'
+  },
+  {
+    id: 'berita-006',
+    judul: 'Festival Kebudayaan dan Kuliner Tradisional Desa Walaho 2024',
+    slug: 'festival-kebudayaan-kuliner-walaho-2024',
+    konten: 'Memperkenalkan pesona wisata dan warisan kuliner lokal, Desa Walaho menggelar festival kebudayaan tahunan yang dihadiri oleh ratusan pengunjung dari luar daerah.',
+    tanggal_publikasi: '2024-03-20T13:00:00Z',
+    penulis_id: 'user-002',
+    cover_url: '/mock-data/katalog-kopi.jpg'
   }
-];
+].sort((a, b) => new Date(b.tanggal_publikasi).getTime() - new Date(a.tanggal_publikasi).getTime());
 
 export const mockGallery: Galeri[] = [
   {
@@ -201,7 +228,7 @@ export const mockDocument: Document[] = [
     size: '850 KB',
     format: 'PDF'
   }
-];
+].sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
 
 export const mockPengaduan: Pengaduan[] = [
   {
