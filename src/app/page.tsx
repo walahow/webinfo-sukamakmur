@@ -1,9 +1,16 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, ChevronDown, Users, MapPin, Wallet, Store, Info, FileText, Download } from "lucide-react";
-import { mockVillageProfile, mockStrukturOrganisasi, mockKatalog, mockBerita, mockDocument } from "@/lib/mock";
+import { mockVillageProfile, mockStrukturOrganisasi, mockBerita, mockDocument } from "@/lib/mock";
 import { ProfileImageStack } from "@/components/ui/ProfileImageStack";
+import { prisma } from "@/lib/prisma";
 
-export default function Home() {
+export default async function Home() {
+  const katalogItems = await prisma.katalog.findMany({
+    take: 6,
+    include: { category: true },
+    orderBy: { createdAt: 'desc' }
+  });
   return (
     <main className="flex min-h-screen flex-col items-center overflow-x-hidden">
       
@@ -172,40 +179,63 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. KATALOG SECTION (SKELETON) */}
+      {/* 4. KATALOG SECTION */}
       <section id="catalogue" className="w-full py-24 scroll-margin-top px-4 bg-white/90 dark:bg-black/90 backdrop-blur-md">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Potensi Desa</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Katalog UMKM & Wisata</h3>
-            <p className="text-slate-600 dark:text-slate-400 mt-4">Jelajahi potensi lokal dan dukung perekonomian desa kami.</p>
+          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+            <div className="max-w-2xl">
+              <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Potensi Desa</h2>
+              <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Katalog UMKM & Wisata</h3>
+              <p className="text-slate-600 dark:text-slate-400 mt-4">Jelajahi potensi lokal dan dukung perekonomian desa kami.</p>
+            </div>
+            <Link 
+              href="/katalog" 
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 border border-primary hover:border-primary/90 ring-1 ring-primary hover:ring-primary/90 transform-gpu shrink-0"
+            >
+              Jelajahi Katalog Desa <ArrowRight size={18} />
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {mockKatalog.map((item) => (
-              <div key={item.id} className="group cursor-pointer">
-                <div className="aspect-[4/3] rounded-3xl overflow-hidden bg-slate-200 dark:bg-slate-800 mb-6 relative">
-                  <div 
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-                    style={{ backgroundImage: `url('${item.foto_url}')` }}
-                  />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
+            {katalogItems.map((item) => (
+              <Link href={`/katalog/${item.slug}`} key={item.id} className="group cursor-pointer flex flex-col h-full bg-slate-50 dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-100 dark:border-slate-800 hover:shadow-lg transition-all duration-300">
+                <div className="aspect-[4/3] bg-slate-200 dark:bg-slate-800 relative overflow-hidden">
+                  {item.fotoUrl ? (
+                    <Image 
+                      src={item.fotoUrl} 
+                      alt={item.nama}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center text-slate-400">
+                      <Store size={48} />
+                    </div>
+                  )}
+                  <div className="absolute top-4 left-4">
+                    <span className="px-3 py-1 bg-white/90 dark:bg-black/90 backdrop-blur text-xs font-bold rounded-full text-slate-900 dark:text-white shadow-sm">
+                      {item.category.nama}
+                    </span>
+                  </div>
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300" />
                 </div>
-                <div className="space-y-2">
-                  <h4 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">{item.nama}</h4>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">{item.deskripsi}</p>
+                <div className="p-6 flex flex-col flex-1 space-y-3">
+                  <h4 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors line-clamp-1">
+                    {item.nama}
+                  </h4>
+                  {item.dusun && (
+                    <div className="flex items-center gap-1.5 text-sm font-medium text-slate-500 dark:text-slate-400">
+                      <MapPin size={16} className="text-primary" />
+                      <span>{item.dusun}</span>
+                    </div>
+                  )}
+                  <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mt-auto pt-2">
+                    {item.deskripsi}
+                  </p>
                 </div>
-              </div>
+              </Link>
             ))}
-          </div>
-          
-          <div className="mt-12 text-center">
-            <Link 
-              href="/katalog" 
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 border border-primary hover:border-primary/90 ring-1 ring-primary hover:ring-primary/90 transform-gpu"
-            >
-              Eksplor Peta Desa <ArrowRight size={18} />
-            </Link>
           </div>
         </div>
       </section>

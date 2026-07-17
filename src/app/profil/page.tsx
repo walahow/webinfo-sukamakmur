@@ -133,11 +133,13 @@ export default function ProfilPage() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div className="relative w-full h-[300px] md:h-[400px] rounded-3xl overflow-hidden bg-slate-200 dark:bg-slate-800 shadow-lg">
-                <div className="absolute inset-0 bg-slate-300 dark:bg-slate-700 flex items-center justify-center">
-                   {/* Placeholder Image element - using CSS pattern for now */}
-                   <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 dark:opacity-5 mix-blend-overlay"></div>
-                   <p className="font-medium text-slate-500 dark:text-slate-400">Gambar Sejarah Desa</p>
-                </div>
+                <Image
+                  src="/mock-data/village-profile.jpg"
+                  alt="Sejarah Desa Walaho"
+                  fill
+                  className="object-cover transition-transform duration-700 hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
               </div>
               <div className="flex flex-col justify-center">
                 <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed text-justify">
@@ -160,16 +162,19 @@ export default function ProfilPage() {
           </div>
 
           <div className="flex flex-col gap-8">
-            {/* Interactive Map (Now on top) */}
-            <div className="w-full relative min-h-[400px] md:min-h-[500px] rounded-3xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm bg-slate-50 dark:bg-slate-900 p-4">
-              <div className="absolute inset-4 rounded-2xl bg-white dark:bg-slate-950 overflow-hidden flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 relative">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 dark:opacity-5 mix-blend-overlay"></div>
-                <MapPin size={64} className="text-primary/50 mb-4 animate-bounce" />
-                <p className="font-medium text-lg text-slate-600 dark:text-slate-300">Peta Interaktif Batas Desa</p>
-                <p className="text-sm mt-2 max-w-sm text-center">Menggunakan placeholder sesuai konfigurasi. Koordinat: {mockVillageProfile.koordinat}</p>
-                <div className="absolute top-6 right-6 flex gap-2 z-10">
-                   <div className="w-10 h-10 bg-slate-50 dark:bg-slate-800 rounded-lg shadow-sm flex items-center justify-center cursor-pointer hover:bg-slate-100 transition-colors"><Activity size={18} /></div>
-                </div>
+            {/* Map Image Section */}
+            <div className="w-full relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-md bg-slate-100 dark:bg-slate-900 group">
+              <Image
+                src="/image.png"
+                alt="Peta Wilayah Geografis Desa"
+                fill
+                className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                sizes="(max-width: 1200px) 100vw, 1200px"
+                priority
+              />
+              <div className="absolute bottom-4 left-4 z-10 bg-black/60 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 text-white text-xs font-semibold flex items-center gap-1.5 shadow-md">
+                <MapPin size={14} className="text-primary" />
+                <span>Peta Batas Administrasi Desa</span>
               </div>
             </div>
 
@@ -184,9 +189,24 @@ export default function ProfilPage() {
                     </div>
                     <h4 className="font-bold text-xl text-slate-900 dark:text-white">Batas Wilayah</h4>
                   </div>
-                  <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm md:text-base">
-                    {mockVillageProfile.batas_desa}
-                  </p>
+                  <div className="grid grid-cols-1 gap-2.5 mt-2 text-sm text-slate-600 dark:text-slate-400">
+                    <div className="flex items-center gap-2 border-b border-slate-200/50 dark:border-slate-800/50 pb-1.5">
+                      <span className="font-bold text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500 w-16">Utara</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-300">Medan Johor</span>
+                    </div>
+                    <div className="flex items-center gap-2 border-b border-slate-200/50 dark:border-slate-800/50 pb-1.5">
+                      <span className="font-bold text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500 w-16">Timur</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-300">Mekar Sari</span>
+                    </div>
+                    <div className="flex items-center gap-2 border-b border-slate-200/50 dark:border-slate-800/50 pb-1.5">
+                      <span className="font-bold text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500 w-16">Selatan</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-300">Kedai Durian, Namorambe</span>
+                    </div>
+                    <div className="flex items-center gap-2 pb-1">
+                      <span className="font-bold text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500 w-16">Barat</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-300">Medan Johor</span>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Luas Wilayah */}

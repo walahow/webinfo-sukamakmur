@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import Image from "next/image";
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   title: "Desa Walaho - Portal Informasi Resmi",
@@ -24,7 +21,8 @@ export default function RootLayout({
   return (
     <html
       lang="id"
-      className={cn("h-full scroll-smooth", "antialiased", inter.variable)}
+      className={cn("h-full scroll-smooth", "antialiased")}
+      data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col font-sans selection:bg-primary/20 selection:text-primary relative">
         <div className="fixed inset-0 z-0 pointer-events-none flex items-center justify-center opacity-[0.95] dark:opacity-[0.75] overflow-hidden">
@@ -33,6 +31,7 @@ export default function RootLayout({
               src="/deliSerdang.png"
               alt="Logo Deli Serdang Background"
               fill
+              sizes="(max-width: 800px) 100vw, 800px"
               className="object-contain"
               priority
             />

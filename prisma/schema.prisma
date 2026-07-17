@@ -1,0 +1,32 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model KatalogCategory {
+  id        String    @id @default(uuid())
+  nama      String    // contoh: "UMKM", "Wisata", "Kuliner", "Kerajinan"
+  katalog   Katalog[]
+}
+
+model Katalog {
+  id          String          @id @default(uuid())
+  categoryId  String
+  category    KatalogCategory @relation(fields: [categoryId], references: [id])
+  nama        String
+  slug        String          @unique
+  deskripsi   String
+  latitude    Float
+  longitude   Float
+  dusun       String?
+  kontak      String?
+  fotoUrl     String?
+  createdAt   DateTime        @default(now())
+}

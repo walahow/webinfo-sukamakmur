@@ -52,11 +52,13 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [pathname]);
 
+  const isSolid = (pathname !== '/' && pathname !== '/profil') || isScrolled;
+
   return (
     <header
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b',
-        isScrolled
+        isSolid
           ? 'bg-white/80 backdrop-blur-md shadow-sm border-slate-200/50 dark:bg-slate-950/80 dark:border-slate-800'
           : 'bg-transparent border-transparent'
       )}
@@ -74,10 +76,10 @@ export function Navbar() {
             />
           </div>
           <div className="flex flex-col ml-1">
-            <span className={cn("font-bold text-lg leading-tight tracking-tight transition-colors", isScrolled ? "text-slate-900 dark:text-white" : "text-white")}>
+            <span className={cn("font-bold text-lg leading-tight tracking-tight transition-colors", isSolid ? "text-slate-900 dark:text-white" : "text-white")}>
               Desa Walaho
             </span>
-            <span className={cn("text-xs font-medium transition-colors", isScrolled ? "text-slate-500" : "text-slate-300")}>Kab. Deli Serdang</span>
+            <span className={cn("text-xs font-medium transition-colors", isSolid ? "text-slate-500" : "text-slate-300")}>Kab. Deli Serdang</span>
           </div>
         </Link>
 
@@ -95,8 +97,8 @@ export function Navbar() {
                 className={cn(
                   'px-4 py-2 rounded-full text-sm font-medium transition-all duration-200',
                   isActive
-                    ? (isScrolled ? 'bg-primary/10 text-primary dark:bg-primary/20' : 'bg-white/20 text-white')
-                    : (isScrolled 
+                    ? (isSolid ? 'bg-primary/10 text-primary dark:bg-primary/20' : 'bg-white/20 text-white')
+                    : (isSolid 
                         ? 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white'
                         : 'text-white/80 hover:text-white hover:bg-white/10'
                       )
@@ -110,7 +112,7 @@ export function Navbar() {
 
         {/* Mobile Toggle */}
         <button 
-          className={cn("md:hidden p-2 transition-colors", isScrolled ? "text-slate-600" : "text-white")}
+          className={cn("md:hidden p-2 transition-colors", isSolid ? "text-slate-600" : "text-white")}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -124,7 +126,7 @@ export function Navbar() {
           mobileMenuOpen 
             ? "opacity-100 translate-y-0 pointer-events-auto" 
             : "opacity-0 -translate-y-4 pointer-events-none",
-          isScrolled 
+          isSolid 
             ? "bg-white/90 backdrop-blur-md border-slate-200/50 dark:bg-slate-950/90 dark:border-slate-800 shadow-xl" 
             : "bg-transparent border-transparent shadow-none"
         )}
@@ -136,7 +138,7 @@ export function Navbar() {
             onClick={() => setMobileMenuOpen(false)}
             className={cn(
               "px-4 py-3 rounded-lg text-sm font-medium transition-colors",
-              isScrolled 
+              isSolid 
                 ? "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                 : "text-white hover:bg-white/10"
             )}
