@@ -6,20 +6,75 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
+// ----------------------------------------------------------------------
+// 1. Core Profile & Organization
+// ----------------------------------------------------------------------
+
+model VillageProfile {
+  id              String   @id @default(uuid())
+  sejarah         String   @db.Text
+  visi            String   @db.Text
+  misi            String[] // PostgreSQL native array
+  sambutan_kepdes String   @db.Text
+  peta_url        String?
+  koordinat       String?
+  batas_desa      String?
+  luas_wilayah    String?
+  jumlah_penduduk Int?
+  updatedAt       DateTime @updatedAt
+}
+
+model StrukturOrganisasi {
+  id           String @id @default(uuid())
+  jabatan      String
+  nama_pejabat String
+  urutan       Int    @default(0)
+  foto_url     String?
+}
+
+// ----------------------------------------------------------------------
+// 2. News & Publications
+// ----------------------------------------------------------------------
+
+model User {
+  id    String @id @default(uuid())
+  nama  String
+  email String @unique
+  role  String @default("EDITOR") // ADMIN or EDITOR
+  news  News[]
+}
+
+model News {
+  id                String   @id @default(uuid())
+  judul             String
+  slug              String   @unique
+  konten            String   @db.Text
+  status            String   @default("DRAFT") // DRAFT or PUBLISHED
+  tanggal_publikasi DateTime @default(now())
+  cover_url         String?
+
+  penulis_id String
+  penulis    User   @relation(fields: [penulis_id], references: [id])
+}
+
+// ----------------------------------------------------------------------
+// 3. Katalog (UMKM & Wisata)
+// ----------------------------------------------------------------------
+
 model KatalogCategory {
-  id        String    @id @default(uuid())
-  nama      String    // contoh: "UMKM", "Wisata", "Kuliner", "Kerajinan"
-  katalog   Katalog[]
+  id      String    @id @default(uuid())
+  nama    String
+  icon    String?   // Lucide icon name e.g. "Utensils", "MapPin"
+  katalog Katalog[]
 }
 
 model Katalog {
   id          String          @id @default(uuid())
-  categoryId  String
-  category    KatalogCategory @relation(fields: [categoryId], references: [id])
   nama        String
   slug        String          @unique
   deskripsi   String
@@ -28,5 +83,103 @@ model Katalog {
   dusun       String?
   kontak      String?
   fotoUrl     String?
+  categoryId  String
+  category    KatalogCategory @relation(fields: [categoryId], references: [id])
   createdAt   DateTime        @default(now())
+}
+
+// ----------------------------------------------------------------------
+// 4. Gallery
+// ----------------------------------------------------------------------
+
+model Galeri {
+  id        String  @id @default(uuid())
+  foto_url  String
+  caption   String
+  katalog_id  String?
+  kegiatan_id String?
+}
+
+// ----------------------------------------------------------------------
+// 5. Kegiatan (Events)
+// ----------------------------------------------------------------------
+
+model Kegiatan {
+  id       String @id @default(uuid())
+  judul    String
+  deskripsi String
+  tanggal  String // ISO date string
+  lokasi   String
+}
+
+// ----------------------------------------------------------------------
+// 6. PPID (Public Documents)
+// ----------------------------------------------------------------------
+
+model DocumentCategory {
+  id        String     @id @default(uuid())
+  name      String
+  documents Document[]
+}
+
+model Document {
+  id           String           @id @default(uuid())
+  judul        String
+  file_url     String
+  size         String?          // e.g. "2.5 MB"
+  format       String?          // e.g. "PDF", "XLSX"
+  published_at DateTime         @default(now())
+  category_id  String
+  category     DocumentCategory @relation(fields: [category_id], references: [id])
+}
+
+// ----------------------------------------------------------------------
+// 7. Pengaduan Warga
+// ----------------------------------------------------------------------
+
+model Pengaduan {
+  id           String   @id @default(uuid())
+  nama_pelapor String
+  kontak       String
+  judul        String
+  deskripsi    String
+  status       String   @default("PENDING") // PENDING, PROSES, SELESAI
+  created_at   DateTime @default(now())
+}
+
+// ----------------------------------------------------------------------
+// 8. Infografis / Statistics
+// ----------------------------------------------------------------------
+
+model PendudukStat {
+  id             String @id @default(uuid())
+  tahun          Int    @unique
+  total_penduduk Int
+  laki_laki      Int
+  perempuan      Int
+  jumlah_kk      Int
+}
+
+model Apbdes {
+  id               String @id @default(uuid())
+  tahun            Int    @unique
+  pendapatan       Float
+  belanja          Float
+  pembiayaan       Float
+  kategori_belanja Json  // JSONB in PostgreSQL
+}
+
+model IdmSdgScore {
+  id         String @id @default(uuid())
+  tahun      Int    @unique
+  skor_idm   Float
+  status_idm String // 'Sangat Tertinggal' | 'Tertinggal' | 'Berkembang' | 'Maju' | 'Mandiri'
+  skor_sdgs  Float
+}
+
+model StuntingBansos {
+  id               String @id @default(uuid())
+  tahun            Int    @unique
+  jumlah_stunting  Int
+  penerima_bansos  Int
 }
