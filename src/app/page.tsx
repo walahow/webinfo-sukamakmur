@@ -193,18 +193,10 @@ export default async function Home() {
       {/* 4. KATALOG SECTION */}
       <section id="catalogue" className="w-full py-24 scroll-margin-top px-4 bg-white/90 dark:bg-black/90 backdrop-blur-md">
         <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-            <div className="max-w-2xl">
-              <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Potensi Desa</h2>
-              <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Katalog UMKM & Wisata</h3>
-              <p className="text-slate-600 dark:text-slate-400 mt-4">Jelajahi potensi lokal dan dukung perekonomian desa kami.</p>
-            </div>
-            <Link 
-              href="/katalog" 
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 border border-primary hover:border-primary/90 ring-1 ring-primary hover:ring-primary/90 transform-gpu shrink-0"
-            >
-              Jelajahi Katalog Desa <ArrowRight size={18} />
-            </Link>
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Potensi Desa</h2>
+            <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Katalog UMKM & Wisata</h3>
+            <p className="text-slate-600 dark:text-slate-400 mt-4">Jelajahi potensi lokal dan dukung perekonomian desa kami.</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -247,6 +239,15 @@ export default async function Home() {
                 </div>
               </Link>
             ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <Link 
+              href="/katalog" 
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 border border-primary hover:border-primary/90 ring-1 ring-primary hover:ring-primary/90 transform-gpu"
+            >
+              Jelajahi Katalog Desa <ArrowRight size={18} />
+            </Link>
           </div>
         </div>
       </section>
