@@ -38,6 +38,12 @@ const ChartCard = ({ children, title }: { children: React.ReactNode, title: stri
 );
 
 export default function InfografisPage() {
+  const totalDusun = pendudukByDusun.reduce((sum, item) => sum + item.total, 0);
+  const totalKawin = pendudukByKawin.reduce((sum, item) => sum + item.total, 0);
+  const totalAgama = pendudukByAgama.reduce((sum, item) => sum + item.total, 0);
+  const totalPendapatanDetail = apbdesPendapatanDetail.reduce((sum, item) => sum + item.amount, 0);
+  const totalBelanjaDetail = apbdesBelanjaDetail.reduce((sum, item) => sum + item.amount, 0);
+
   return (
     <main className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
       {/* HEADER */}
@@ -114,17 +120,30 @@ export default function InfografisPage() {
             </ChartCard>
 
             <ChartCard title="Sebaran per Dusun">
-              <div className="h-[300px] w-full">
+              <div className="h-[250px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={pendudukByDusun} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={5} dataKey="total" label={({name, percent}) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`} labelLine={false} style={{fontSize: '11px', fontWeight: 'bold'}}>
+                    <Pie data={pendudukByDusun} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={5} dataKey="total">
                       {pendudukByDusun.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                    <Tooltip formatter={(value) => [`${value} jiwa (${((Number(value) / totalDusun) * 100).toFixed(1)}%)`, 'Jumlah']} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                   </PieChart>
                 </ResponsiveContainer>
+              </div>
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 text-xs">
+                {pendudukByDusun.map((item, i) => (
+                  <div key={i} className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full shrink-0" style={{backgroundColor: PIE_COLORS[i % PIE_COLORS.length]}}></div>
+                      <span className="text-slate-600 dark:text-slate-400 truncate">{item.name}</span>
+                    </div>
+                    <div className="font-semibold text-slate-800 dark:text-slate-200 shrink-0">
+                      {item.total} <span className="text-slate-400 font-normal ml-0.5">({((item.total/totalDusun)*100).toFixed(1)}%)</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </ChartCard>
 
@@ -158,30 +177,54 @@ export default function InfografisPage() {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <ChartCard title="Status Kawin">
-                <div className="h-[220px] w-full">
+                <div className="h-[200px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie data={pendudukByKawin} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={2} dataKey="total">
                         {pendudukByKawin.map((entry, index) => <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />)}
                       </Pie>
-                      <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                      <Legend layout="horizontal" verticalAlign="bottom" wrapperStyle={{ fontSize: '11px', marginTop: '10px' }}/>
+                      <Tooltip formatter={(value, name) => [`${value} jiwa (${((Number(value) / totalKawin) * 100).toFixed(1)}%)`, name]} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                     </PieChart>
                   </ResponsiveContainer>
+                </div>
+                <div className="mt-4 grid grid-cols-1 gap-y-3 text-xs">
+                  {pendudukByKawin.map((item, i) => (
+                    <div key={i} className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full shrink-0" style={{backgroundColor: PIE_COLORS[i % PIE_COLORS.length]}}></div>
+                        <span className="text-slate-600 dark:text-slate-400">{item.name}</span>
+                      </div>
+                      <div className="font-semibold text-slate-800 dark:text-slate-200">
+                        {item.total} <span className="text-slate-400 font-normal ml-0.5">({((item.total/totalKawin)*100).toFixed(1)}%)</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </ChartCard>
 
               <ChartCard title="Agama">
-                <div className="h-[220px] w-full">
+                <div className="h-[200px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie data={pendudukByAgama} cx="50%" cy="50%" outerRadius={70} dataKey="total">
                         {pendudukByAgama.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                       </Pie>
-                      <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                      <Legend layout="horizontal" verticalAlign="bottom" wrapperStyle={{ fontSize: '11px', marginTop: '10px' }}/>
+                      <Tooltip formatter={(value, name) => [`${value} jiwa (${((Number(value) / totalAgama) * 100).toFixed(1)}%)`, name]} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                     </PieChart>
                   </ResponsiveContainer>
+                </div>
+                <div className="mt-4 grid grid-cols-1 gap-y-3 text-xs">
+                  {pendudukByAgama.map((item, i) => (
+                    <div key={i} className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full shrink-0" style={{backgroundColor: COLORS[i % COLORS.length]}}></div>
+                        <span className="text-slate-600 dark:text-slate-400">{item.name}</span>
+                      </div>
+                      <div className="font-semibold text-slate-800 dark:text-slate-200">
+                        {item.total} <span className="text-slate-400 font-normal ml-0.5">({((item.total/totalAgama)*100).toFixed(1)}%)</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </ChartCard>
             </div>
@@ -259,30 +302,56 @@ export default function InfografisPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <ChartCard title="Sumber Pendapatan (2024)">
-              <div className="h-[350px] w-full">
+              <div className="h-[250px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={apbdesPendapatanDetail} cx="50%" cy="45%" innerRadius={60} outerRadius={90} paddingAngle={2} dataKey="amount">
+                    <Pie data={apbdesPendapatanDetail} cx="50%" cy="50%" innerRadius={60} outerRadius={90} paddingAngle={2} dataKey="amount">
                       {apbdesPendapatanDetail.map((entry, index) => <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />)}
                     </Pie>
-                    <Tooltip formatter={(value: any) => `Rp ${(Number(value) / 1000000).toFixed(0)} Juta`} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                    <Legend layout="horizontal" verticalAlign="bottom" wrapperStyle={{ fontSize: '11px', marginTop: '10px' }}/>
+                    <Tooltip formatter={(value: any) => `Rp ${(Number(value) / 1000000).toFixed(1)} Juta (${((Number(value) / totalPendapatanDetail) * 100).toFixed(1)}%)`} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                   </PieChart>
                 </ResponsiveContainer>
+              </div>
+              <div className="mt-2 grid grid-cols-1 gap-y-3 text-xs">
+                {apbdesPendapatanDetail.map((item, i) => (
+                  <div key={i} className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full shrink-0" style={{backgroundColor: PIE_COLORS[i % PIE_COLORS.length]}}></div>
+                      <span className="text-slate-600 dark:text-slate-400">{item.name}</span>
+                    </div>
+                    <div className="font-semibold text-slate-800 dark:text-slate-200 shrink-0">
+                      Rp {(item.amount / 1000000).toFixed(0)} Jt 
+                      <span className="text-slate-400 font-normal ml-1">({((item.amount/totalPendapatanDetail)*100).toFixed(1)}%)</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </ChartCard>
             
             <ChartCard title="Alokasi Belanja (2024)">
-              <div className="h-[350px] w-full">
+              <div className="h-[250px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={apbdesBelanjaDetail} cx="50%" cy="45%" innerRadius={60} outerRadius={90} paddingAngle={2} dataKey="amount">
+                    <Pie data={apbdesBelanjaDetail} cx="50%" cy="50%" innerRadius={60} outerRadius={90} paddingAngle={2} dataKey="amount">
                       {apbdesBelanjaDetail.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                     </Pie>
-                    <Tooltip formatter={(value: any) => `Rp ${(Number(value) / 1000000).toFixed(0)} Juta`} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                    <Legend layout="horizontal" verticalAlign="bottom" wrapperStyle={{ fontSize: '11px', marginTop: '10px' }}/>
+                    <Tooltip formatter={(value: any) => `Rp ${(Number(value) / 1000000).toFixed(1)} Juta (${((Number(value) / totalBelanjaDetail) * 100).toFixed(1)}%)`} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                   </PieChart>
                 </ResponsiveContainer>
+              </div>
+              <div className="mt-2 grid grid-cols-1 gap-y-3 text-xs">
+                {apbdesBelanjaDetail.map((item, i) => (
+                  <div key={i} className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full shrink-0" style={{backgroundColor: COLORS[i % COLORS.length]}}></div>
+                      <span className="text-slate-600 dark:text-slate-400">{item.name}</span>
+                    </div>
+                    <div className="font-semibold text-slate-800 dark:text-slate-200 shrink-0">
+                      Rp {(item.amount / 1000000).toFixed(0)} Jt 
+                      <span className="text-slate-400 font-normal ml-1">({((item.amount/totalBelanjaDetail)*100).toFixed(1)}%)</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </ChartCard>
           </div>

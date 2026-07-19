@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
+import { LayoutWrapper } from "@/components/layout/LayoutWrapper";
 import Image from "next/image";
 
 export const metadata: Metadata = {
@@ -38,11 +37,9 @@ export default function RootLayout({
           </div>
         </div>
         <div className="relative z-10 flex-1 flex flex-col">
-          <Navbar />
-          <div className="flex-1 flex flex-col">
+          <LayoutWrapper>
             {children}
-          </div>
-          <Footer />
+          </LayoutWrapper>
         </div>
       </body>
     </html>

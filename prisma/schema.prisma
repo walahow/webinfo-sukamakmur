@@ -42,11 +42,12 @@ model StrukturOrganisasi {
 // ----------------------------------------------------------------------
 
 model User {
-  id    String @id @default(uuid())
-  nama  String
-  email String @unique
-  role  String @default("EDITOR") // ADMIN or EDITOR
-  news  News[]
+  id       String @id @default(uuid())
+  nama     String
+  email    String @unique
+  password String
+  role     String @default("EDITOR") // ADMIN or EDITOR
+  news     News[]
 }
 
 model News {

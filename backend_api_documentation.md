@@ -1,253 +1,123 @@
-# Backend API & Database Documentation
+# Backend API & CMS Integration Documentation
 
-This document is designed to help the backend developer seamlessly integrate the database (via Prisma & Supabase) with the existing frontend UI. The frontend has been built with mock data that strictly adheres to the types defined in `src/types/index.ts`. 
+This document serves as the technical specification for backend developers to implement the APIs required by the CMS (Admin Dashboard) and the public website frontend. 
 
-By matching these schemas and API contracts, the frontend will automatically "just work" when the mock data is swapped out for real database queries.
-
----
-
-## 1. Recommended Prisma Schema
-
-The following `schema.prisma` provides a relational mapping for all the entities expected by the frontend. You can copy-paste this directly into your `prisma/schema.prisma` file, replacing the existing SQLite configuration with your Supabase PostgreSQL connection string.
-
-```prisma
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL") // Optional: if using Supabase connection pooling
-}
-
-// ----------------------------------------------------------------------
-// 1. Core Profile & Organization
-// ----------------------------------------------------------------------
-
-model VillageProfile {
-  id              String   @id @default(uuid())
-  sejarah         String   @db.Text
-  visi            String   @db.Text
-  misi            String[] // PostgreSQL string array
-  sambutan_kepdes String   @db.Text
-  peta_url        String?
-  koordinat       String?
-  batas_desa      String?
-  luas_wilayah    String?
-  jumlah_penduduk Int?
-  updatedAt       DateTime @updatedAt
-}
-
-model StrukturOrganisasi {
-  id           String   @id @default(uuid())
-  jabatan      String
-  nama_pejabat String
-  urutan       Int      @default(0) // Used for ordering in the UI (e.g., Kades = 1, Sekdes = 2)
-  foto_url     String?
-}
-
-// ----------------------------------------------------------------------
-// 2. News & Publications
-// ----------------------------------------------------------------------
-
-model User {
-  id        String   @id @default(uuid())
-  nama      String
-  email     String   @unique
-  role      String   @default("EDITOR") // ADMIN or EDITOR
-  news      News[]
-}
-
-model News {
-  id                String   @id @default(uuid())
-  judul             String
-  slug              String   @unique
-  konten            String   @db.Text
-  status            String   @default("DRAFT") // DRAFT or PUBLISHED
-  tanggal_publikasi DateTime @default(now())
-  cover_url         String?
-  
-  penulis_id        String
-  penulis           User     @relation(fields: [penulis_id], references: [id])
-}
-
-// ----------------------------------------------------------------------
-// 3. Katalog (UMKM & Wisata)
-// ----------------------------------------------------------------------
-
-model KatalogCategory {
-  id      String    @id @default(uuid())
-  name    String    // e.g., "Kuliner", "Wisata"
-  icon    String?   // Lucide icon name (e.g., "Utensils", "MapPin")
-  katalog Katalog[]
-}
-
-model Katalog {
-  id          String          @id @default(uuid())
-  nama        String
-  slug        String          @unique
-  deskripsi   String          @db.Text
-  latitude    Float
-  longitude   Float
-  dusun       String?
-  kontak      String?
-  foto_url    String?
-  
-  category_id String
-  category    KatalogCategory @relation(fields: [category_id], references: [id])
-  
-  createdAt   DateTime        @default(now())
-}
-
-// ----------------------------------------------------------------------
-// 4. PPID (Public Documents)
-// ----------------------------------------------------------------------
-
-model DocumentCategory {
-  id        String     @id @default(uuid())
-  name      String     // e.g., "RPJMDes", "APBDes", "Peraturan Desa"
-  documents Document[]
-}
-
-model Document {
-  id           String           @id @default(uuid())
-  judul        String
-  file_url     String
-  size         String?          // e.g., "2.5 MB"
-  format       String?          // e.g., "PDF", "XLSX"
-  published_at DateTime         @default(now())
-  
-  category_id  String
-  category     DocumentCategory @relation(fields: [category_id], references: [id])
-}
-
-// ----------------------------------------------------------------------
-// 5. Layanan Pengaduan
-// ----------------------------------------------------------------------
-
-model Pengaduan {
-  id           String   @id @default(uuid())
-  nama_pelapor String
-  kontak       String
-  judul        String
-  deskripsi    String   @db.Text
-  status       String   @default("PENDING") // PENDING, PROSES, SELESAI
-  created_at   DateTime @default(now())
-}
-
-// ----------------------------------------------------------------------
-// 6. Transparansi & Infografis (Statistics)
-// ----------------------------------------------------------------------
-
-model PendudukStat {
-  id             String @id @default(uuid())
-  tahun          Int    @unique
-  total_penduduk Int
-  laki_laki      Int
-  perempuan      Int
-  jumlah_kk      Int
-}
-
-model Apbdes {
-  id               String @id @default(uuid())
-  tahun            Int    @unique
-  pendapatan       Float
-  belanja          Float
-  pembiayaan       Float
-  // Storing categories as JSON for flexibility, or you can create a separate relational model
-  kategori_belanja Json 
-}
-```
-
-> [!TIP]
-> Make sure to run `npx prisma db push` or `npx prisma migrate dev` after updating the schema, followed by `npx prisma generate` to update the Prisma Client types.
+The frontend UI has been built with mock data. The backend developer's responsibility is to wire these endpoints up to the database (PostgreSQL/Supabase) and integrate NextAuth.js for security.
 
 ---
 
-## 2. Recommended API Endpoints
+## 1. Authentication & Security
 
-The frontend uses Server Components heavily, which means you have two primary ways to feed data to the UI:
-1. **Direct Prisma Queries in Server Components** (Recommended for performance and SEO).
-2. **Next.js Route Handlers (`/api/...`)** for client-side fetching (e.g., search filtering, form submissions).
+The CMS is protected. All `/api/admin/*` routes must be secured.
 
-Below are the primary endpoints/queries the frontend expects:
+- **Library:** NextAuth.js (v4 or v5)
+- **Strategy:** `credentials` provider (email & password).
+- **Session:** JWT strategy recommended.
+- **Middleware:** Use Next.js Middleware (`middleware.ts`) to protect `/admin` and `/api/admin` routes. If a user is not authenticated, redirect to `/login`.
 
-### A. Village Profile & Organization
-- `GET /api/profile` (or `prisma.villageProfile.findFirst()`)
-  - **Returns**: `VillageProfile` object.
-- `GET /api/organization` (or `prisma.strukturOrganisasi.findMany({ orderBy: { urutan: 'asc' } })`)
-  - **Returns**: Array of `StrukturOrganisasi` objects.
+> [!WARNING]
+> Ensure passwords are securely hashed using `bcryptjs` before storing them in the database. Never store plaintext passwords.
 
-### B. News (Berita)
-- `GET /api/news`
-  - **Query Params**: `?limit=10&page=1`
-  - **Returns**: Array of `News` sorted by `tanggal_publikasi` DESC.
-- `GET /api/news/:slug`
-  - **Returns**: Single `News` object with populated `penulis` relation.
+---
+
+## 2. File Uploads (Vercel Blob / Supabase Storage)
+
+The CMS requires file upload capabilities for:
+1. **Berita:** Cover images (JPG/PNG).
+2. **Katalog:** UMKM/Wisata cover images (JPG/PNG).
+3. **PPID:** Public documents (PDF/XLSX).
+
+**Recommended Implementation:**
+- Create an endpoint `POST /api/admin/upload`.
+- Accepts `multipart/form-data`.
+- Uses `@vercel/blob` (or Supabase Storage) to upload the file and return a public `url`.
+- The frontend will call this upload endpoint first, receive the `url`, and then submit the `url` as part of the JSON payload to the respective CRUD endpoints below.
+
+---
+
+## 3. CMS API Endpoints
+
+All endpoints below require authentication. Return `401 Unauthorized` if the session is invalid or missing.
+
+### A. Infografis (Dashboard Stats)
+Manages the numerical statistics shown on the public homepage.
+
+- **`GET /api/admin/infografis`**
+  - **Returns:** JSON object combining the latest records for `PendudukStat`, `Apbdes`, `IdmSdgScore`, and `StuntingBansos`.
+  - **`PUT /api/admin/infografis`**
+  - **Payload:** 
+    ```json
+    {
+      "penduduk": {
+        "overview": { "total": 2450, "kk": 850, "lakiLaki": 1215, "perempuan": 1235 },
+        "byAge": [{ "ageGroup": "0-4", "male": 105, "female": 100 }, "..."],
+        "byKawin": [{ "name": "Belum Kawin", "total": 950 }, "..."],
+        "byAgama": [{ "name": "Islam", "total": 2350 }, "..."],
+        "byPekerjaan": [{ "name": "Petani", "total": 850 }, "..."],
+        "byDusun": [{ "name": "Dusun 1", "total": 650 }, "..."],
+        "wajibPilih": [{ "year": 2024, "total": 1820 }, "..."]
+      },
+      "apbdes": {
+        "summary": { "pendapatan": 1800000000, "belanja": 1820000000, "pembiayaan": 20000000 },
+        "pendapatanDetail": [{ "name": "Dana Desa (DD)", "amount": 950000000 }, "..."],
+        "belanjaDetail": [{ "name": "Pembangunan", "amount": 820000000 }, "..."]
+      },
+      "idm": { "score": 0.78, "status": "Maju" },
+      "stunting": { "total": 12 }
+    }
+    ```
+  - **Action:** Updates (or upserts) the complex statistical arrays. *Backend Note: Consider using `JSONB` columns in PostgreSQL for `byAge`, `byKawin`, `pendapatanDetail`, etc., to avoid creating a massive number of relational tables for this dashboard data.*
+  - **Returns:** `200 OK`.
+
+### B. Berita (News Management)
+Manages news articles published on the village portal.
+
+- **`GET /api/admin/berita`**
+  - **Query Params:** `?page=1&limit=10&search=keyword`
+  - **Returns:** Paginated list of news articles.
+- **`POST /api/admin/berita`**
+  - **Payload:** `{ judul: string, konten: string, status: "DRAFT" | "PUBLISHED", cover_url: string }`
+  - **Action:** Generates a unique `slug` based on `judul`, associates the post with the logged-in user (`penulis_id`), and saves to DB.
+  - **Returns:** `201 Created` with the new article object.
+- **`PUT /api/admin/berita/:id`**
+  - **Payload:** (Same as POST)
+  - **Returns:** `200 OK`.
+- **`DELETE /api/admin/berita/:id`**
+  - **Returns:** `204 No Content`.
 
 ### C. Katalog (UMKM & Wisata)
-- `GET /api/katalog`
-  - **Query Params**: `?category=slug&search=keyword`
-  - **Returns**: Array of `Katalog` objects with `category` relation populated.
-- `GET /api/katalog/categories`
-  - **Returns**: Array of `KatalogCategory` objects.
+Manages the village directory.
 
-### D. Documents (PPID)
-- `GET /api/documents`
-  - **Returns**: Array of `Document` objects sorted by `published_at` DESC.
+- **`GET /api/admin/katalog`**
+  - **Query Params:** `?category=id&search=keyword`
+  - **Returns:** List of catalog items.
+- **`POST /api/admin/katalog`**
+  - **Payload:** `{ nama: string, deskripsi: string, category_id: string, dusun: string, kontak: string, foto_url: string, latitude: float, longitude: float }`
+  - **Action:** Generates `slug`, saves to database.
+  - **Returns:** `201 Created`.
+- **`PUT /api/admin/katalog/:id`**
+  - **Payload:** (Partial or full update of Katalog fields)
+  - **Returns:** `200 OK`.
+- **`DELETE /api/admin/katalog/:id`**
+  - **Returns:** `204 No Content`.
 
-### E. Pengaduan (Form Submissions)
-- `POST /api/pengaduan`
-  - **Payload**: `{ nama_pelapor, kontak, judul, deskripsi }`
-  - **Action**: Creates a new row in the `Pengaduan` table with status `PENDING`.
-  - **Returns**: HTTP 201 Created.
+### D. PPID (Public Documents)
+Manages transparent public documents.
+
+- **`GET /api/admin/ppid`**
+  - **Returns:** List of all documents.
+- **`POST /api/admin/ppid`**
+  - **Payload:** `{ judul: string, category_id: string, file_url: string, format: string, size: string }`
+  - **Action:** Saves document metadata to the DB. (The actual file is uploaded via the `/upload` endpoint first).
+  - **Returns:** `201 Created`.
+- **`DELETE /api/admin/ppid/:id`**
+  - **Action:** Deletes the database record. (Optional: Also delete the file from Vercel Blob/Supabase).
+  - **Returns:** `204 No Content`.
 
 ---
 
-## 3. Best Practices & Supabase Tips
+## 4. Frontend Integration Notes
 
-> [!IMPORTANT]
-> Since you are using Supabase, keep the following architectural points in mind to make development easier:
-
-### Image & File Storage
-Instead of saving base64 strings in the database, use **Supabase Storage** for:
-- News Cover Images (`News.cover_url`)
-- Organization Photos (`StrukturOrganisasi.foto_url`)
-- Katalog Images (`Katalog.foto_url`)
-- PPID Documents (`Document.file_url`)
-
-**Workflow:**
-1. Admin uploads the file via the (future) dashboard.
-2. Store the file in a Supabase Storage Bucket (e.g., `public-assets`).
-3. Get the public URL of the uploaded file.
-4. Save the public URL as the string field in the Prisma record.
-
-### Date Handling
-The frontend expects ISO-8601 string dates (e.g., `2024-03-20T13:00:00Z`). Prisma handles this natively by returning Javascript `Date` objects, which serialize perfectly to JSON in Next.js Server Components. No complex parsing is required on the frontend!
-
-### Seed Data
-To help with the transition, use the existing data in `src/lib/mock.ts` as a baseline to create a `prisma/seed.ts` file. This allows you to quickly populate your Supabase database with dummy data during development.
-
-```typescript
-// prisma/seed.ts example
-import { PrismaClient } from '@prisma/client'
-import { mockBerita } from '../src/lib/mock'
-
-const prisma = new PrismaClient()
-
-async function main() {
-  for (const berita of mockBerita) {
-    await prisma.news.create({
-      data: {
-        judul: berita.judul,
-        slug: berita.slug,
-        konten: berita.konten,
-        tanggal_publikasi: new Date(berita.tanggal_publikasi),
-        // ...
-      }
-    })
-  }
-}
-```
-DYOR dawg, jan jadiin acuan banget ini mah
+- The frontend currently uses **React Quill** for the Berita editor. The `konten` field will send rich HTML strings (e.g., `<h1>Title</h1><p>Content</p>`). The database column for `konten` must support long text (e.g., `@db.Text` in Prisma).
+- To connect the UI to these APIs, the frontend developer will replace the mock arrays in `/src/app/admin/.../page.tsx` with `fetch` calls or Server Actions that hit these endpoints.
+- Dates are passed natively as ISO strings. Let Prisma handle Date conversion automatically.

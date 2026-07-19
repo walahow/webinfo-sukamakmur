@@ -51,10 +51,15 @@ async function main() {
   // ─── 3. Users ───────────────────────────────────────────────────────────────
   await prisma.news.deleteMany();
   await prisma.user.deleteMany();
+  
+  const bcrypt = require('bcryptjs');
+  const defaultPassword = await bcrypt.hash('password123', 10);
+  
   const admin = await prisma.user.create({
     data: {
       nama: "Admin Desa",
       email: "admin@sukamakmur.desa.id",
+      password: defaultPassword,
       role: "ADMIN",
     },
   });
@@ -62,10 +67,11 @@ async function main() {
     data: {
       nama: "Editor Desa",
       email: "editor@sukamakmur.desa.id",
+      password: defaultPassword,
       role: "EDITOR",
     },
   });
-  console.log("✅ Users seeded");
+  console.log("✅ Users seeded with hashed passwords");
 
   // ─── 4. News ────────────────────────────────────────────────────────────────
   await prisma.news.createMany({
