@@ -48,12 +48,12 @@ export default function VillageGeoJSON() {
   const onEachFeature = (feature: any, layer: any) => {
     if (feature.properties) {
       if (feature.properties.balaiDesa) {
-        layer.bindPopup("<div class='font-bold text-sm text-center font-sans'>Balai Desa Walaho</div>");
+        layer.bindPopup("<div class='font-bold text-sm text-center font-sans'>Balai Desa Suka Makmur</div>");
       } else if (feature.properties.BUMDes) {
-        layer.bindPopup("<div class='font-bold text-sm text-center font-sans'>BUMDes Walaho</div>");
+        layer.bindPopup("<div class='font-bold text-sm text-center font-sans'>BUMDes Suka Makmur</div>");
       } else {
         // Border popup or tooltip
-        layer.bindPopup("<div class='font-bold text-sm text-center font-sans text-primary'>Batas Administrasi Desa Walaho</div>");
+        layer.bindPopup("<div class='font-bold text-sm text-center font-sans text-primary'>Batas Administrasi Desa Suka Makmur</div>");
       }
     }
   };

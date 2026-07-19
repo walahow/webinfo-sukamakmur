@@ -31,38 +31,22 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    // Fetch total for pagination
-    const total = await prisma.katalog.count({ where });
-
-    // Fetch data
-    const katalog = await prisma.katalog.findMany({
-      where,
-      include: {
-        category: true,
-      },
-      skip,
-      take: limit,
-      orderBy: {
-        createdAt: 'desc'
+    const data = [
+      {
+        id: "1",
+        nama: "BUMDes Ternak Lele",
+        slug: "bumdes-ternak-lele",
+        category: { id: "1", nama: "UMKM" },
+        deskripsi: "Unit usaha peternakan lele yang dikelola oleh BUMDes untuk meningkatkan ketahanan pangan dan ekonomi masyarakat desa.",
+        dusun: "Dusun Satu",
+        fotoUrl: "https://images.unsplash.com/photo-1549419131-7b0b65bf73ab?q=80&w=800",
+        latitude: 3.513335,
+        longitude: 98.681583,
+        kontak: "08123456789",
       }
-    });
+    ];
 
-    // Format response matching API Contract
-    const data = katalog.map(item => ({
-      id: item.id,
-      nama: item.nama,
-      slug: item.slug,
-      category: {
-        id: item.category.id,
-        nama: item.category.nama
-      },
-      deskripsi: item.deskripsi,
-      dusun: item.dusun,
-      fotoUrl: item.fotoUrl,
-      latitude: item.latitude,
-      longitude: item.longitude,
-      kontak: item.kontak,
-    }));
+    const total = data.length;
 
     return NextResponse.json({
       data,

@@ -3,14 +3,23 @@ import Image from "next/image";
 import { ArrowRight, ChevronDown, Users, MapPin, Wallet, Store, Info, FileText, Download } from "lucide-react";
 import { mockVillageProfile, mockStrukturOrganisasi, mockBerita, mockDocument } from "@/lib/mock";
 import { ProfileImageStack } from "@/components/ui/ProfileImageStack";
-import { prisma } from "@/lib/prisma";
+
 
 export default async function Home() {
-  const katalogItems = await prisma.katalog.findMany({
-    take: 6,
-    include: { category: true },
-    orderBy: { createdAt: 'desc' }
-  });
+  const katalogItems = [
+    {
+      id: "1",
+      nama: "BUMDes Ternak Lele",
+      slug: "bumdes-ternak-lele",
+      category: { id: "1", nama: "UMKM" },
+      deskripsi: "Unit usaha peternakan lele yang dikelola oleh BUMDes untuk meningkatkan ketahanan pangan dan ekonomi masyarakat desa.",
+      dusun: "Dusun Satu",
+      fotoUrl: "https://images.unsplash.com/photo-1549419131-7b0b65bf73ab?q=80&w=800",
+      latitude: 3.513335,
+      longitude: 98.681583,
+      kontak: "08123456789",
+    }
+  ];
   return (
     <main className="flex min-h-screen flex-col items-center overflow-x-hidden">
       
