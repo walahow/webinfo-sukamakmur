@@ -117,7 +117,7 @@ export default function InfografisPage() {
               <div className="h-[300px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={pendudukByDusun} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={5} dataKey="total" label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false} style={{fontSize: '11px', fontWeight: 'bold'}}>
+                    <Pie data={pendudukByDusun} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={5} dataKey="total" label={({name, percent}) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`} labelLine={false} style={{fontSize: '11px', fontWeight: 'bold'}}>
                       {pendudukByDusun.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                       ))}
@@ -220,7 +220,7 @@ export default function InfografisPage() {
                        <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{fontSize: 12}} />
                        <YAxis axisLine={false} tickLine={false} tickFormatter={(value) => `${(value / 1000000).toFixed(0)}M`} tick={{fontSize: 12}} />
                        <Tooltip 
-                         formatter={(value: number) => `Rp ${(value / 1000000).toFixed(0)} Juta`}
+                         formatter={(value: any) => `Rp ${(Number(value) / 1000000).toFixed(0)} Jt`}
                          contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} 
                        />
                        <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
@@ -265,7 +265,7 @@ export default function InfografisPage() {
                     <Pie data={apbdesPendapatanDetail} cx="50%" cy="45%" innerRadius={60} outerRadius={90} paddingAngle={2} dataKey="amount">
                       {apbdesPendapatanDetail.map((entry, index) => <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />)}
                     </Pie>
-                    <Tooltip formatter={(value: number) => `Rp ${(value / 1000000).toFixed(0)} Juta`} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                    <Tooltip formatter={(value: any) => `Rp ${(Number(value) / 1000000).toFixed(0)} Juta`} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                     <Legend layout="horizontal" verticalAlign="bottom" wrapperStyle={{ fontSize: '11px', marginTop: '10px' }}/>
                   </PieChart>
                 </ResponsiveContainer>
@@ -279,7 +279,7 @@ export default function InfografisPage() {
                     <Pie data={apbdesBelanjaDetail} cx="50%" cy="45%" innerRadius={60} outerRadius={90} paddingAngle={2} dataKey="amount">
                       {apbdesBelanjaDetail.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                     </Pie>
-                    <Tooltip formatter={(value: number) => `Rp ${(value / 1000000).toFixed(0)} Juta`} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                    <Tooltip formatter={(value: any) => `Rp ${(Number(value) / 1000000).toFixed(0)} Juta`} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                     <Legend layout="horizontal" verticalAlign="bottom" wrapperStyle={{ fontSize: '11px', marginTop: '10px' }}/>
                   </PieChart>
                 </ResponsiveContainer>

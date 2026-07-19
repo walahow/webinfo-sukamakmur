@@ -6,6 +6,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { ArrowRight, MapPin } from "lucide-react";
+import VillageGeoJSON from "../ui/VillageGeoJSON";
 
 // Fix Leaflet icon issue
 const customIcon = new L.Icon({
@@ -41,14 +42,12 @@ function MapBounds({ items }: { items: KatalogItem[] }) {
 }
 
 export default function KatalogMap({ items }: { items: KatalogItem[] }) {
-  const defaultCenter: [number, number] = items.length > 0 
-    ? [items[0].latitude, items[0].longitude] 
-    : [1.1234, 99.1234]; // fallback center
+  const defaultCenter: [number, number] = [3.514, 98.678]; // Match profile map exactly
 
   return (
     <MapContainer 
       center={defaultCenter} 
-      zoom={13} 
+      zoom={15} 
       scrollWheelZoom={true} 
       className="w-full h-full z-0"
     >
@@ -56,6 +55,7 @@ export default function KatalogMap({ items }: { items: KatalogItem[] }) {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+      <VillageGeoJSON />
       
       {items.map(item => (
         <Marker key={item.id} position={[item.latitude, item.longitude]} icon={customIcon}>

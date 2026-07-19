@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Users, Map, Target, MapPin, Flag, Navigation, Activity } from "lucide-react";
 import { mockVillageProfile, mockStrukturOrganisasi } from "@/lib/mock";
+import ProfileMapWrapper from "@/components/profil/ProfileMapWrapper";
 
 export default function ProfilPage() {
   const kepalaDesa = mockStrukturOrganisasi.find(p => p.urutan === 1);
@@ -162,17 +163,9 @@ export default function ProfilPage() {
           </div>
 
           <div className="flex flex-col gap-8">
-            {/* Map Image Section */}
-            <div className="w-full relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-md bg-slate-100 dark:bg-slate-900 group">
-              <Image
-                src="/image.png"
-                alt="Peta Wilayah Geografis Desa"
-                fill
-                className="object-cover transition-transform duration-1000 group-hover:scale-105"
-                sizes="(max-width: 1200px) 100vw, 1200px"
-                priority
-              />
-              <div className="absolute bottom-4 left-4 z-10 bg-black/60 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 text-white text-xs font-semibold flex items-center gap-1.5 shadow-md">
+            <div className="w-full relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-md bg-slate-100 dark:bg-slate-900">
+              <ProfileMapWrapper />
+              <div className="absolute bottom-4 left-4 z-[1000] bg-black/60 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 text-white text-xs font-semibold flex items-center gap-1.5 shadow-md pointer-events-none">
                 <MapPin size={14} className="text-primary" />
                 <span>Peta Batas Administrasi Desa</span>
               </div>

@@ -154,33 +154,13 @@ export const mockKatalogCategory: KatalogCategory[] = [
 export const mockKatalog: Katalog[] = [
   {
     id: 'kat-001',
-    category_id: 'kc-001',
-    nama: 'Kopi Khas Walaho',
-    deskripsi: 'Kopi bubuk robusta asli yang ditanam di perbukitan desa Walaho, diproses dengan cara tradisional.',
-    latitude: -6.201,
-    longitude: 106.817,
+    category_id: 'kc-001', // We can use UMKM or Kuliner category, let's keep kc-001
+    nama: 'BUMDes Walaho (Ternak Lele)',
+    deskripsi: 'Peternakan lele berkualitas tinggi yang dikelola oleh BUMDes Walaho untuk ketahanan pangan desa.',
+    latitude: 3.513335,
+    longitude: 98.681583,
     kontak: '081234567890',
-    foto_url: '/mock-data/katalog-kopi.jpg'
-  },
-  {
-    id: 'kat-002',
-    category_id: 'kc-002',
-    nama: 'Sentra Anyaman Bambu Makmur',
-    deskripsi: 'Pusat pembuatan kerajinan anyaman bambu untuk kebutuhan rumah tangga dan dekorasi eksklusif.',
-    latitude: -6.205,
-    longitude: 106.820,
-    kontak: '089876543210',
-    foto_url: '/mock-data/katalog-bambu.jpg'
-  },
-  {
-    id: 'kat-003',
-    category_id: 'kc-003',
-    nama: 'Wisata Air Terjun Bidadari',
-    deskripsi: 'Destinasi wisata alam dengan pemandangan air terjun setinggi 30 meter dan udara sejuk pegunungan.',
-    latitude: -6.198,
-    longitude: 106.810,
-    kontak: '085555555555',
-    foto_url: '/mock-data/katalog-wisata.jpg'
+    foto_url: undefined
   }
 ];
 
