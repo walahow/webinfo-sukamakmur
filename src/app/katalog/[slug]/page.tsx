@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import MapWrapper from "@/components/katalog/MapWrapper";
-import { prisma } from "@/lib/prisma";
+
 import { ArrowLeft, MapPin, Phone, Calendar, Store, Share2, FileText } from "lucide-react";
 
 interface Props {
@@ -12,10 +12,23 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const item = await prisma.katalog.findUnique({
-    where: { slug },
-    include: { category: true }
-  });
+  const mockItems = [
+    {
+      id: "1",
+      nama: "BUMDes Ternak Lele",
+      slug: "bumdes-ternak-lele",
+      category: { id: "1", nama: "UMKM" },
+      deskripsi: "Unit usaha peternakan lele yang dikelola oleh BUMDes untuk meningkatkan ketahanan pangan dan ekonomi masyarakat desa.",
+      dusun: "Dusun Satu",
+      fotoUrl: "https://images.unsplash.com/photo-1549419131-7b0b65bf73ab?q=80&w=800",
+      latitude: 3.513335,
+      longitude: 98.681583,
+      kontak: "08123456789",
+      createdAt: new Date().toISOString()
+    }
+  ];
+  
+  const item = mockItems.find(i => i.slug === slug);
 
   if (!item) {
     return { title: "Katalog Tidak Ditemukan - Desa Walaho" };
@@ -35,10 +48,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function KatalogDetailPage({ params }: Props) {
   const { slug } = await params;
   
-  const item = await prisma.katalog.findUnique({
-    where: { slug },
-    include: { category: true }
-  });
+  const mockItems = [
+    {
+      id: "1",
+      nama: "BUMDes Ternak Lele",
+      slug: "bumdes-ternak-lele",
+      category: { id: "1", nama: "UMKM" },
+      deskripsi: "Unit usaha peternakan lele yang dikelola oleh BUMDes untuk meningkatkan ketahanan pangan dan ekonomi masyarakat desa.",
+      dusun: "Dusun Satu",
+      fotoUrl: "https://images.unsplash.com/photo-1549419131-7b0b65bf73ab?q=80&w=800",
+      latitude: 3.513335,
+      longitude: 98.681583,
+      kontak: "08123456789",
+      createdAt: new Date().toISOString()
+    }
+  ];
+  
+  const item = mockItems.find(i => i.slug === slug);
 
   if (!item) {
     notFound();
