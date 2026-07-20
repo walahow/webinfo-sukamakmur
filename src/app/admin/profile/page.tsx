@@ -8,10 +8,10 @@ export default function ProfileAdmin() {
 
   // MOCK DATA: Profil Umum
   const [profilUmum, setProfilUmum] = useState({
-    sejarah: 'Desa Walaho adalah sebuah desa yang terletak di ...',
+    sejarah: 'Desa Suka Makmur adalah sebuah desa yang terletak di ...',
     visi: 'Menjadi desa yang mandiri, sejahtera, dan berbudaya.',
     misi: ['Meningkatkan kualitas SDM', 'Mengoptimalkan potensi pertanian', 'Menjaga kelestarian lingkungan'],
-    sambutan_kepdes: 'Selamat datang di website resmi Desa Walaho...',
+    sambutan_kepdes: 'Selamat datang di website resmi Desa Suka Makmur...',
     total_penduduk: 1250,
   });
 

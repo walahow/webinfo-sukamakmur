@@ -31,11 +31,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const item = mockItems.find(i => i.slug === slug);
 
   if (!item) {
-    return { title: "Katalog Tidak Ditemukan - Desa Walaho" };
+    return { title: "Katalog Tidak Ditemukan - Desa Suka Makmur" };
   }
 
   return {
-    title: `${item.nama} | ${item.category.nama} Desa Walaho`,
+    title: `${item.nama} | ${item.category.nama} Desa Suka Makmur`,
     description: item.deskripsi.substring(0, 160),
     openGraph: {
       title: item.nama,
@@ -94,7 +94,7 @@ export default async function KatalogDetailPage({ params }: Props) {
               {item.dusun && (
                 <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 font-medium">
                   <MapPin size={18} className="text-primary" />
-                  <span>{item.dusun}, Desa Walaho</span>
+                  <span>{item.dusun}, Desa Suka Makmur</span>
                 </div>
               )}
             </div>

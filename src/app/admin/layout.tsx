@@ -9,7 +9,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside className="w-64 flex-shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col z-20">
         <div className="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-800">
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center mr-3 text-white font-bold">W</div>
-          <span className="text-lg font-bold text-slate-900 dark:text-white">CMS Walaho</span>
+          <span className="text-lg font-bold text-slate-900 dark:text-white">CMS Suka Makmur</span>
         </div>
         
         <nav className="flex-1 overflow-y-auto py-6 px-3 space-y-1.5">

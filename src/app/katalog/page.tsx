@@ -4,7 +4,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Katalog Desa - Potensi UMKM & Wisata",
-  description: "Jelajahi potensi lokal, UMKM, kerajinan, dan destinasi wisata di Desa Walaho.",
+  description: "Jelajahi potensi lokal, UMKM, kerajinan, dan destinasi wisata di Desa Suka Makmur.",
 };
 
 export default async function KatalogPage({

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { GeoJSON } from "react-leaflet";
+import { useState, useEffect, useRef } from "react";
+import { GeoJSON, useMap } from "react-leaflet";
 import L from "leaflet";
 
 // SVG Strings for custom POI markers
@@ -26,24 +26,71 @@ const createCustomIconHtml = (svgIcon: string, bgColor: string) => {
 const balaiDesaIcon = createCustomIconHtml(balaiDesaSvg, "#0284c7"); // Tailwind primary/sky-600
 const bumdesIcon = createCustomIconHtml(bumdesSvg, "#16a34a"); // Tailwind green-600
 
-// Define styles for the polygon
-const polygonStyle = {
-  fillColor: "#0284c7",
-  fillOpacity: 0.1,
-  color: "#0284c7",
-  weight: 3,
-  dashArray: "8, 8",
+// Define dynamic styles based on feature properties
+const getFeatureStyle = (feature: any, variant: "profile" | "katalog") => {
+  if (variant === "katalog") {
+    if (feature.properties?.visibility === false) {
+      return {
+        fillColor: "#0284c7",
+        fillOpacity: 0.1,
+        color: "#0284c7",
+        weight: 3,
+        dashArray: "8, 8",
+      };
+    }
+    return {};
+  }
+
+  // Profile mode: Main village boundary transparent
+  if (feature.properties?.visibility === false) {
+    return {
+      fillColor: "transparent",
+      fillOpacity: 0,
+      color: "#0284c7",
+      weight: 3,
+      dashArray: "8, 8",
+    };
+  }
+
+  // Profile mode: Dusun areas (have fill and fill-opacity in properties)
+  return {
+    fillColor: feature.properties?.fill || "#0284c7",
+    fillOpacity: feature.properties?.["fill-opacity"] ?? 0.1,
+    color: "white", // subtle border for dusun boundaries
+    weight: 1.5,
+  };
 };
 
-export default function VillageGeoJSON() {
+interface VillageGeoJSONProps {
+  variant?: "profile" | "katalog";
+}
+
+export default function VillageGeoJSON({ variant = "profile" }: VillageGeoJSONProps) {
   const [geojsonData, setGeojsonData] = useState<any>(null);
+  const map = useMap();
+  const geoJsonRef = useRef<any>(null);
 
   useEffect(() => {
-    fetch('/sukaMakmur.geojson')
+    const jsonUrl = variant === "katalog" ? '/sukaMakmur.geojson' : '/SMDusun.geojson';
+    fetch(jsonUrl)
       .then(res => res.json())
       .then(data => setGeojsonData(data))
       .catch(err => console.error("Error loading GeoJSON:", err));
-  }, []);
+  }, [variant]);
+
+  useEffect(() => {
+    if (geojsonData && geoJsonRef.current) {
+      // Small timeout ensures the layer is fully added before getting bounds
+      setTimeout(() => {
+        if (geoJsonRef.current) {
+          const bounds = geoJsonRef.current.getBounds();
+          if (bounds.isValid()) {
+            map.fitBounds(bounds, { padding: [20, 20] });
+          }
+        }
+      }, 50);
+    }
+  }, [geojsonData, map, variant]);
 
   const onEachFeature = (feature: any, layer: any) => {
     if (feature.properties) {
@@ -51,9 +98,12 @@ export default function VillageGeoJSON() {
         layer.bindPopup("<div class='font-bold text-sm text-center font-sans'>Balai Desa Suka Makmur</div>");
       } else if (feature.properties.BUMDes) {
         layer.bindPopup("<div class='font-bold text-sm text-center font-sans'>BUMDes Suka Makmur</div>");
-      } else {
-        // Border popup or tooltip
+      } else if (feature.properties.visibility === false) {
+        // Main village border
         layer.bindPopup("<div class='font-bold text-sm text-center font-sans text-primary'>Batas Administrasi Desa Suka Makmur</div>");
+      } else {
+        // Dusun area
+        layer.bindPopup("<div class='font-bold text-sm text-center font-sans text-primary'>Wilayah Dusun</div>");
       }
     }
   };
@@ -67,14 +117,25 @@ export default function VillageGeoJSON() {
     return L.marker(latlng);
   };
 
+  const featureFilter = (feature: any) => {
+    if (variant === "katalog") {
+      // In katalog mode, only show the main boundary and POIs (hide dusun polygons)
+      return feature.properties?.visibility === false || feature.properties?.balaiDesa || feature.properties?.BUMDes;
+    }
+    return true;
+  };
+
   if (!geojsonData) return null;
 
   return (
     <GeoJSON
+      ref={geoJsonRef}
+      key={variant} // Force re-render when variant changes
       data={geojsonData}
-      style={polygonStyle}
+      style={(feature) => getFeatureStyle(feature, variant)}
       onEachFeature={onEachFeature}
       pointToLayer={pointToLayer}
+      filter={featureFilter}
     />
   );
 }

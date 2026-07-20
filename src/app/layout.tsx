@@ -5,8 +5,8 @@ import { LayoutWrapper } from "@/components/layout/LayoutWrapper";
 import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: "Desa Walaho - Portal Informasi Resmi",
-  description: "Website resmi Desa Walaho, Kecamatan Contoh, Kabupaten Contoh",
+  title: "Desa Suka Makmur - Portal Informasi Resmi",
+  description: "Website resmi Desa Suka Makmur, Kecamatan Contoh, Kabupaten Contoh",
   icons: {
     icon: "/deliSerdang.png",
   },
@@ -24,13 +24,13 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col font-sans selection:bg-primary/20 selection:text-primary relative">
-        <div className="fixed inset-0 z-0 pointer-events-none flex items-center justify-center opacity-[0.95] dark:opacity-[0.75] overflow-hidden">
-          <div className="relative w-[120vw] h-[120vh] max-w-[800px] max-h-[800px]">
+        <div className="fixed inset-0 z-0 pointer-events-none flex items-center justify-center overflow-hidden">
+          <div className="relative w-[80vw] h-[80vw] max-w-[500px] max-h-[500px] opacity-[0.15] dark:opacity-[0.1]">
             <Image
               src="/deliSerdang.png"
               alt="Logo Deli Serdang Background"
               fill
-              sizes="(max-width: 800px) 100vw, 800px"
+              sizes="(max-width: 500px) 100vw, 500px"
               className="object-contain"
               priority
             />

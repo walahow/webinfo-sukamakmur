@@ -20,7 +20,7 @@ export default function ProfilPage() {
         <div className="relative z-20 max-w-4xl flex flex-col items-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-1000">
           <div className="w-16 h-1 bg-primary rounded-full mb-2"></div>
           <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight">
-            Profil Desa Walaho
+            Profil Desa Suka Makmur
           </h1>
           <p className="text-lg text-slate-200 max-w-2xl font-light">
             Mengenal lebih dekat sejarah, visi misi, dan jajaran aparatur desa kami.
@@ -33,7 +33,7 @@ export default function ProfilPage() {
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Pemerintahan Desa</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Aparatur Desa Walaho</h3>
+            <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Aparatur Desa Suka Makmur</h3>
             <p className="text-slate-600 dark:text-slate-400 mt-4">Mengenal lebih dekat para pelayan masyarakat yang berdedikasi membangun desa.</p>
           </div>
           
@@ -129,14 +129,14 @@ export default function ProfilPage() {
           <section id="sejarah" className="scroll-margin-top max-w-5xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Rekam Jejak</h2>
-              <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Sejarah Desa Walaho</h3>
+              <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Sejarah Desa Suka Makmur</h3>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div className="relative w-full h-[300px] md:h-[400px] rounded-3xl overflow-hidden bg-slate-200 dark:bg-slate-800 shadow-lg">
                 <Image
                   src="/mock-data/village-profile.jpg"
-                  alt="Sejarah Desa Walaho"
+                  alt="Sejarah Desa Suka Makmur"
                   fill
                   className="object-cover transition-transform duration-700 hover:scale-105"
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -159,7 +159,7 @@ export default function ProfilPage() {
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Wilayah</h2>
             <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Geografis & Batas Desa</h3>
-            <p className="text-slate-600 dark:text-slate-400 mt-4">Informasi demografi dan pemetaan wilayah Desa Walaho.</p>
+            <p className="text-slate-600 dark:text-slate-400 mt-4">Informasi demografi dan pemetaan wilayah Desa Suka Makmur.</p>
           </div>
 
           <div className="flex flex-col gap-8">

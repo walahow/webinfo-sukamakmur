@@ -77,7 +77,7 @@ export function Navbar() {
           </div>
           <div className="flex flex-col ml-1">
             <span className={cn("font-bold text-lg leading-tight tracking-tight transition-colors", isSolid ? "text-slate-900 dark:text-white" : "text-white")}>
-              Desa Walaho
+              Desa Suka Makmur
             </span>
             <span className={cn("text-xs font-medium transition-colors", isSolid ? "text-slate-500" : "text-slate-300")}>Kab. Deli Serdang</span>
           </div>

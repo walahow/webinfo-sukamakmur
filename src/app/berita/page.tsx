@@ -22,7 +22,7 @@ export default function BeritaPage() {
             Berita & Informasi Terkini
           </h1>
           <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl font-light">
-            Temukan kumpulan berita, pengumuman resmi, dan dokumentasi kegiatan terbaru dari Pemerintah Desa Walaho.
+            Temukan kumpulan berita, pengumuman resmi, dan dokumentasi kegiatan terbaru dari Pemerintah Desa Suka Makmur.
           </p>
         </div>
 

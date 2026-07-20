@@ -82,14 +82,14 @@ export default async function BeritaDetailPage({ params }: BeritaDetailPageProps
           {/* Content Body */}
           <div className="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 text-lg leading-relaxed space-y-6">
             <p className="font-semibold text-slate-900 dark:text-white border-l-4 border-primary pl-4 py-1 italic">
-              WALAHO, {new Date(currentNews.tanggal_publikasi).toLocaleDateString("id-ID", { dateStyle: "long" })} – Kabar terkini dan resmi dari wilayah Desa Walaho.
+              SUKA MAKMUR, {new Date(currentNews.tanggal_publikasi).toLocaleDateString("id-ID", { dateStyle: "long" })} – Kabar terkini dan resmi dari wilayah Desa Suka Makmur.
             </p>
             <p>{currentNews.konten}</p>
             <p>
-              Pemerintah Desa Walaho senantiasa berkomitmen untuk membagikan informasi terkini, transparan, dan terpercaya bagi segenap warga desa serta masyarakat luas. Gotong royong dan sinergi bersama seluruh elemen masyarakat adalah kunci utama pembangunan yang inklusif dan berkelanjutan.
+              Pemerintah Desa Suka Makmur senantiasa berkomitmen untuk membagikan informasi terkini, transparan, dan terpercaya bagi segenap warga desa serta masyarakat luas. Gotong royong dan sinergi bersama seluruh elemen masyarakat adalah kunci utama pembangunan yang inklusif dan berkelanjutan.
             </p>
             <p>
-              Diharapkan dengan adanya portal berita resmi ini, masyarakat dapat dengan mudah memantau progres kegiatan, pengumuman regulasi terbaru, serta agenda pembangunan di wilayah Desa Walaho demi kemajuan bersama.
+              Diharapkan dengan adanya portal berita resmi ini, masyarakat dapat dengan mudah memantau progres kegiatan, pengumuman regulasi terbaru, serta agenda pembangunan di wilayah Desa Suka Makmur demi kemajuan bersama.
             </p>
           </div>
         </article>

@@ -13,7 +13,7 @@ export default function AdminDashboard() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col gap-1">
         <h2 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">Selamat Datang, Admin</h2>
-        <p className="text-slate-500 dark:text-slate-400 text-lg">Berikut adalah ringkasan data website Desa Walaho hari ini.</p>
+        <p className="text-slate-500 dark:text-slate-400 text-lg">Berikut adalah ringkasan data website Desa Suka Makmur hari ini.</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -26,7 +26,7 @@ const southWestIcon = createDirectionIcon("↙", "Barat Daya: Namorambe");
 const westIcon = createDirectionIcon("←", "Barat: Medan Johor");
 
 export default function ProfileMap() {
-  const defaultCenter: [number, number] = [3.514, 98.678]; // Center on Sukamakmur/Walaho
+  const defaultCenter: [number, number] = [3.514, 98.678]; // Center on Sukamakmur/Suka Makmur
 
   return (
     <MapContainer 

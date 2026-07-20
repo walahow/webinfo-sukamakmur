@@ -31,14 +31,14 @@ export function Footer() {
                 />
               </div>
               <div>
-                <h3 className="text-white font-bold text-lg leading-tight">Pemerintah Desa Walaho</h3>
+                <h3 className="text-white font-bold text-lg leading-tight">Pemerintah Desa Suka Makmur</h3>
                 <p className="text-sm text-slate-400">Kab. Deli Serdang</p>
               </div>
             </div>
             <div className="text-sm space-y-2 leading-relaxed">
               <p className="flex items-start gap-2">
                 <MapPin size={16} className="text-primary shrink-0 mt-1" />
-                <span>Jl. Lintas Utama No.01 Dusun Walaho<br />Desa Walaho, Kec. Beringin<br />Kab. Deli Serdang<br />Sumatera Utara, 20552</span>
+                <span>Jl. Lintas Utama No.01 Dusun Suka Makmur<br />Desa Suka Makmur, Kec. Beringin<br />Kab. Deli Serdang<br />Sumatera Utara, 20552</span>
               </p>
               <p className="font-semibold text-slate-200 pt-2 pl-6">Kode Wilayah: 12.07.23.2012</p>
             </div>
@@ -69,11 +69,11 @@ export function Footer() {
                   </div>
                   0822-5034-5977
                 </a>
-                <a href="mailto:pemdeswalaho@gmail.com" className="flex items-center gap-3 hover:text-white transition-colors group">
+                <a href="mailto:pemdessukamakmur@gmail.com" className="flex items-center gap-3 hover:text-white transition-colors group">
                   <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-primary transition-colors">
                     <Mail size={14} className="text-slate-300 group-hover:text-white" />
                   </div>
-                  pemdeswalaho@gmail.com
+                  pemdessukamakmur@gmail.com
                 </a>
                 <a href="#" className="flex items-center gap-3 hover:text-white transition-colors group pt-2">
                   <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-red-500 transition-colors">
@@ -86,19 +86,19 @@ export function Footer() {
                     <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
                       <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-slate-300 group-hover:text-white"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
                     </div>
-                    <span>@pemdeswalaho</span>
+                    <span>@pemdessukamakmur</span>
                   </a>
                   <a href="#" className="flex items-center gap-3 hover:text-white transition-colors group">
                     <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-pink-600 transition-colors">
                       <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-slate-300 group-hover:text-white"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
                     </div>
-                    <span>@pemdes.walaho</span>
+                    <span>@pemdes.sukamakmur</span>
                   </a>
                   <a href="#" className="flex items-center gap-3 hover:text-white transition-colors group">
                     <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-sky-500 transition-colors">
                       <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-slate-300 group-hover:text-white"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
                     </div>
-                    <span>@pemdes_walaho</span>
+                    <span>@pemdes_sukamakmur</span>
                   </a>
                 </div>
               </div>
@@ -159,7 +159,7 @@ export function Footer() {
               openSection === 'masukan' ? "max-h-[500px] opacity-100 mt-6" : "max-h-0 opacity-0 md:max-h-[500px] md:opacity-100 md:mt-0"
             )}>
               <div className="space-y-4 pb-4 md:pb-0">
-                <p className="text-sm text-slate-400">Punya saran atau keluhan? Sampaikan kepada kami untuk Desa Walaho yang lebih baik.</p>
+                <p className="text-sm text-slate-400">Punya saran atau keluhan? Sampaikan kepada kami untuk Desa Suka Makmur yang lebih baik.</p>
                 <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
                   <input
                     type="text"
@@ -187,7 +187,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-slate-800 text-sm flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500">
           <p>© 2026 Powered by Sistem Informasi Desa.</p>
-          <p>Desa Walaho, Berkarya & Berinovasi</p>
+          <p>Desa Suka Makmur, Berkarya & Berinovasi</p>
         </div>
       </div>
     </footer>

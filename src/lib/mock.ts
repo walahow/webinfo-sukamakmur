@@ -17,7 +17,7 @@ import {
 
 export const mockVillageProfile: VillageProfile = {
   id: 'vp-001',
-  sejarah: 'Desa Walaho berdiri sejak awal abad ke-19, bermula dari perkampungan agraris kecil di lembah hijau. Seiring berjalannya waktu, Walaho berkembang menjadi desa mandiri yang memadukan kearifan lokal dengan inovasi berkelanjutan, mempertahankan warisan budaya leluhur sambil terus beradaptasi dengan kemajuan teknologi.',
+  sejarah: 'Desa Suka Makmur berdiri sejak awal abad ke-19, bermula dari perkampungan agraris kecil di lembah hijau. Seiring berjalannya waktu, Suka Makmur berkembang menjadi desa mandiri yang memadukan kearifan lokal dengan inovasi berkelanjutan, mempertahankan warisan budaya leluhur sambil terus beradaptasi dengan kemajuan teknologi.',
   visi: 'Menjadi Desa yang Mandiri, Sejahtera, dan Berbudaya melalui Tata Kelola Pemerintahan yang Inovatif dan Transparan.',
   misi: [
     'Meningkatkan kualitas pelayanan publik berbasis teknologi informasi.',
@@ -26,10 +26,10 @@ export const mockVillageProfile: VillageProfile = {
     'Meningkatkan ketersediaan dan kualitas infrastruktur desa yang berkelanjutan.',
     'Mewujudkan lingkungan desa yang bersih, sehat, dan asri.'
   ],
-  sambutan_kepdes: 'Selamat datang di portal resmi Desa Walaho. Melalui website ini, kami berkomitmen mewujudkan tata kelola desa yang transparan, inovatif, dan responsif. Kami berharap sistem informasi ini dapat mendekatkan pelayanan kepada masyarakat dan membuka potensi desa ke kancah yang lebih luas.',
+  sambutan_kepdes: 'Selamat datang di portal resmi Desa Suka Makmur. Melalui website ini, kami berkomitmen mewujudkan tata kelola desa yang transparan, inovatif, dan responsif. Kami berharap sistem informasi ini dapat mendekatkan pelayanan kepada masyarakat dan membuka potensi desa ke kancah yang lebih luas.',
   peta_url: 'https://maps.google.com/...',
   koordinat: '-6.200000, 106.816666',
-  batas_desa: 'Utara: Desa Beringin Jaya, Selatan: Sungai Walaho, Timur: Hutan Lindung, Barat: Kecamatan Beringin.',
+  batas_desa: 'Utara: Desa Beringin Jaya, Selatan: Sungai Suka Makmur, Timur: Hutan Lindung, Barat: Kecamatan Beringin.',
   luas_wilayah: '450 Hektar',
   jumlah_penduduk: 2450
 };
@@ -52,9 +52,9 @@ export const mockStrukturOrganisasi: StrukturOrganisasi[] = [
   {
     id: 'so-003',
     jabatan: 'Kaur Technical',
-    nama_pejabat: 'Walaho',
+    nama_pejabat: 'Suka Makmur',
     urutan: 3,
-    foto_url: '/mock-data/Walaho_kaur%20technical.jpeg'
+    foto_url: '/mock-data/Suka%20Makmur_kaur%20technical.jpeg'
   },
   {
     id: 'so-004',
@@ -68,9 +68,9 @@ export const mockStrukturOrganisasi: StrukturOrganisasi[] = [
 export const mockBerita: News[] = [
   {
     id: 'berita-001',
-    judul: 'Musrenbangdes Walaho Tahun 2024 Berjalan Lancar',
-    slug: 'musrenbangdes-walaho-2024',
-    konten: 'Musyawarah Perencanaan Pembangunan Desa (Musrenbangdes) Walaho untuk tahun anggaran 2024 telah sukses diselenggarakan dengan fokus pada pembangunan infrastruktur dan pemulihan ekonomi.',
+    judul: 'Musrenbangdes Suka Makmur Tahun 2024 Berjalan Lancar',
+    slug: 'musrenbangdes-sukamakmur-2024',
+    konten: 'Musyawarah Perencanaan Pembangunan Desa (Musrenbangdes) Suka Makmur untuk tahun anggaran 2024 telah sukses diselenggarakan dengan fokus pada pembangunan infrastruktur dan pemulihan ekonomi.',
     tanggal_publikasi: '2024-01-15T08:00:00Z',
     penulis_id: 'user-001',
     cover_url: '/mock-data/news-musrenbang.jpg'
@@ -79,7 +79,7 @@ export const mockBerita: News[] = [
     id: 'berita-002',
     judul: 'Pelatihan Kewirausahaan untuk UMKM Desa',
     slug: 'pelatihan-kewirausahaan-umkm',
-    konten: 'Dalam rangka meningkatkan taraf ekonomi warga, Pemerintah Desa Walaho bekerja sama dengan dinas terkait mengadakan pelatihan kewirausahaan digital bagi para pelaku usaha kecil mikro.',
+    konten: 'Dalam rangka meningkatkan taraf ekonomi warga, Pemerintah Desa Suka Makmur bekerja sama dengan dinas terkait mengadakan pelatihan kewirausahaan digital bagi para pelaku usaha kecil mikro.',
     tanggal_publikasi: '2024-02-02T09:30:00Z',
     penulis_id: 'user-001',
     cover_url: '/mock-data/news-umkm.jpg'
@@ -88,7 +88,7 @@ export const mockBerita: News[] = [
     id: 'berita-003',
     judul: 'Gotong Royong Membersihkan Saluran Irigasi Menjelang Musim Tanam',
     slug: 'gotong-royong-irigasi',
-    konten: 'Menjelang musim tanam padi, warga Desa Walaho beramai-ramai turun ke sawah untuk membersihkan saluran irigasi utama guna memastikan pasokan air lancar ke seluruh lahan pertanian.',
+    konten: 'Menjelang musim tanam padi, warga Desa Suka Makmur beramai-ramai turun ke sawah untuk membersihkan saluran irigasi utama guna memastikan pasokan air lancar ke seluruh lahan pertanian.',
     tanggal_publikasi: '2024-02-28T07:15:00Z',
     penulis_id: 'user-002',
     cover_url: '/mock-data/news-gotong-royong.jpg'
@@ -97,25 +97,25 @@ export const mockBerita: News[] = [
     id: 'berita-004',
     judul: 'Penyaluran Bantuan Sosial Lansia dan Balita Periode Maret',
     slug: 'penyaluran-bansos-lansia-balita',
-    konten: 'Pemerintah Desa Walaho kembali menyalurkan program bantuan sosial kepada para lansia dan balita berupa paket nutrisi tambahan guna menekan angka stunting serta menjamin kesejahteraan.',
+    konten: 'Pemerintah Desa Suka Makmur kembali menyalurkan program bantuan sosial kepada para lansia dan balita berupa paket nutrisi tambahan guna menekan angka stunting serta menjamin kesejahteraan.',
     tanggal_publikasi: '2024-03-05T09:00:00Z',
     penulis_id: 'user-001',
     cover_url: '/mock-data/village-profile.jpg'
   },
   {
     id: 'berita-005',
-    judul: 'Pembangunan Jembatan Penghubung Antar Dusun Walaho Rampung',
+    judul: 'Pembangunan Jembatan Penghubung Antar Dusun Suka Makmur Rampung',
     slug: 'pembangunan-jembatan-antardusun-rampung',
-    konten: 'Akses transportasi antar dusun di Desa Walaho kini semakin mudah dengan rampungnya proyek pembangunan jembatan gantung baru yang ramah lingkungan dan aman dilalui warga.',
+    konten: 'Akses transportasi antar dusun di Desa Suka Makmur kini semakin mudah dengan rampungnya proyek pembangunan jembatan gantung baru yang ramah lingkungan dan aman dilalui warga.',
     tanggal_publikasi: '2024-03-12T10:00:00Z',
     penulis_id: 'user-001',
     cover_url: '/mock-data/katalog-wisata.jpg'
   },
   {
     id: 'berita-006',
-    judul: 'Festival Kebudayaan dan Kuliner Tradisional Desa Walaho 2024',
-    slug: 'festival-kebudayaan-kuliner-walaho-2024',
-    konten: 'Memperkenalkan pesona wisata dan warisan kuliner lokal, Desa Walaho menggelar festival kebudayaan tahunan yang dihadiri oleh ratusan pengunjung dari luar daerah.',
+    judul: 'Festival Kebudayaan dan Kuliner Tradisional Desa Suka Makmur 2024',
+    slug: 'festival-kebudayaan-kuliner-sukamakmur-2024',
+    konten: 'Memperkenalkan pesona wisata dan warisan kuliner lokal, Desa Suka Makmur menggelar festival kebudayaan tahunan yang dihadiri oleh ratusan pengunjung dari luar daerah.',
     tanggal_publikasi: '2024-03-20T13:00:00Z',
     penulis_id: 'user-002',
     cover_url: '/mock-data/katalog-kopi.jpg'
@@ -126,7 +126,7 @@ export const mockGallery: Galeri[] = [
   {
     id: 'gal-001',
     foto_url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800&auto=format&fit=crop',
-    caption: 'Pemandangan sawah Desa Walaho saat pagi hari'
+    caption: 'Pemandangan sawah Desa Suka Makmur saat pagi hari'
   },
   {
     id: 'gal-002',
@@ -155,8 +155,8 @@ export const mockKatalog: Katalog[] = [
   {
     id: 'kat-001',
     category_id: 'kc-001', // We can use UMKM or Kuliner category, let's keep kc-001
-    nama: 'BUMDes Walaho (Ternak Lele)',
-    deskripsi: 'Peternakan lele berkualitas tinggi yang dikelola oleh BUMDes Walaho untuk ketahanan pangan desa.',
+    nama: 'BUMDes Suka Makmur (Ternak Lele)',
+    deskripsi: 'Peternakan lele berkualitas tinggi yang dikelola oleh BUMDes Suka Makmur untuk ketahanan pangan desa.',
     latitude: 3.513335,
     longitude: 98.681583,
     kontak: '081234567890',
@@ -168,9 +168,9 @@ export const mockKegiatan: Kegiatan[] = [
   {
     id: 'keg-001',
     judul: 'Lomba Desa Sehat',
-    deskripsi: 'Kegiatan lomba kebersihan antar RT se-Desa Walaho.',
+    deskripsi: 'Kegiatan lomba kebersihan antar RT se-Desa Suka Makmur.',
     tanggal: '2026-08-10',
-    lokasi: 'Balai Desa Walaho'
+    lokasi: 'Balai Desa Suka Makmur'
   }
 ];
 

@@ -39,7 +39,7 @@ export default async function Home() {
             Selamat Datang di
           </div>
           <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-tight">
-            Desa Walaho
+            Desa Suka Makmur
           </h1>
           <p className="text-lg md:text-xl text-slate-200 max-w-2xl font-light">
             Mewujudkan tata kelola desa yang transparan, inovatif, dan responsif. Memadukan kearifan lokal dengan inovasi berkelanjutan.
@@ -71,13 +71,13 @@ export default async function Home() {
 
 
       {/* 2. SAMBUTAN & PROFIL TEASER */}
-      <section id="profile" className="w-full py-24 scroll-margin-top px-4 bg-white/90 dark:bg-black/90 backdrop-blur-md">
+      <section id="profile" className="w-full py-24 scroll-margin-top px-4 bg-white/60 dark:bg-black/60 backdrop-blur-md">
         <div className="container mx-auto max-w-6xl flex flex-col gap-12">
           {/* Top: Title Centered */}
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Sekilas Profil</h2>
             <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight">
-              Sejarah & Visi Misi Desa Walaho
+              Sejarah & Visi Misi Desa Suka Makmur
             </h3>
           </div>
 
@@ -133,7 +133,7 @@ export default async function Home() {
       </section>
 
       {/* 3. INFOGRAFIS SECTION */}
-      <section id="infografis" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md">
+      <section id="infografis" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-md">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Transparansi Data</h2>
@@ -191,7 +191,7 @@ export default async function Home() {
       </section>
 
       {/* 4. KATALOG SECTION */}
-      <section id="catalogue" className="w-full py-24 scroll-margin-top px-4 bg-white/90 dark:bg-black/90 backdrop-blur-md">
+      <section id="catalogue" className="w-full py-24 scroll-margin-top px-4 bg-white/60 dark:bg-black/60 backdrop-blur-md">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Potensi Desa</h2>
@@ -253,7 +253,7 @@ export default async function Home() {
       </section>
 
       {/* 5. NEWS SECTION (SKELETON) */}
-      <section id="news" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md">
+      <section id="news" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-md">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Kabar Terbaru</h2>
@@ -313,7 +313,7 @@ export default async function Home() {
       </section>
 
       {/* 6. PPID SECTION */}
-      <section id="ppid" className="w-full py-24 scroll-margin-top px-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-slate-900 dark:text-white relative overflow-hidden">
+      <section id="ppid" className="w-full py-24 scroll-margin-top px-4 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md text-slate-900 dark:text-white relative overflow-hidden">
         {/* Decorative background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
         

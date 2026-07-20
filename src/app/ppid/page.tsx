@@ -53,13 +53,13 @@ export default function PpidPage() {
         <div className="mb-12 border-b border-slate-200 dark:border-slate-800 pb-8">
           <div className="flex items-center gap-2 text-primary font-bold uppercase tracking-wider text-xs mb-3">
             <Info size={18} />
-            <span>PPID Desa Walaho</span>
+            <span>PPID Desa Suka Makmur</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">
             Pusat Data & Informasi Publik
           </h1>
           <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl font-light">
-            Temukan dan unduh dokumen resmi Pemerintah Desa Walaho secara transparan demi transparansi dan akuntabilitas tata kelola desa.
+            Temukan dan unduh dokumen resmi Pemerintah Desa Suka Makmur secara transparan demi transparansi dan akuntabilitas tata kelola desa.
           </p>
         </div>
 
