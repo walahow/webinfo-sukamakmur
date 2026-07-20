@@ -29,7 +29,7 @@ export default function ProfilPage() {
       </section>
 
       {/* 2. PERANGKAT DESA (Moved to top as requested) */}
-      <section id="perangkat" className="w-full py-24 px-4 scroll-margin-top bg-white/90 dark:bg-black/90 backdrop-blur-md">
+      <section id="perangkat" className="w-full py-24 px-4 scroll-margin-top bg-white/90 dark:bg-black/90 backdrop-blur-sm">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Pemerintahan Desa</h2>
@@ -78,7 +78,7 @@ export default function ProfilPage() {
         </div>
       </section>
 
-      <div className="w-full bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md">
+      <div className="w-full bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-sm">
         <div className="container mx-auto max-w-6xl px-4 py-16 md:py-24 space-y-24">
           
           {/* 3. VISI & MISI */}
@@ -154,7 +154,7 @@ export default function ProfilPage() {
       </div>
 
       {/* 5. GEOGRAFIS DESA & MAP */}
-      <section id="geografis" className="w-full bg-white/90 dark:bg-black/90 backdrop-blur-md py-24 px-4 scroll-margin-top">
+      <section id="geografis" className="w-full bg-white/90 dark:bg-black/90 backdrop-blur-sm py-24 px-4 scroll-margin-top">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Wilayah</h2>
@@ -168,6 +168,38 @@ export default function ProfilPage() {
               <div className="absolute bottom-4 left-4 z-[1000] bg-black/60 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 text-white text-xs font-semibold flex items-center gap-1.5 shadow-md pointer-events-none">
                 <MapPin size={14} className="text-primary" />
                 <span>Peta Batas Administrasi Desa</span>
+              </div>
+            </div>
+
+            {/* Legend Dusun & Batas */}
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm w-fit">
+                <div className="w-8 h-0 border-t-4 border-dashed border-[#0284c7] shrink-0"></div>
+                <div className="flex flex-col">
+                  <span className="font-bold text-sm text-slate-900 dark:text-white">Batas Wilayah Desa</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">Garis batas administrasi Suka Makmur</span>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { name: "Dusun 1", color: "rgba(255, 187, 13, 1)" },
+                  { name: "Dusun 2", color: "rgba(209, 104, 0, 1)" },
+                  { name: "Dusun 3", color: "rgba(0, 113, 174, 1)" },
+                  { name: "Dusun 4", color: "rgba(141, 42, 154, 1)" },
+                  { name: "Dusun 5", color: "rgba(226, 234, 0, 1)" },
+                  { name: "Dusun 6", color: "rgba(7, 204, 0, 1)" },
+                  { name: "Dusun 7", color: "rgba(225, 0, 90, 1)" },
+                  { name: "Dusun 8", color: "rgba(0, 185, 71, 1)" }
+                ].map((dusun, idx) => (
+                  <div key={idx} className="flex items-center gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm hover:border-primary/30 transition-colors">
+                    <div className="w-6 h-6 rounded-full shadow-inner border border-black/10 shrink-0" style={{ backgroundColor: dusun.color }}></div>
+                    <div className="flex flex-col">
+                      <span className="font-bold text-sm text-slate-900 dark:text-white">{dusun.name}</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">Wilayah {dusun.name}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 

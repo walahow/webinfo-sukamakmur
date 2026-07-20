@@ -35,7 +35,7 @@ export default async function Home() {
         />
         
         <div className="relative z-20 max-w-4xl flex flex-col items-center gap-6 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <div className="px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white text-sm font-medium">
+          <div className="px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white text-sm font-medium">
             Selamat Datang di
           </div>
           <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-tight">
@@ -53,7 +53,7 @@ export default async function Home() {
             </Link>
             <Link 
               href="/#ppid"
-              className="px-8 py-4 rounded-full bg-white/10 backdrop-blur-md text-white border border-white/20 font-medium hover:bg-white/20 transition-colors flex items-center justify-center gap-2"
+              className="px-8 py-4 rounded-full bg-white/10 backdrop-blur-sm text-white border border-white/20 font-medium hover:bg-white/20 transition-colors flex items-center justify-center gap-2"
             >
               Layanan Informasi Publik
             </Link>
@@ -71,7 +71,7 @@ export default async function Home() {
 
 
       {/* 2. SAMBUTAN & PROFIL TEASER */}
-      <section id="profile" className="w-full py-24 scroll-margin-top px-4 bg-white/60 dark:bg-black/60 backdrop-blur-md">
+      <section id="profile" className="w-full py-24 scroll-margin-top px-4 bg-white/60 dark:bg-black/60 backdrop-blur-sm">
         <div className="container mx-auto max-w-6xl flex flex-col gap-12">
           {/* Top: Title Centered */}
           <div className="text-center max-w-2xl mx-auto">
@@ -133,7 +133,7 @@ export default async function Home() {
       </section>
 
       {/* 3. INFOGRAFIS SECTION */}
-      <section id="infografis" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-md">
+      <section id="infografis" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-sm">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Transparansi Data</h2>
@@ -191,7 +191,7 @@ export default async function Home() {
       </section>
 
       {/* 4. KATALOG SECTION */}
-      <section id="catalogue" className="w-full py-24 scroll-margin-top px-4 bg-white/60 dark:bg-black/60 backdrop-blur-md">
+      <section id="catalogue" className="w-full py-24 scroll-margin-top px-4 bg-white/60 dark:bg-black/60 backdrop-blur-sm">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Potensi Desa</h2>
@@ -253,7 +253,7 @@ export default async function Home() {
       </section>
 
       {/* 5. NEWS SECTION (SKELETON) */}
-      <section id="news" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-md">
+      <section id="news" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-sm">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Kabar Terbaru</h2>
@@ -313,7 +313,7 @@ export default async function Home() {
       </section>
 
       {/* 6. PPID SECTION */}
-      <section id="ppid" className="w-full py-24 scroll-margin-top px-4 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md text-slate-900 dark:text-white relative overflow-hidden">
+      <section id="ppid" className="w-full py-24 scroll-margin-top px-4 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm text-slate-900 dark:text-white relative overflow-hidden">
         {/* Decorative background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
         

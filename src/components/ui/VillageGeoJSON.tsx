@@ -103,7 +103,9 @@ export default function VillageGeoJSON({ variant = "profile" }: VillageGeoJSONPr
         layer.bindPopup("<div class='font-bold text-sm text-center font-sans text-primary'>Batas Administrasi Desa Suka Makmur</div>");
       } else {
         // Dusun area
-        layer.bindPopup("<div class='font-bold text-sm text-center font-sans text-primary'>Wilayah Dusun</div>");
+        const name = feature.properties.name || "Wilayah Dusun";
+        const desc = feature.properties.description || "";
+        layer.bindPopup(`<div class='font-bold text-sm text-center font-sans text-primary'>${name}</div><div class='text-xs text-center mt-1 text-slate-600 dark:text-slate-400'>${desc}</div>`);
       }
     }
   };
