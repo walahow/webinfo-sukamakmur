@@ -1,61 +1,139 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ChevronDown, Users, MapPin, Wallet, Store, Info, FileText, Download } from "lucide-react";
-import StatsCardsClient from '@/components/StatsCardsClient';
-import { mockBerita, mockDocument } from "@/lib/mock";
-import HomeHeroClient from '@/components/HomeHeroClient';
-import { prisma } from "@/lib/prisma";
+import { mockVillageProfile, mockStrukturOrganisasi, mockBerita, mockDocument } from "@/lib/mock";
+import { ProfileImageStack } from "@/components/ui/ProfileImageStack";
 
 
 export default async function Home() {
-  // Fetch real katalog data from database (featured items on homepage)
-  let katalogItems: Array<{
-    id: string;
-    nama: string;
-    slug: string;
-    category: { id: string; nama: string };
-    deskripsi: string;
-    dusun: string | null;
-    fotoUrl: string | null;
-    latitude: number;
-    longitude: number;
-    kontak: string | null;
-  }> = [];
-  try {
-    const katalogFromDb = await prisma.katalog.findMany({
-      include: { category: true },
-      orderBy: { createdAt: 'desc' },
-      take: 3, // Show top 3 on homepage
-    });
-    
-    katalogItems = katalogFromDb.map(item => ({
-      id: item.id,
-      nama: item.nama,
-      slug: item.slug,
-      category: { id: item.category.id, nama: item.category.nama },
-      deskripsi: item.deskripsi,
-      dusun: item.dusun,
-      fotoUrl: item.fotoUrl,
-      latitude: item.latitude,
-      longitude: item.longitude,
-      kontak: item.kontak,
-    }));
-  } catch (error) {
-    console.error('Failed to fetch katalog on homepage:', error);
-    // Fallback to empty array if database query fails
-    katalogItems = [];
-  }
-
-  // Profile and struktur are fetched on the client to avoid build-time DB schema mismatch
-
+  const katalogItems = [
+    {
+      id: "1",
+      nama: "BUMDes Ternak Lele",
+      slug: "bumdes-ternak-lele",
+      category: { id: "1", nama: "UMKM" },
+      deskripsi: "Unit usaha peternakan lele yang dikelola oleh BUMDes untuk meningkatkan ketahanan pangan dan ekonomi masyarakat desa.",
+      dusun: "Dusun Satu",
+      fotoUrl: "https://images.unsplash.com/photo-1549419131-7b0b65bf73ab?q=80&w=800",
+      latitude: 3.513335,
+      longitude: 98.681583,
+      kontak: "08123456789",
+    }
+  ];
   return (
     <main className="flex min-h-screen flex-col items-center overflow-x-hidden">
       
-      {/* Client-rendered hero + profile (fetches profile on client to avoid build-time DB schema mismatch) */}
-      <HomeHeroClient />
+      {/* 1. HERO SECTION */}
+      <section 
+        id="hero" 
+        className="relative w-full min-h-screen flex flex-col justify-center items-center text-center px-4"
+      >
+        <div className="absolute inset-0 bg-slate-900/60 z-10" />
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/mock-data/hero-bg.jpg')" }} 
+        />
+        
+        <div className="relative z-20 max-w-4xl flex flex-col items-center gap-6 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <div className="px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white text-sm font-medium">
+            Selamat Datang di
+          </div>
+          <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-tight">
+            Desa Suka Makmur
+          </h1>
+          <p className="text-lg md:text-xl text-slate-200 max-w-2xl font-light">
+            Mewujudkan tata kelola desa yang transparan, inovatif, dan responsif. Memadukan kearifan lokal dengan inovasi berkelanjutan.
+          </p>
+          <div className="mt-6 flex flex-col sm:flex-row gap-4">
+            <Link 
+              href="/#profile"
+              className="px-8 py-4 rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 flex items-center justify-center gap-2"
+            >
+              Kenali Kami Lebih Dekat
+            </Link>
+            <Link 
+              href="/#ppid"
+              className="px-8 py-4 rounded-full bg-white/10 backdrop-blur-sm text-white border border-white/20 font-medium hover:bg-white/20 transition-colors flex items-center justify-center gap-2"
+            >
+              Layanan Informasi Publik
+            </Link>
+          </div>
+        </div>
+
+        <a 
+          href="/#profile"
+          className="absolute bottom-10 z-20 text-white/70 hover:text-white transition-colors animate-bounce"
+        >
+          <ChevronDown size={32} />
+        </a>
+      </section>
+
+
+
+      {/* 2. SAMBUTAN & PROFIL TEASER */}
+      <section id="profile" className="w-full py-24 scroll-margin-top px-4 bg-white/60 dark:bg-black/60 backdrop-blur-sm">
+        <div className="container mx-auto max-w-6xl flex flex-col gap-12">
+          {/* Top: Title Centered */}
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Sekilas Profil</h2>
+            <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight">
+              Sejarah & Visi Misi Desa Suka Makmur
+            </h3>
+          </div>
+
+          {/* Middle: 2 Columns */}
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-stretch">
+            
+            {/* Left: Kepala Desa & Sambutan */}
+            <div className="flex-1 w-full flex flex-col items-center lg:items-start text-center lg:text-left bg-slate-50 dark:bg-slate-900/50 p-8 md:p-12 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 relative shadow-sm">
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-800 shadow-xl mb-6 relative ring-4 ring-primary/20 shrink-0">
+                {mockStrukturOrganisasi[0]?.foto_url ? (
+                  <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${mockStrukturOrganisasi[0].foto_url}')` }} />
+                ) : (
+                  <div className="absolute inset-0 bg-slate-200 animate-pulse" />
+                )}
+              </div>
+              <div className="inline-flex px-4 py-1.5 rounded-full bg-primary/10 text-primary font-bold text-xs tracking-wide uppercase mb-3">
+                {mockStrukturOrganisasi[0]?.jabatan || "Kepala Desa"}
+              </div>
+              <h4 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-6">
+                {mockStrukturOrganisasi[0]?.nama_pejabat}
+              </h4>
+              <p className="text-slate-600 dark:text-slate-400 text-base md:text-lg italic leading-relaxed relative">
+                <span className="text-5xl text-primary/20 absolute -top-4 -left-4 font-serif">&quot;</span>
+                {mockVillageProfile.sambutan_kepdes}
+                <span className="text-5xl text-primary/20 absolute -bottom-6 -right-2 font-serif">&quot;</span>
+              </p>
+            </div>
+
+            {/* Right: Images and Desc */}
+            <div className="flex-1 w-full flex flex-col space-y-6 justify-center">
+              <div className="hidden sm:block py-2">
+                 <ProfileImageStack />
+              </div>
+
+              <div>
+                <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed line-clamp-4 text-center lg:text-left">
+                  {mockVillageProfile.sejarah}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom: Action Centered */}
+          <div className="flex justify-center mt-2">
+            <Link 
+              href="/profil" 
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 border border-primary hover:border-primary/90 ring-1 ring-primary hover:ring-primary/90 transform-gpu"
+            >
+              Baca Selengkapnya <ArrowRight size={18} />
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* 3. INFOGRAFIS SECTION */}
-      <section id="infografis" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-md">
+      <section id="infografis" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-sm">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Transparansi Data</h2>
@@ -63,11 +141,42 @@ export default async function Home() {
             <p className="text-slate-600 dark:text-slate-400 mt-4">Ringkasan data kependudukan dan transparansi APBDes terkini.</p>
           </div>
           
-          {/* Replace hardcoded stats with live data from database */}
-          <div>
-            {/* StatsCards is a client component that fetches profile and displays stats */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <StatsCardsClient />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="p-8 rounded-3xl bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex flex-col items-start group">
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Users size={28} />
+              </div>
+              <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Total Penduduk</p>
+              <h4 className="text-4xl font-black text-slate-900 dark:text-white">2,450</h4>
+              <p className="text-xs text-slate-400 mt-2">Jiwa tersebar di 4 dusun</p>
+            </div>
+            
+            <div className="p-8 rounded-3xl bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex flex-col items-start group">
+              <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <MapPin size={28} />
+              </div>
+              <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Luas Wilayah</p>
+              <h4 className="text-4xl font-black text-slate-900 dark:text-white">450</h4>
+              <p className="text-xs text-slate-400 mt-2">Hektar area produktif</p>
+            </div>
+
+            <div className="p-8 rounded-3xl bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex flex-col items-start group">
+              <div className="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Wallet size={28} />
+              </div>
+              <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Realisasi Dana Desa</p>
+              <h4 className="text-4xl font-black text-slate-900 dark:text-white">85<span className="text-2xl text-slate-400 font-bold">%</span></h4>
+              <p className="text-xs text-slate-400 mt-2">Terserap untuk pembangunan</p>
+            </div>
+
+            <div className="p-8 rounded-3xl bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex flex-col items-start group">
+              <div className="w-14 h-14 rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Store size={28} />
+              </div>
+              <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">UMKM Aktif</p>
+              <h4 className="text-4xl font-black text-slate-900 dark:text-white">45</h4>
+              <p className="text-xs text-slate-400 mt-2">Unit usaha terdaftar</p>
+            </div>
           </div>
           
           <div className="mt-12 text-center">
@@ -82,7 +191,7 @@ export default async function Home() {
       </section>
 
       {/* 4. KATALOG SECTION */}
-      <section id="catalogue" className="w-full py-24 scroll-margin-top px-4 bg-white/60 dark:bg-black/60 backdrop-blur-md">
+      <section id="catalogue" className="w-full py-24 scroll-margin-top px-4 bg-white/60 dark:bg-black/60 backdrop-blur-sm">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Potensi Desa</h2>
@@ -144,7 +253,7 @@ export default async function Home() {
       </section>
 
       {/* 5. NEWS SECTION (SKELETON) */}
-      <section id="news" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-md">
+      <section id="news" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-sm">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Kabar Terbaru</h2>
@@ -204,7 +313,7 @@ export default async function Home() {
       </section>
 
       {/* 6. PPID SECTION */}
-      <section id="ppid" className="w-full py-24 scroll-margin-top px-4 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md text-slate-900 dark:text-white relative overflow-hidden">
+      <section id="ppid" className="w-full py-24 scroll-margin-top px-4 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm text-slate-900 dark:text-white relative overflow-hidden">
         {/* Decorative background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
         

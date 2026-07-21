@@ -25,7 +25,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans selection:bg-primary/20 selection:text-primary relative">
         <div className="fixed inset-0 z-0 pointer-events-none flex items-center justify-center overflow-hidden">
-          <div className="relative w-[80vw] h-[80vw] max-w-[500px] max-h-[500px] opacity-[0.15] dark:opacity-[0.1]">
+          <div className="relative w-[80vw] h-[80vw] max-w-[500px] max-h-[500px] opacity-[0.65] dark:opacity-[0.25]">
             <Image
               src="/deliSerdang.png"
               alt="Logo Deli Serdang Background"
