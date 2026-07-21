@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import { LayoutDashboard, Users, Map, FileText, Newspaper, LogOut, Building2 } from 'lucide-react';
+import { LayoutDashboard, Users, Map, FileText, Newspaper, Building2 } from 'lucide-react';
+import AdminLogout from '@/components/admin/AdminLogout';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -42,10 +43,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
         
         <div className="p-4 border-t border-slate-200 dark:border-slate-800">
-          <Link href="/admin/login" className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-semibold hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors">
-            <LogOut size={18} />
-            Logout (Mock)
-          </Link>
+          <AdminLogout />
         </div>
       </aside>
       

@@ -16,17 +16,19 @@ datasource db {
 // ----------------------------------------------------------------------
 
 model VillageProfile {
-  id              String   @id @default(uuid())
-  sejarah         String   @db.Text
-  visi            String   @db.Text
-  misi            String[] // PostgreSQL native array
-  sambutan_kepdes String   @db.Text
-  peta_url        String?
-  koordinat       String?
-  batas_desa      String?
-  luas_wilayah    String?
-  jumlah_penduduk Int?
-  updatedAt       DateTime @updatedAt
+  id                              String   @id @default(uuid())
+  sejarah                         String   @db.Text
+  visi                            String   @db.Text
+  misi                            String[] // PostgreSQL native array
+  sambutan_kepdes                 String   @db.Text
+  peta_url                        String?
+  koordinat                       String?
+  batas_desa                      String?
+  luas_wilayah                    String?
+  jumlah_penduduk                 Int?
+  realisasi_dana_desa_persen      Int      @default(0) // 0-100
+  umkm_aktif                      Int      @default(0)
+  updatedAt                       DateTime @updatedAt
 }
 
 model StrukturOrganisasi {

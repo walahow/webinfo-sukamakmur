@@ -72,26 +72,48 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const item = await prisma.katalog.create({
-      data: {
-        nama: body.nama,
-        slug: body.slug,
-        deskripsi: body.deskripsi,
-        latitude: body.latitude,
-        longitude: body.longitude,
-        dusun: body.dusun,
-        kontak: body.kontak,
-        fotoUrl: body.fotoUrl,
-        categoryId: body.categoryId,
-      },
-      include: { category: true },
-    });
+    if (body.latitude === undefined || body.longitude === undefined) {
+      return NextResponse.json(
+        { error: { message: "Latitude and longitude are required", code: "VALIDATION_ERROR" } },
+        { status: 400 }
+      );
+    }
+
+    // Filter create payload against actual DB columns to avoid Prisma Unknown argument errors
+    const cols: Array<{ column_name: string }> = await prisma.$queryRaw`
+      SELECT column_name FROM information_schema.columns WHERE lower(table_name) = 'katalog'
+    `;
+    const allowed = new Set(cols.map((c) => c.column_name));
+
+    const createPayload = {
+      nama: body.nama,
+      slug: body.slug,
+      deskripsi: body.deskripsi,
+      latitude: body.latitude,
+      longitude: body.longitude,
+      dusun: body.dusun,
+      kontak: body.kontak,
+      fotoUrl: body.fotoUrl,
+      categoryId: body.categoryId,
+    };
+
+    const filteredCreate = Object.fromEntries(
+      Object.entries(createPayload).filter(([k]) => allowed.has(k))
+    );
+
+    const item = await prisma.katalog.create({ data: filteredCreate as any, include: { category: true } });
 
     return NextResponse.json({ data: item, meta: { total: 1 } }, { status: 201 });
   } catch (error) {
     console.error("API POST /katalog error:", error);
     return NextResponse.json(
-      { error: { message: "Internal server error", code: "INTERNAL_ERROR" } },
+      {
+        error: {
+          message: "Internal server error",
+          code: "INTERNAL_ERROR",
+          details: error instanceof Error ? error.message : String(error),
+        },
+      },
       { status: 500 }
     );
   }

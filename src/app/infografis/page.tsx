@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Users, Home, User, TrendingUp, Wallet } from "lucide-react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
-import { pendudukOverview, apbdesData } from "@/lib/mock-infografis";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { infografisAPI } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 const PIE_COLORS = ['#0ea5e9', '#ec4899'];
@@ -27,11 +28,103 @@ const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
+const defaultPendudukOverview = {
+  total: 0,
+  lakiLaki: 0,
+  perempuan: 0,
+  kk: 0,
+};
+
+const defaultApbdesData = {
+  pendapatan: { anggaran: 0, realisasi: 0, lebihKurang: 0 },
+  belanja: { anggaran: 0, realisasi: 0, lebihKurang: 0 },
+  pembiayaan: { anggaran: 0, realisasi: 0, lebihKurang: 0 },
+};
+
 export default function InfografisPage() {
+  const [pendudukOverview, setPendudukOverview] = useState(defaultPendudukOverview);
+  const [apbdesData, setApbdesData] = useState(defaultApbdesData);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadInfografis = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const [pendudukRes, apbdesRes] = await Promise.all([
+          infografisAPI.getPenduduk(),
+          infografisAPI.getApbdes(),
+        ]);
+
+        if (pendudukRes.success && Array.isArray(pendudukRes.data) && pendudukRes.data.length > 0) {
+          const latest = pendudukRes.data[0];
+          setPendudukOverview({
+            total: latest.total_penduduk || 0,
+            lakiLaki: latest.laki_laki || 0,
+            perempuan: latest.perempuan || 0,
+            kk: latest.jumlah_kk || 0,
+          });
+        }
+
+        if (apbdesRes.success && Array.isArray(apbdesRes.data) && apbdesRes.data.length > 0) {
+          const latest = apbdesRes.data[0];
+          setApbdesData({
+            pendapatan: {
+              anggaran: Number(latest.pendapatan) || 0,
+              realisasi: Number(latest.pendapatan) || 0,
+              lebihKurang: 0,
+            },
+            belanja: {
+              anggaran: Number(latest.belanja) || 0,
+              realisasi: Number(latest.belanja) || 0,
+              lebihKurang: 0,
+            },
+            pembiayaan: {
+              anggaran: Number(latest.pembiayaan) || 0,
+              realisasi: Number(latest.pembiayaan) || 0,
+              lebihKurang: 0,
+            },
+          });
+        }
+      } catch (err) {
+        console.error('Failed loading infografis data', err);
+        setError(err instanceof Error ? err.message : 'Gagal memuat data infografis');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadInfografis();
+  }, []);
+
   const genderData = [
     { name: 'Laki-Laki', value: pendudukOverview.lakiLaki },
     { name: 'Perempuan', value: pendudukOverview.perempuan },
   ];
+
+  if (loading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <div className="text-center p-10 bg-white dark:bg-slate-900 rounded-3xl shadow-lg border border-slate-200 dark:border-slate-800">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-slate-700 dark:text-slate-300">Memuat data infografis dari Supabase...</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <div className="p-10 bg-red-50 dark:bg-red-900/20 rounded-3xl shadow-lg border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300">
+          <h2 className="text-xl font-bold mb-3">Gagal memuat data</h2>
+          <p>{error}</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">

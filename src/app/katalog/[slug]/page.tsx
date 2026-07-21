@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import MapWrapper from "@/components/katalog/MapWrapper";
+import { prisma } from "@/lib/prisma";
 
 import { ArrowLeft, MapPin, Phone, Calendar, Store, Share2, FileText } from "lucide-react";
 
@@ -12,59 +13,44 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const mockItems = [
-    {
-      id: "1",
-      nama: "BUMDes Ternak Lele",
-      slug: "bumdes-ternak-lele",
-      category: { id: "1", nama: "UMKM" },
-      deskripsi: "Unit usaha peternakan lele yang dikelola oleh BUMDes untuk meningkatkan ketahanan pangan dan ekonomi masyarakat desa.",
-      dusun: "Dusun Satu",
-      fotoUrl: "https://images.unsplash.com/photo-1549419131-7b0b65bf73ab?q=80&w=800",
-      latitude: 3.513335,
-      longitude: 98.681583,
-      kontak: "08123456789",
-      createdAt: new Date().toISOString()
-    }
-  ];
   
-  const item = mockItems.find(i => i.slug === slug);
+  try {
+    const item = await prisma.katalog.findUnique({
+      where: { slug },
+      include: { category: true },
+    });
 
-  if (!item) {
+    if (!item) {
+      return { title: "Katalog Tidak Ditemukan - Desa Suka Makmur" };
+    }
+
+    return {
+      title: `${item.nama} | ${item.category.nama} Desa Suka Makmur`,
+      description: item.deskripsi.substring(0, 160),
+      openGraph: {
+        title: item.nama,
+        description: item.deskripsi.substring(0, 160),
+        images: item.fotoUrl ? [item.fotoUrl] : [],
+      },
+    };
+  } catch (error) {
+    console.error('Error generating metadata for katalog:', error);
     return { title: "Katalog Tidak Ditemukan - Desa Suka Makmur" };
   }
-
-  return {
-    title: `${item.nama} | ${item.category.nama} Desa Suka Makmur`,
-    description: item.deskripsi.substring(0, 160),
-    openGraph: {
-      title: item.nama,
-      description: item.deskripsi.substring(0, 160),
-      images: item.fotoUrl ? [item.fotoUrl] : [],
-    },
-  };
 }
 
 export default async function KatalogDetailPage({ params }: Props) {
   const { slug } = await params;
   
-  const mockItems = [
-    {
-      id: "1",
-      nama: "BUMDes Ternak Lele",
-      slug: "bumdes-ternak-lele",
-      category: { id: "1", nama: "UMKM" },
-      deskripsi: "Unit usaha peternakan lele yang dikelola oleh BUMDes untuk meningkatkan ketahanan pangan dan ekonomi masyarakat desa.",
-      dusun: "Dusun Satu",
-      fotoUrl: "https://images.unsplash.com/photo-1549419131-7b0b65bf73ab?q=80&w=800",
-      latitude: 3.513335,
-      longitude: 98.681583,
-      kontak: "08123456789",
-      createdAt: new Date().toISOString()
-    }
-  ];
-  
-  const item = mockItems.find(i => i.slug === slug);
+  let item;
+  try {
+    item = await prisma.katalog.findUnique({
+      where: { slug },
+      include: { category: true },
+    });
+  } catch (error) {
+    console.error('Error fetching katalog:', error);
+  }
 
   if (!item) {
     notFound();
@@ -142,10 +128,8 @@ export default async function KatalogDetailPage({ params }: Props) {
               <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
                 <FileText size={20} className="text-primary" /> Deskripsi
               </h3>
-              <div className="prose prose-slate dark:prose-invert prose-lg max-w-none">
-                <p className="whitespace-pre-line leading-relaxed text-slate-600 dark:text-slate-300">
-                  {item.deskripsi}
-                </p>
+              <div className="prose prose-slate dark:prose-invert prose-lg max-w-none text-slate-600 dark:text-slate-300 leading-relaxed">
+                <div dangerouslySetInnerHTML={{ __html: item.deskripsi }} />
               </div>
             </div>
           </div>

@@ -1,13 +1,22 @@
 import React from 'react';
 import Link from 'next/link';
 import { Plus, Edit, Trash2, Search, Eye } from 'lucide-react';
+import { prisma } from '@/lib/prisma';
 
-export default function AdminBeritaPage() {
-  const mockBerita = [
-    { id: 1, judul: 'Musrenbangdes Desa Suka Makmur Tahun 2026 Berjalan Lancar', status: 'PUBLISHED', date: '15 Jan 2026', views: 124 },
-    { id: 2, judul: 'Pelatihan Kewirausahaan untuk UMKM Desa', status: 'PUBLISHED', date: '02 Feb 2026', views: 89 },
-    { id: 3, judul: 'Gotong Royong Membersihkan Saluran Irigasi', status: 'DRAFT', date: '28 Feb 2026', views: 0 },
-  ];
+export default async function AdminBeritaPage() {
+  let berita: any[] = [];
+  let error: string | null = null;
+
+  try {
+    berita = await prisma.news.findMany({
+      include: { penulis: { select: { id: true, nama: true } } },
+      take: 50,
+      orderBy: { tanggal_publikasi: 'desc' },
+    });
+  } catch (err) {
+    error = 'Gagal memuat data berita';
+    console.error('Error loading berita:', err);
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -24,6 +33,12 @@ export default function AdminBeritaPage() {
           Tulis Berita
         </Link>
       </div>
+
+      {error && (
+        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400">
+          {error}
+        </div>
+      )}
 
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
         <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/20">
@@ -44,12 +59,12 @@ export default function AdminBeritaPage() {
                 <th className="px-6 py-4">Judul Berita</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Tanggal Publikasi</th>
-                <th className="px-6 py-4 text-center">Views</th>
+                <th className="px-6 py-4">Penulis</th>
                 <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-              {mockBerita.map((item) => (
+              {berita.map((item: any) => (
                 <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                   <td className="px-6 py-4 font-medium text-slate-900 dark:text-white max-w-md truncate">
                     {item.judul}
@@ -63,23 +78,38 @@ export default function AdminBeritaPage() {
                       {item.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4">{item.date}</td>
-                  <td className="px-6 py-4 text-center">{item.views}</td>
+                  <td className="px-6 py-4">{new Date(item.tanggal_publikasi).toLocaleDateString('id-ID')}</td>
+                  <td className="px-6 py-4">{item.penulis?.nama || 'Unknown'}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors" title="Lihat">
+                      <Link href={`/berita/${item.slug}`} target="_blank" className="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors" title="Lihat">
                         <Eye size={18} />
-                      </button>
-                      <Link href={`/admin/berita/${item.id}/edit`} className="p-2 text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-colors inline-block" title="Edit">
+                      </Link>
+                      <Link href={`/admin/berita/${item.slug}/edit`} className="p-2 text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-colors inline-block" title="Edit">
                         <Edit size={18} />
                       </Link>
-                      <button className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors" title="Hapus">
-                        <Trash2 size={18} />
-                      </button>
+                      <form
+                        action={async () => {
+                          'use server';
+                          await prisma.news.delete({ where: { slug: item.slug } });
+                        }}
+                        className="inline"
+                      >
+                        <button className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors" title="Hapus" type="submit">
+                          <Trash2 size={18} />
+                        </button>
+                      </form>
                     </div>
                   </td>
                 </tr>
               ))}
+              {berita.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-6 py-8 text-center text-slate-500">
+                    Belum ada data berita.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
