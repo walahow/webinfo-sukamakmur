@@ -1,22 +1,23 @@
 import React from 'react';
-import { Users, Map, Newspaper, FileText, TrendingUp, AlertCircle } from 'lucide-react';
+import { Users, Map, Newspaper, FileText, TrendingUp, AlertCircle, Inbox } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 
 export default async function AdminDashboard() {
-  const [newsCount, katalogCount, ppidCount] = await Promise.all([
+  const [newsCount, katalogCount, ppidCount, pengaduanCount] = await Promise.all([
     prisma.news.count(),
     prisma.katalog.count(),
     prisma.document.count(),
+    prisma.pengaduan.count(),
   ]).catch(async () => {
-    return [0, 0, 0];
+    return [0, 0, 0, 0];
   });
 
   const stats = [
+    { name: 'Kotak Masukan / Aduan', value: pengaduanCount.toString(), icon: Inbox, color: 'text-purple-600 bg-purple-100 dark:text-purple-400 dark:bg-purple-900/30', href: '/admin/inbox' },
     { name: 'Total Berita', value: newsCount.toString(), icon: Newspaper, color: 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/30', href: '/admin/berita' },
     { name: 'Katalog UMKM/Wisata', value: katalogCount.toString(), icon: Map, color: 'text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900/30', href: '/admin/katalog' },
     { name: 'Dokumen PPID', value: ppidCount.toString(), icon: FileText, color: 'text-amber-600 bg-amber-100 dark:text-amber-400 dark:bg-amber-900/30', href: '/admin/ppid' },
-    { name: 'Kunjungan Web (Bulan Ini)', value: '—', icon: Users, color: 'text-purple-600 bg-purple-100 dark:text-purple-400 dark:bg-purple-900/30', href: '#' },
   ];
 
   return (

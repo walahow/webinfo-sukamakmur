@@ -5,11 +5,18 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Phone, Mail, Play, MapPin, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { profileAPI } from '@/lib/api';
+import { profileAPI, pengaduanAPI } from '@/lib/api';
 
 export function Footer() {
   const [openSection, setOpenSection] = useState<string | null>(null);
   const [kepalaDesaName, setKepalaDesaName] = useState('Kepala Desa (Bpk. Aldo)');
+
+  // State for Kotak Masukan form
+  const [namaMasukan, setNamaMasukan] = useState('');
+  const [pesanMasukan, setPesanMasukan] = useState('');
+  const [masukanSending, setMasukanSending] = useState(false);
+  const [masukanSuccess, setMasukanSuccess] = useState(false);
+  const [masukanError, setMasukanError] = useState<string | null>(null);
 
   const toggleSection = (section: string) => {
     setOpenSection(openSection === section ? null : section);
@@ -176,22 +183,67 @@ export function Footer() {
             )}>
               <div className="space-y-4 pb-4 md:pb-0">
                 <p className="text-sm text-slate-400">Punya saran atau keluhan? Sampaikan kepada kami untuk Desa Suka Makmur yang lebih baik.</p>
-                <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
+                <form className="flex flex-col gap-3" onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!pesanMasukan.trim()) {
+                    setMasukanError('Pesan masukan wajib diisi');
+                    return;
+                  }
+                  try {
+                    setMasukanSending(true);
+                    setMasukanError(null);
+                    setMasukanSuccess(false);
+
+                    const res = await pengaduanAPI.create({
+                      nama_pelapor: namaMasukan,
+                      deskripsi: pesanMasukan,
+                    });
+
+                    if (res.success) {
+                      setMasukanSuccess(true);
+                      setNamaMasukan('');
+                      setPesanMasukan('');
+                    } else {
+                      setMasukanError(res.error || 'Gagal mengirim masukan');
+                    }
+                  } catch (err) {
+                    setMasukanError('Terjadi kesalahan. Coba lagi.');
+                  } finally {
+                    setMasukanSending(false);
+                  }
+                }}>
+                  {masukanSuccess && (
+                    <div className="p-3 bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs rounded-lg animate-in fade-in">
+                      ✓ Masukan Anda berhasil dikirim! Terima kasih atas partisipasi Anda.
+                    </div>
+                  )}
+                  {masukanError && (
+                    <div className="p-3 bg-red-950/80 border border-red-800 text-red-300 text-xs rounded-lg animate-in fade-in">
+                      {masukanError}
+                    </div>
+                  )}
                   <input
                     type="text"
                     placeholder="Nama (Opsional)"
-                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                    value={namaMasukan}
+                    onChange={(e) => setNamaMasukan(e.target.value)}
+                    disabled={masukanSending}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all disabled:opacity-50"
                   />
                   <textarea
                     placeholder="Pesan Anda..."
                     rows={3}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none"
+                    value={pesanMasukan}
+                    onChange={(e) => setPesanMasukan(e.target.value)}
+                    disabled={masukanSending}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none disabled:opacity-50"
                   ></textarea>
                   <button
-                    type="button"
-                    className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-lg text-sm transition-colors"
+                    type="submit"
+                    disabled={masukanSending}
+                    className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-lg text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    Kirim Masukan
+                    {masukanSending ? 'Sending...' : 'Kirim Masukan'}
                   </button>
                 </form>
               </div>

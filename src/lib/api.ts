@@ -145,3 +145,21 @@ export const infografisAPI = {
   deleteStunting: (id: string) =>
     apiCall("DELETE", "/api/infografis/stunting", { id }),
 };
+
+// Pengaduan / Kotak Masukan API
+export const pengaduanAPI = {
+  getAll: (status?: string, search?: string) => {
+    let url = "/api/pengaduan";
+    const params = new URLSearchParams();
+    if (status && status !== "ALL") params.append("status", status);
+    if (search) params.append("search", search);
+    if (params.toString()) url += `?${params.toString()}`;
+    return apiCall("GET", url);
+  },
+  create: (data: { nama_pelapor?: string; kontak?: string; judul?: string; deskripsi: string }) =>
+    apiCall("POST", "/api/pengaduan", data),
+  updateStatus: (id: string, status: "PENDING" | "PROSES" | "SELESAI") =>
+    apiCall("PUT", `/api/pengaduan/${id}`, { status }),
+  delete: (id: string) => apiCall("DELETE", `/api/pengaduan/${id}`),
+};
+
