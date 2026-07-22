@@ -96,10 +96,13 @@ export default async function Home() {
   const latestNews = newsItems[0];
   const moreNews = newsItems.slice(1);
 
-  const totalPenduduk = profile?.jumlah_penduduk ?? pendudukStat?.total_penduduk ?? 0;
+  // Prioritas: pendudukStat (diisi dari admin infografis) → profile → 0
+  const totalPenduduk = (pendudukStat?.total_penduduk ?? 0) > 0
+    ? pendudukStat!.total_penduduk
+    : (profile?.jumlah_penduduk ?? 0);
   const luasWilayah = profile?.luas_wilayah || "Belum diisi";
   const realisasiDana = profile?.realisasi_dana_desa_persen ?? 0;
-  const umkmAktif = profile?.umkm_aktif || katalogCount || 0;
+  const umkmAktif = profile?.umkm_aktif ?? 0;
 
   return (
     <main className="flex min-h-screen flex-col items-center overflow-x-hidden">
