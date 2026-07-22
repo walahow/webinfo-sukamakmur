@@ -18,6 +18,9 @@ export default function ProfileAdmin() {
     sambutan_kepdes: '',
     jumlah_penduduk: 0,
     luas_wilayah: '',
+    batas_desa: '',
+    koordinat: '',
+    peta_url: '',
     realisasi_dana_desa_persen: 0,
     umkm_aktif: 0,
   });
@@ -52,6 +55,9 @@ export default function ProfileAdmin() {
           sambutan_kepdes: profile.sambutan_kepdes || '',
           jumlah_penduduk: profile.jumlah_penduduk || 0,
           luas_wilayah: profile.luas_wilayah || '',
+          batas_desa: profile.batas_desa || '',
+          koordinat: profile.koordinat || '',
+          peta_url: profile.peta_url || '',
           realisasi_dana_desa_persen: profile.realisasi_dana_desa_persen || 0,
           umkm_aktif: profile.umkm_aktif || 0,
         });
@@ -96,6 +102,9 @@ export default function ProfileAdmin() {
         sambutan_kepdes: profilUmum.sambutan_kepdes,
         jumlah_penduduk: profilUmum.jumlah_penduduk,
         luas_wilayah: profilUmum.luas_wilayah,
+        batas_desa: profilUmum.batas_desa,
+        koordinat: profilUmum.koordinat,
+        peta_url: profilUmum.peta_url,
         realisasi_dana_desa_persen: profilUmum.realisasi_dana_desa_persen,
         umkm_aktif: profilUmum.umkm_aktif,
       });
@@ -297,6 +306,32 @@ export default function ProfileAdmin() {
                 </div>
 
                 <div>
+                  <label className="block text-sm font-medium mb-2">Koordinat</label>
+                  <input
+                    type="text"
+                    value={profilUmum.koordinat}
+                    onChange={(e) =>
+                      setProfilUmum({ ...profilUmum, koordinat: e.target.value })
+                    }
+                    placeholder="Contoh: 3.514,-98.678"
+                    className="w-full px-3 py-2 border rounded-lg"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Batas Desa</label>
+                  <input
+                    type="text"
+                    value={profilUmum.batas_desa}
+                    onChange={(e) =>
+                      setProfilUmum({ ...profilUmum, batas_desa: e.target.value })
+                    }
+                    placeholder="Contoh: Utara: Medan Johor"
+                    className="w-full px-3 py-2 border rounded-lg"
+                  />
+                </div>
+
+                <div>
                   <label className="block text-sm font-medium mb-2">Realisasi Dana Desa (%)</label>
                   <div className="flex gap-2 items-center">
                     <input
@@ -311,6 +346,19 @@ export default function ProfileAdmin() {
                     />
                     <span className="text-gray-500">%</span>
                   </div>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium mb-2">Embed URL Peta</label>
+                  <input
+                    type="text"
+                    value={profilUmum.peta_url}
+                    onChange={(e) =>
+                      setProfilUmum({ ...profilUmum, peta_url: e.target.value })
+                    }
+                    placeholder="Contoh: https://www.google.com/maps/embed?..."
+                    className="w-full px-3 py-2 border rounded-lg"
+                  />
                 </div>
 
                 <div>

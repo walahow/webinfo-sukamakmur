@@ -8,6 +8,70 @@ import { RichTextEditor } from '@/components/ui/RichTextEditor';
 export default function EditBeritaPage() {
   const [content, setContent] = useState('<p>Ini adalah contoh konten yang sudah ada untuk berita ini. Anda dapat mengeditnya di sini.</p>');
   const [title, setTitle] = useState('Pelatihan Kewirausahaan untuk UMKM Desa');
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setCoverFile(file);
+      const reader = new FileReader();
+      reader.onload = (ev) => setCoverPreview(ev.target?.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const getSlugFromPath = () => {
+    if (typeof window === 'undefined') return null;
+    const parts = window.location.pathname.split('/').filter(Boolean);
+    // Expected path: /admin/berita/[slug]/edit
+    const idx = parts.indexOf('berita');
+    if (idx >= 0 && parts.length > idx + 1) return parts[idx + 1];
+    return null;
+  };
+
+  React.useEffect(() => {
+    const slug = getSlugFromPath();
+    if (!slug) return;
+    (async () => {
+      try {
+        const res = await fetch(`/api/news/${slug}`);
+        if (!res.ok) return;
+        const json = await res.json();
+        const data = json.data;
+        setTitle(data.judul || '');
+        setContent(data.konten || '');
+        setCoverPreview(data.cover_url || null);
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+  }, []);
+
+  const handleSave = async () => {
+    const slug = getSlugFromPath();
+    if (!slug) return alert('Tidak dapat menentukan berita');
+    setSaving(true);
+    try {
+      let cover_url = coverPreview || '';
+      if (coverFile) {
+        const formData = new FormData();
+        formData.append('file', coverFile);
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
+        if (!res.ok) throw new Error('Gagal upload');
+        const data = await res.json();
+        cover_url = data.url;
+      }
+      const payload = { judul: title, konten: content, status: 'PUBLISHED', cover_url };
+      const putRes = await fetch(`/api/news/${slug}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!putRes.ok) throw new Error('Gagal menyimpan');
+      alert('Perubahan berhasil disimpan');
+      window.location.href = '/admin/berita';
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Gagal');
+    } finally { setSaving(false); }
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl">
@@ -38,11 +102,21 @@ export default function EditBeritaPage() {
           <div className="space-y-3">
             <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Foto Cover (Vercel Blob)</label>
             <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 flex flex-col items-center justify-center text-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
-              <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-full flex items-center justify-center mb-4 transition-transform">
                 <ImageIcon size={32} />
               </div>
               <h4 className="text-slate-700 dark:text-slate-300 font-semibold">Ganti Gambar (Klik/Seret)</h4>
               <p className="text-slate-500 text-sm mt-1">Mendukung format JPG, PNG (Maks 5MB)</p>
+              <label className="mt-3 block border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-4 text-center cursor-pointer">
+                <input type="file" accept="image/*" className="hidden" onChange={handleCoverChange} />
+                <Upload size={20} className="mx-auto mb-2 text-gray-400" />
+                <p className="text-sm text-gray-600">Klik untuk memilih gambar</p>
+              </label>
+              {coverPreview && (
+                <div className="mt-3">
+                  <img src={coverPreview} className="w-full h-40 object-cover rounded" alt="preview" />
+                </div>
+              )}
             </div>
           </div>
 

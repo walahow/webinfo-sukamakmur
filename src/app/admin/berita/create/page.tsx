@@ -8,6 +8,54 @@ import { RichTextEditor } from '@/components/ui/RichTextEditor';
 export default function CreateBeritaPage() {
   const [content, setContent] = useState('');
   const [title, setTitle] = useState('');
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setCoverFile(file);
+      const reader = new FileReader();
+      reader.onload = (ev) => setCoverPreview(ev.target?.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const slugify = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+
+  const handlePublish = async (publish: boolean) => {
+    if (!title.trim()) return alert('Judul wajib diisi');
+    setSaving(true);
+    try {
+      let cover_url = '';
+      if (coverFile) {
+        const formData = new FormData();
+        formData.append('file', coverFile);
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
+        if (!res.ok) throw new Error('Gagal upload');
+        const data = await res.json();
+        cover_url = data.url;
+      }
+      const payload = {
+        judul: title,
+        slug: slugify(title),
+        konten: content,
+        penulis_id: 'system',
+        status: publish ? 'PUBLISHED' : 'DRAFT',
+        cover_url,
+      };
+      const createRes = await fetch('/api/news', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!createRes.ok) {
+        const err = await createRes.json().catch(()=>null);
+        throw new Error(err?.error?.message || 'Gagal menyimpan berita');
+      }
+      alert('Berhasil disimpan');
+      window.location.href = '/admin/berita';
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Gagal');
+    } finally { setSaving(false); }
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl">
@@ -44,9 +92,15 @@ export default function CreateBeritaPage() {
               </div>
               <h4 className="text-slate-700 dark:text-slate-300 font-semibold">Klik atau seret gambar ke sini</h4>
               <p className="text-slate-500 text-sm mt-1">Mendukung format JPG, PNG (Maks 5MB)</p>
-              <button type="button" className="mt-4 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium flex items-center gap-2 hover:border-primary hover:text-primary transition-colors">
+              <label className="mt-4 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium flex items-center gap-2 hover:border-primary hover:text-primary transition-colors cursor-pointer">
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) { setCoverFile(f); const r = new FileReader(); r.onload = (ev) => setCoverPreview(ev.target?.result as string); r.readAsDataURL(f); } }} />
                 <Upload size={16} /> Pilih File
-              </button>
+              </label>
+              {coverPreview && (
+                <div className="mt-3">
+                  <img src={coverPreview} className="w-48 h-28 object-cover rounded" alt="preview" />
+                </div>
+              )}
             </div>
           </div>
 
@@ -58,12 +112,12 @@ export default function CreateBeritaPage() {
           </div>
 
           <div className="flex justify-end gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-            <button type="button" className="px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-              Simpan Draf
+            <button type="button" onClick={() => handlePublish(false)} disabled={saving} className="px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50">
+              {saving ? 'Menyimpan...' : 'Simpan Draf'}
             </button>
-            <button type="button" className="px-6 py-3 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all flex items-center gap-2">
+            <button type="button" onClick={() => handlePublish(true)} disabled={saving} className="px-6 py-3 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all flex items-center gap-2 disabled:opacity-50">
               <Save size={18} />
-              Publikasikan
+              {saving ? 'Menyimpan...' : 'Publikasikan'}
             </button>
           </div>
 

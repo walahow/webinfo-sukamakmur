@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Users, Home, User, TrendingUp, Wallet } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
-import { infografisAPI } from "@/lib/api";
-import { cn } from "@/lib/utils";
+import { infografisAPI, profileAPI } from "@/lib/api";
+import ProfileMapWrapper from "@/components/profil/ProfileMapWrapper";
 
 const PIE_COLORS = ['#0ea5e9', '#ec4899'];
 
@@ -35,15 +35,10 @@ const defaultPendudukOverview = {
   kk: 0,
 };
 
-const defaultApbdesData = {
-  pendapatan: { anggaran: 0, realisasi: 0, lebihKurang: 0 },
-  belanja: { anggaran: 0, realisasi: 0, lebihKurang: 0 },
-  pembiayaan: { anggaran: 0, realisasi: 0, lebihKurang: 0 },
-};
-
 export default function InfografisPage() {
+  const [profile, setProfile] = useState<any>(null);
   const [pendudukOverview, setPendudukOverview] = useState(defaultPendudukOverview);
-  const [apbdesData, setApbdesData] = useState(defaultApbdesData);
+  const [apbdesRecord, setApbdesRecord] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,10 +48,15 @@ export default function InfografisPage() {
       setError(null);
 
       try {
-        const [pendudukRes, apbdesRes] = await Promise.all([
+        const [profileRes, pendudukRes, apbdesRes] = await Promise.all([
+          profileAPI.get(),
           infografisAPI.getPenduduk(),
           infografisAPI.getApbdes(),
         ]);
+
+        if (profileRes.success && profileRes.data?.profile) {
+          setProfile(profileRes.data.profile);
+        }
 
         if (pendudukRes.success && Array.isArray(pendudukRes.data) && pendudukRes.data.length > 0) {
           const latest = pendudukRes.data[0];
@@ -69,24 +69,7 @@ export default function InfografisPage() {
         }
 
         if (apbdesRes.success && Array.isArray(apbdesRes.data) && apbdesRes.data.length > 0) {
-          const latest = apbdesRes.data[0];
-          setApbdesData({
-            pendapatan: {
-              anggaran: Number(latest.pendapatan) || 0,
-              realisasi: Number(latest.pendapatan) || 0,
-              lebihKurang: 0,
-            },
-            belanja: {
-              anggaran: Number(latest.belanja) || 0,
-              realisasi: Number(latest.belanja) || 0,
-              lebihKurang: 0,
-            },
-            pembiayaan: {
-              anggaran: Number(latest.pembiayaan) || 0,
-              realisasi: Number(latest.pembiayaan) || 0,
-              lebihKurang: 0,
-            },
-          });
+          setApbdesRecord(apbdesRes.data[0]);
         }
       } catch (err) {
         console.error('Failed loading infografis data', err);
@@ -103,6 +86,45 @@ export default function InfografisPage() {
     { name: 'Laki-Laki', value: pendudukOverview.lakiLaki },
     { name: 'Perempuan', value: pendudukOverview.perempuan },
   ];
+
+  const apbdes = apbdesRecord ?? {
+    tahun: new Date().getFullYear(),
+    pendapatan: 0,
+    belanja: 0,
+    pembiayaan: 0,
+    kategori_belanja: {},
+  };
+
+  const totalPenduduk = profile?.jumlah_penduduk ?? pendudukOverview.total;
+  const luasWilayah = profile?.luas_wilayah ?? 'Belum tersedia';
+  const umkmAktif = profile?.umkm_aktif ?? 0;
+  const realisasiDana = apbdes.pendapatan > 0
+    ? Math.round((Number(apbdes.belanja) / Number(apbdes.pendapatan)) * 100)
+    : 0;
+
+  const tableValue = (type: 'pendapatan' | 'belanja' | 'pembiayaan') => {
+    if (type === 'pendapatan') {
+      return {
+        anggaran: apbdes.pendapatan,
+        realisasi: apbdes.belanja,
+        lebihKurang: apbdes.pendapatan - apbdes.belanja,
+      };
+    }
+
+    if (type === 'belanja') {
+      return {
+        anggaran: apbdes.belanja,
+        realisasi: apbdes.belanja,
+        lebihKurang: 0,
+      };
+    }
+
+    return {
+      anggaran: apbdes.pembiayaan,
+      realisasi: apbdes.pembiayaan,
+      lebihKurang: 0,
+    };
+  };
 
   if (loading) {
     return (
@@ -138,12 +160,72 @@ export default function InfografisPage() {
             Infografis & Statistik
           </h1>
           <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto md:mx-0">
-            Transparansi data Desa Suka Makmur yang disajikan secara visual. Meliputi data kependudukan dan transparansi APBDesa.
+            Ringkasan data kependudukan dan transparansi APBDes terbaru, langsung dari database desa.
           </p>
         </div>
       </header>
 
-      {/* 1. PENDUDUK SECTION */}
+      <section className="w-full py-20 bg-slate-50 dark:bg-slate-950">
+        <div className="container mx-auto max-w-6xl px-4 md:px-6">
+          <div className="grid gap-6 md:grid-cols-4">
+            {[
+              {
+                title: 'Total Penduduk',
+                value: totalPenduduk,
+                subtitle: 'Jiwa terdaftar',
+                icon: Users,
+                bg: 'bg-sky-50 text-sky-600',
+              },
+              {
+                title: 'Luas Wilayah',
+                value: luasWilayah,
+                subtitle: 'Hektar area produktif',
+                icon: Home,
+                bg: 'bg-emerald-50 text-emerald-600',
+              },
+              {
+                title: 'Realisasi Dana Desa',
+                value: `${realisasiDana}%`,
+                subtitle: 'Terserap untuk pembangunan',
+                icon: Wallet,
+                bg: 'bg-amber-50 text-amber-600',
+              },
+              {
+                title: 'UMKM Aktif',
+                value: umkmAktif,
+                subtitle: 'Unit usaha terdaftar',
+                icon: TrendingUp,
+                bg: 'bg-fuchsia-50 text-fuchsia-600',
+              },
+            ].map((card, idx) => {
+              const Icon = card.icon;
+              return (
+                <div key={idx} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all">
+                  <div className={`inline-flex items-center justify-center w-14 h-14 rounded-3xl ${card.bg} mb-5`}>
+                    <Icon size={24} />
+                  </div>
+                  <div className="text-3xl font-black text-slate-900 dark:text-white mb-2">
+                    {typeof card.value === 'number'
+                      ? new Intl.NumberFormat('id-ID').format(card.value)
+                      : card.value}
+                  </div>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{card.subtitle}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-10 text-center">
+            <Link href="#apbdes" className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/10 hover:bg-blue-700 transition-colors">
+              Lihat Laporan Lengkap
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      
+
       <section id="penduduk" className="w-full py-24 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800">
         <div className="container mx-auto max-w-6xl px-4 md:px-6">
           <div className="mb-16 text-center max-w-2xl mx-auto">
@@ -163,7 +245,7 @@ export default function InfografisPage() {
                 { label: 'Perempuan', value: pendudukOverview.perempuan, icon: User, color: 'text-pink-500' },
               ].map((stat, i) => (
                 <div key={i} className="flex flex-col items-center justify-center p-6 sm:p-8 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
-                  <stat.icon size={32} className={cn("mb-6", stat.color)} />
+                  <stat.icon size={32} className={`mb-6 ${stat.color}`} />
                   <span className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white mb-2">{stat.value}</span>
                   <span className="text-base font-semibold text-slate-500 dark:text-slate-400 text-center uppercase tracking-wider">{stat.label}</span>
                 </div>
@@ -226,6 +308,7 @@ export default function InfografisPage() {
             </div>
             <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Transparansi APBDesa</h2>
             <p className="text-slate-500 mt-4 text-lg">Ringkasan Anggaran, Realisasi, dan Selisih APBDesa tahun berjalan.</p>
+            <p className="text-sm text-slate-400 mt-2">Data APBDesa tahun {apbdes.tahun}</p>
           </div>
 
           <div className="bg-slate-50 dark:bg-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
@@ -251,13 +334,13 @@ export default function InfografisPage() {
                       </div>
                     </td>
                     <td className="p-6 text-right font-mono text-slate-700 dark:text-slate-300">
-                      {formatCurrency(apbdesData.pendapatan.anggaran)}
+                      {formatCurrency(tableValue('pendapatan').anggaran)}
                     </td>
                     <td className="p-6 text-right font-mono text-emerald-600 dark:text-emerald-400 font-medium">
-                      {formatCurrency(apbdesData.pendapatan.realisasi)}
+                      {formatCurrency(tableValue('pendapatan').realisasi)}
                     </td>
                     <td className="p-6 text-right font-mono text-slate-500 dark:text-slate-400">
-                      {formatCurrency(apbdesData.pendapatan.lebihKurang)}
+                      {formatCurrency(tableValue('pendapatan').lebihKurang)}
                     </td>
                   </tr>
                   
@@ -272,13 +355,13 @@ export default function InfografisPage() {
                       </div>
                     </td>
                     <td className="p-6 text-right font-mono text-slate-700 dark:text-slate-300">
-                      {formatCurrency(apbdesData.belanja.anggaran)}
+                      {formatCurrency(tableValue('belanja').anggaran)}
                     </td>
                     <td className="p-6 text-right font-mono text-rose-600 dark:text-rose-400 font-medium">
-                      {formatCurrency(apbdesData.belanja.realisasi)}
+                      {formatCurrency(tableValue('belanja').realisasi)}
                     </td>
                     <td className="p-6 text-right font-mono text-slate-500 dark:text-slate-400">
-                      {formatCurrency(apbdesData.belanja.lebihKurang)}
+                      {formatCurrency(tableValue('belanja').lebihKurang)}
                     </td>
                   </tr>
 
@@ -293,13 +376,13 @@ export default function InfografisPage() {
                       </div>
                     </td>
                     <td className="p-6 text-right font-mono text-slate-700 dark:text-slate-300">
-                      {formatCurrency(apbdesData.pembiayaan.anggaran)}
+                      {formatCurrency(tableValue('pembiayaan').anggaran)}
                     </td>
                     <td className="p-6 text-right font-mono text-blue-600 dark:text-blue-400 font-medium">
-                      {formatCurrency(apbdesData.pembiayaan.realisasi)}
+                      {formatCurrency(tableValue('pembiayaan').realisasi)}
                     </td>
                     <td className="p-6 text-right font-mono text-slate-500 dark:text-slate-400">
-                      {formatCurrency(apbdesData.pembiayaan.lebihKurang)}
+                      {formatCurrency(tableValue('pembiayaan').lebihKurang)}
                     </td>
                   </tr>
                 </tbody>

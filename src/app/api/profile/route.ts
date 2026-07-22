@@ -97,12 +97,74 @@ export async function GET() {
   }
 }
 
+const profilePrismaColumns = new Set([
+  'id',
+  'sejarah',
+  'visi',
+  'misi',
+  'sambutan_kepdes',
+  'peta_url',
+  'koordinat',
+  'batas_desa',
+  'luas_wilayah',
+  'jumlah_penduduk',
+  'realisasi_dana_desa_persen',
+  'umkm_aktif',
+  'updatedAt',
+]);
+
+async function getSafeVillageProfileColumns() {
+  const cols: Array<{ column_name: string }> = await prisma.$queryRaw`
+    SELECT column_name
+    FROM information_schema.columns
+    WHERE lower(table_name) = 'villageprofile'
+  `;
+  return new Set(cols.map((c) => c.column_name));
+}
+
+async function findExistingVillageProfile(allowedColumns: Set<string>) {
+  const selected = Array.from(allowedColumns).reduce((acc: Record<string, true>, column) => {
+    if (profilePrismaColumns.has(column)) {
+      acc[column] = true;
+    }
+    return acc;
+  }, {});
+
+  if (Object.keys(selected).length === 0) {
+    return null;
+  }
+
+  return prisma.villageProfile.findFirst({ select: selected as any });
+}
+
+function buildSqlUpdateSet(data: Record<string, any>) {
+  return Object.keys(data)
+    .map((key, idx) => `"${key}" = $${idx + 1}`)
+    .join(', ');
+}
+
+function buildSqlInsertColumns(data: Record<string, any>) {
+  return Object.keys(data)
+    .map((key) => `"${key}"`)
+    .join(', ');
+}
+
+function buildSqlInsertPlaceholders(data: Record<string, any>) {
+  return Object.keys(data)
+    .map((_, idx) => `$${idx + 1}`)
+    .join(', ');
+}
+
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Find existing profile if any
-    const existing = await prisma.villageProfile.findFirst();
+    const dbColumns = await getSafeVillageProfileColumns();
+    const allowed = new Set(
+      Array.from(dbColumns).filter((column) => profilePrismaColumns.has(column))
+    );
+
+    const existing = await findExistingVillageProfile(allowed);
 
     // Build a safe `data` object: only include keys that are present or
     // that we can coerce to the expected types. This avoids sending
@@ -146,16 +208,6 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    // Before calling Prisma update/create, ensure the columns exist in the DB
-    // (use information_schema to discover available columns). This helps when
-    // the Prisma client schema is out-of-sync with the actual DB (some columns
-    // may be absent) — in that case we filter out unknown keys to avoid
-    // `Unknown argument` errors.
-    const cols: Array<{ column_name: string }> = await prisma.$queryRaw`
-      SELECT column_name FROM information_schema.columns WHERE lower(table_name) = 'villageprofile'
-    `;
-    const allowed = new Set(cols.map(c => c.column_name));
-
     const filteredData = Object.fromEntries(
       Object.entries(data).filter(([k]) => allowed.has(k))
     );
@@ -168,9 +220,12 @@ export async function PUT(req: NextRequest) {
           { status: 400 }
         );
       }
-      // perform update with filtered keys
-      const safeData: any = filteredData;
-      profile = await prisma.villageProfile.update({ where: { id: existing.id }, data: safeData });
+
+      const setClause = buildSqlUpdateSet(filteredData);
+      const updateValues = Object.values(filteredData);
+      const updateQuery = `UPDATE "VillageProfile" SET ${setClause} WHERE id = $${updateValues.length + 1} RETURNING *;`;
+      const updatedRows: any = await prisma.$queryRawUnsafe(updateQuery, ...updateValues, existing.id);
+      profile = Array.isArray(updatedRows) ? updatedRows[0] : updatedRows;
     } else {
       // when creating, ensure required fields exist or provide defaults
       const createData = {
@@ -183,13 +238,16 @@ export async function PUT(req: NextRequest) {
         batas_desa: data.batas_desa,
         luas_wilayah: data.luas_wilayah,
         jumlah_penduduk: data.jumlah_penduduk,
-        realisasi_dana_desa_persen: data.realisasi_dana_desa_persen ?? 0,
-        umkm_aktif: data.umkm_aktif ?? 0,
       };
       const filteredCreate = Object.fromEntries(
         Object.entries(createData).filter(([k]) => allowed.has(k))
       );
-      profile = await prisma.villageProfile.create({ data: filteredCreate as any });
+      const columns = buildSqlInsertColumns(filteredCreate);
+      const placeholders = buildSqlInsertPlaceholders(filteredCreate);
+      const insertValues = Object.values(filteredCreate);
+      const insertQuery = `INSERT INTO "VillageProfile" (${columns}) VALUES (${placeholders}) RETURNING *;`;
+      const insertedRows: any = await prisma.$queryRawUnsafe(insertQuery, ...insertValues);
+      profile = Array.isArray(insertedRows) ? insertedRows[0] : insertedRows;
     }
 
     return NextResponse.json({ data: profile, meta: { total: 1 } });

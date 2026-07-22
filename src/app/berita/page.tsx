@@ -1,12 +1,19 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Calendar, User, Newspaper } from "lucide-react";
-import { mockBerita } from "@/lib/mock";
+import { ArrowRight, Calendar, Newspaper } from "lucide-react";
+import { prisma } from "@/lib/prisma";
 
-export default function BeritaPage() {
-  const featuredNews = mockBerita[0];
-  const secondaryNews = mockBerita.slice(1, 4);
-  const otherNews = mockBerita.slice(4);
+export default async function BeritaPage() {
+  const berita = await prisma.news.findMany({
+    where: { status: "PUBLISHED" },
+    orderBy: { tanggal_publikasi: "desc" },
+    include: { penulis: { select: { id: true, nama: true } } },
+    take: 9,
+  });
+
+  const featuredNews = berita[0];
+  const secondaryNews = berita.slice(1, 4);
+  const otherNews = berita.slice(4);
 
   return (
     <main className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-24 pb-16 px-4 md:px-6">

@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { Users, Map, Target, MapPin, Flag, Navigation } from 'lucide-react';
-import { profileAPI } from '@/lib/api';
-import ProfileMapWrapper from '@/components/profil/ProfileMapWrapper';
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import { Users, Map, Target, MapPin, Flag, Navigation } from "lucide-react";
+import { profileAPI } from "@/lib/api";
+import ProfileMapWrapper from "@/components/profil/ProfileMapWrapper";
 
 export default function ProfilPageClient() {
   const [data, setData] = useState<any>({ profile: null, struktur: [] });
@@ -28,26 +28,26 @@ export default function ProfilPageClient() {
     return () => { mounted = false; };
   }, []);
 
-  const profile = data.profile;
+  const profile = data.profile || {};
   const struktur = data.struktur || [];
   const kepalaDesa = struktur.find((p: any) => p.urutan === 1);
   const perangkatLain = struktur.filter((p: any) => p.urutan !== 1);
 
   return (
     <main className="flex min-h-screen flex-col items-center overflow-x-hidden">
-      {/* Hero header */}
+      {/* HERO */}
       <section className="relative w-full h-[40vh] min-h-[300px] flex flex-col justify-center items-center text-center px-4">
         <div className="absolute inset-0 bg-slate-900/60 z-10" />
         <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/mock-data/hero-bg.jpg')" }} />
         <div className="relative z-20 max-w-4xl flex flex-col items-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <div className="w-16 h-1 bg-primary rounded-full mb-2"></div>
+          <div className="w-16 h-1 bg-primary rounded-full mb-2" />
           <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight">Profil Desa Suka Makmur</h1>
           <p className="text-lg text-slate-200 max-w-2xl font-light">Mengenal lebih dekat sejarah, visi misi, dan jajaran aparatur desa kami.</p>
         </div>
       </section>
 
-      {/* Perangkat Desa */}
-      <section id="perangkat" className="w-full py-24 px-4 scroll-margin-top bg-white/90 dark:bg-black/90 backdrop-blur-md">
+      {/* PERANGKAT */}
+      <section id="perangkat" className="w-full py-24 px-4 scroll-margin-top bg-white/90 dark:bg-black/90 backdrop-blur-sm">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Pemerintahan Desa</h2>
@@ -67,7 +67,7 @@ export default function ProfilPageClient() {
               <div className="text-center md:text-left space-y-4">
                 <div className="inline-flex px-4 py-1.5 rounded-full bg-primary/10 text-primary font-bold text-sm tracking-wide uppercase">{kepalaDesa.jabatan}</div>
                 <h4 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white">{kepalaDesa.nama_pejabat}</h4>
-                <p className="text-slate-600 dark:text-slate-400 text-lg italic leading-relaxed">&quot;{profile?.sambutan_kepdes ?? 'Sambutan kepala desa belum tersedia.'}&quot;</p>
+                <p className="text-slate-600 dark:text-slate-400 text-lg italic leading-relaxed">&quot;{profile.sambutan_kepdes ?? 'Sambutan kepala desa belum tersedia.'}&quot;</p>
               </div>
             </div>
           )}
@@ -90,10 +90,10 @@ export default function ProfilPageClient() {
         </div>
       </section>
 
-      {/* Remaining content uses profile and is safe to render client-side */}
-      <div className="w-full bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md">
+      {/* MAIN CONTENT */}
+      <div className="w-full bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-sm">
         <div className="container mx-auto max-w-6xl px-4 py-16 md:py-24 space-y-24">
-          {/* Visi & Misi, Sejarah, Map sections reuse profile variable */}
+          {/* VISI & MISI */}
           <section id="visi-misi" className="scroll-margin-top">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
               <div className="space-y-6 bg-white dark:bg-slate-900 p-8 md:p-12 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
@@ -101,7 +101,7 @@ export default function ProfilPageClient() {
                 <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center relative z-10"><Target size={28} /></div>
                 <div className="relative z-10">
                   <h3 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-4">Visi</h3>
-                  <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed font-medium">&quot;{profile?.visi ?? 'Visi belum tersedia.'}&quot;</p>
+                  <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed font-medium">&quot;{profile.visi ?? 'Visi belum tersedia.'}&quot;</p>
                 </div>
               </div>
 
@@ -111,7 +111,7 @@ export default function ProfilPageClient() {
                 <div className="relative z-10">
                   <h3 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-6">Misi</h3>
                   <ul className="space-y-4">
-                    {profile?.misi?.length ? (
+                    {Array.isArray(profile.misi) && profile.misi.length ? (
                       profile.misi.map((item: any, index: number) => (
                         <li key={index} className="flex gap-4">
                           <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center font-bold text-sm">{index + 1}</span>
@@ -127,6 +127,7 @@ export default function ProfilPageClient() {
             </div>
           </section>
 
+          {/* SEJARAH */}
           <section id="sejarah" className="scroll-margin-top max-w-5xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Rekam Jejak</h2>
@@ -137,7 +138,7 @@ export default function ProfilPageClient() {
                 <Image src="/mock-data/village-profile.jpg" alt="Sejarah Desa Suka Makmur" fill className="object-cover transition-transform duration-700 hover:scale-105" sizes="(max-width: 768px) 100vw, 50vw" />
               </div>
               <div className="flex flex-col justify-center">
-                <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed text-justify">{profile?.sejarah ?? 'Sejarah belum tersedia.'}</p>
+                <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed text-justify">{profile.sejarah ?? 'Sejarah belum tersedia.'}</p>
               </div>
             </div>
           </section>
@@ -145,38 +146,91 @@ export default function ProfilPageClient() {
       </div>
 
       {/* GEOGRAFIS */}
-      <section id="geografis" className="w-full bg-white/90 dark:bg-black/90 backdrop-blur-md py-24 px-4 scroll-margin-top">
+      <section id="geografis" className="w-full bg-white/90 dark:bg-black/90 backdrop-blur-sm py-24 px-4 scroll-margin-top">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Wilayah</h2>
             <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Geografis & Batas Desa</h3>
             <p className="text-slate-600 dark:text-slate-400 mt-4">Informasi demografi dan pemetaan wilayah Desa Suka Makmur.</p>
           </div>
 
-          <div className="flex flex-col gap-8">
-            <div className="w-full relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-md bg-slate-100 dark:bg-slate-900">
-              <ProfileMapWrapper />
-              <div className="absolute bottom-4 left-4 z-[1000] bg-black/60 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 text-white text-xs font-semibold flex items-center gap-1.5 shadow-md pointer-events-none">
-                <MapPin size={14} className="text-primary" />
-                <span>Peta Batas Administrasi Desa</span>
+          {/* Big Map */}
+          <div className="w-full relative h-[420px] md:h-[520px] lg:h-[600px] rounded-[28px] overflow-hidden shadow-lg mb-8 border border-slate-100 dark:border-slate-800">
+            <ProfileMapWrapper />
+            {/* dark pill left bottom like reference */}
+            <div className="absolute bottom-6 left-6 z-[1000] flex items-center gap-3 bg-slate-800/90 text-white px-4 py-2 rounded-full shadow-md pointer-events-none">
+              <div className="w-8 h-8 rounded-full bg-slate-700/80 flex items-center justify-center text-white">
+                <MapPin size={14} />
+              </div>
+              <div className="text-sm font-semibold">Peta Batas Administrasi Desa</div>
+            </div>
+          </div>
+
+          {/* Legend pill centered and dusun chips */}
+          <div className="flex flex-col items-center gap-6 mb-12">
+            <div className="w-fit bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full bg-blue-500" />
+                <div className="text-sm font-semibold text-slate-800 dark:text-white">Batas Wilayah Desa</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 ml-4">Garis batas administrasi Suka Makmur</div>
               </div>
             </div>
 
-            <div className="bg-slate-50 dark:bg-slate-900 p-8 md:p-12 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-0 divide-y md:divide-y-0 md:divide-x divide-slate-200 dark:divide-slate-800">
-                <div className="flex flex-col gap-4 md:pr-12">
-                  <div className="flex items-center gap-4"><div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0"><Navigation size={24} /></div><h4 className="font-bold text-xl text-slate-900 dark:text-white">Batas Wilayah</h4></div>
-                  <div className="grid grid-cols-1 gap-2.5 mt-2 text-sm text-slate-600 dark:text-slate-400">
-                    <div className="flex items-center gap-2 border-b border-slate-200/50 dark:border-slate-800/50 pb-1.5"><span className="font-bold text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500 w-16">Utara</span><span className="font-medium text-slate-700 dark:text-slate-300">Medan Johor</span></div>
-                    <div className="flex items-center gap-2 border-b border-slate-200/50 dark:border-slate-800/50 pb-1.5"><span className="font-bold text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500 w-16">Timur</span><span className="font-medium text-slate-700 dark:text-slate-300">Mekar Sari</span></div>
-                    <div className="flex items-center gap-2 border-b border-slate-200/50 dark:border-slate-800/50 pb-1.5"><span className="font-bold text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500 w-16">Selatan</span><span className="font-medium text-slate-700 dark:text-slate-300">Kedai Durian, Namorambe</span></div>
-                    <div className="flex items-center gap-2 pb-1"><span className="font-bold text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500 w-16">Barat</span><span className="font-medium text-slate-700 dark:text-slate-300">Medan Johor</span></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full">
+              {[
+                { name: 'Dusun 1', color: 'bg-yellow-400' },
+                { name: 'Dusun 2', color: 'bg-orange-600' },
+                { name: 'Dusun 3', color: 'bg-blue-600' },
+                { name: 'Dusun 4', color: 'bg-purple-600' },
+                { name: 'Dusun 5', color: 'bg-lime-400' },
+                { name: 'Dusun 6', color: 'bg-green-500' },
+                { name: 'Dusun 7', color: 'bg-red-600' },
+                { name: 'Dusun 8', color: 'bg-emerald-500' },
+              ].map((d, idx) => (
+                <div key={idx} className="mx-auto w-[92%] md:w-auto flex items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                  <div className={`w-6 h-6 rounded-full ${d.color} ring-2 ring-white dark:ring-slate-900`} />
+                  <div className="flex flex-col">
+                    <div className="font-semibold text-slate-900 dark:text-white">{d.name}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">Wilayah {d.name}</div>
                   </div>
                 </div>
+              ))}
+            </div>
+          </div>
 
-                <div className="flex flex-col gap-4 pt-8 md:pt-0 md:px-12"><div className="flex items-center gap-4"><div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0"><Map size={24} /></div><p className="text-slate-500 dark:text-slate-400 font-medium">Luas Wilayah</p></div><h4 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">{profile?.luas_wilayah ?? 'N/A'}</h4></div>
+          {/* Bottom unified info card */}
+          <div className="bg-white dark:bg-slate-900 p-8 md:p-10 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+              <div className="flex flex-col">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center"><Navigation size={20} /></div>
+                  <div>
+                    <div className="text-sm font-bold text-slate-500">Batas Wilayah</div>
+                    <div className="text-xs text-slate-400">Garis batas administrasi Suka Makmur</div>
+                  </div>
+                </div>
+                <div className="mt-6 text-sm text-slate-700 dark:text-slate-300">
+                  <div className="flex justify-between py-1"><span className="font-bold text-xs text-slate-400 w-24 uppercase">Utara</span><span>Medan Johor</span></div>
+                  <div className="flex justify-between py-1"><span className="font-bold text-xs text-slate-400 w-24 uppercase">Timur</span><span>Mekar Sari</span></div>
+                  <div className="flex justify-between py-1"><span className="font-bold text-xs text-slate-400 w-24 uppercase">Selatan</span><span>Kedai Durian, Namorambe</span></div>
+                  <div className="flex justify-between py-1"><span className="font-bold text-xs text-slate-400 w-24 uppercase">Barat</span><span>Medan Johor</span></div>
+                </div>
+              </div>
 
-                <div className="flex flex-col gap-4 pt-8 md:pt-0 md:pl-12"><div className="flex items-center gap-4"><div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0"><Users size={24} /></div><p className="text-slate-500 dark:text-slate-400 font-medium">Total Penduduk</p></div><h4 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">{profile?.jumlah_penduduk?.toLocaleString('id-ID') ?? '0'} <span className="text-lg font-medium text-slate-400">Jiwa</span></h4></div>
+              <div className="flex flex-col items-center md:items-start md:px-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center"><Map size={20} /></div>
+                  <div className="text-sm text-slate-500">Luas Wilayah</div>
+                </div>
+                <div className="mt-4 text-4xl md:text-5xl font-black text-slate-900 dark:text-white">{profile.luas_wilayah ?? '450'}<span className="text-lg font-medium text-slate-400"> Hektar</span></div>
+              </div>
+
+              <div className="flex flex-col items-center md:items-end md:pl-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center"><Users size={20} /></div>
+                  <div className="text-sm text-slate-500">Total Penduduk</div>
+                </div>
+                <div className="mt-4 text-4xl md:text-5xl font-black text-slate-900 dark:text-white">{profile.jumlah_penduduk?.toLocaleString('id-ID') ?? '2.450'}<span className="text-lg font-medium text-slate-400"> Jiwa</span></div>
               </div>
             </div>
           </div>

@@ -1,8 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
+import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
-import { mkdir } from 'fs/promises';
 import crypto from 'crypto';
+
+const allowedMimeTypes = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'image/svg+xml',
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+]);
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,44 +28,46 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
+    const type = file.type || '';
+    const extension = file.name.split('.').pop()?.toLowerCase() || '';
+
+    const allowedExtensions = new Set(['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'pdf', 'doc', 'docx', 'xls', 'xlsx']);
+
+    if (!allowedMimeTypes.has(type) && !allowedExtensions.has(extension)) {
       return NextResponse.json(
-        { error: 'Only image files are allowed' },
+        { error: 'Unsupported file type. Gunakan PDF, DOCX, XLSX, atau gambar.' },
         { status: 400 }
       );
     }
 
-    // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
+    // Validate file size (10MB max)
+    if (file.size > 10 * 1024 * 1024) {
       return NextResponse.json(
-        { error: 'File size exceeds 5MB limit' },
+        { error: 'File size exceeds 10MB limit' },
         { status: 400 }
       );
     }
 
-    // Generate filename
     const timestamp = Date.now();
     const random = crypto.randomBytes(4).toString('hex');
-    const ext = file.name.split('.').pop() || 'jpg';
+    const ext = extension || 'bin';
     const filename = `${timestamp}-${random}.${ext}`;
 
-    // Create uploads directory
     const uploadsDir = join(process.cwd(), 'public', 'uploads');
     await mkdir(uploadsDir, { recursive: true });
 
-    // Write file
     const filepath = join(uploadsDir, filename);
     const buffer = await file.arrayBuffer();
     await writeFile(filepath, Buffer.from(buffer));
 
-    // Return public URL
     const publicUrl = `/uploads/${filename}`;
 
     return NextResponse.json({
       success: true,
       url: publicUrl,
-      filename: filename,
+      filename,
+      size: file.size,
+      type,
     });
   } catch (error) {
     console.error('Upload error:', error);

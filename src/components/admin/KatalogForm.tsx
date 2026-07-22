@@ -184,9 +184,17 @@ export default function KatalogForm({ item, mode }: KatalogFormProps) {
         categoryId,
       };
 
-      const result = item
-        ? await katalogAPI.update(item.id, payload)
-        : await katalogAPI.create(payload);
+      const katalogIdForUpdate = item?.id || katalogId;
+      let result;
+
+      if (mode === 'edit') {
+        if (!katalogIdForUpdate) {
+          throw new Error('ID katalog tidak ditemukan untuk update');
+        }
+        result = await katalogAPI.update(katalogIdForUpdate, payload);
+      } else {
+        result = await katalogAPI.create(payload);
+      }
 
       if (!result.success) {
         throw new Error(result.error || 'Gagal menyimpan data katalog');

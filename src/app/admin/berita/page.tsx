@@ -81,11 +81,11 @@ export default async function AdminBeritaPage() {
                   <td className="px-6 py-4">{new Date(item.tanggal_publikasi).toLocaleDateString('id-ID')}</td>
                   <td className="px-6 py-4">{item.penulis?.nama || 'Unknown'}</td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Link href={`/berita/${item.slug}`} target="_blank" className="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors" title="Lihat">
+                    <div className="flex items-center justify-end gap-2 transition-opacity">
+                      <Link href={`/berita/${item.slug}`} target="_blank" className="p-2 text-slate-600 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors" title="Lihat">
                         <Eye size={18} />
                       </Link>
-                      <Link href={`/admin/berita/${item.slug}/edit`} className="p-2 text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-colors inline-block" title="Edit">
+                      <Link href={`/admin/berita/${item.slug}/edit`} className="p-2 text-slate-600 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-colors inline-block" title="Edit">
                         <Edit size={18} />
                       </Link>
                       <form
@@ -95,7 +95,7 @@ export default async function AdminBeritaPage() {
                         }}
                         className="inline"
                       >
-                        <button className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors" title="Hapus" type="submit">
+                        <button className="p-2 text-slate-600 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors" title="Hapus" type="submit">
                           <Trash2 size={18} />
                         </button>
                       </form>

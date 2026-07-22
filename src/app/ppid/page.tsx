@@ -1,55 +1,99 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { 
-  FileText, 
-  Download, 
-  Search, 
-  Filter, 
-  Info, 
-  FileSpreadsheet, 
-  FileArchive, 
+import { useEffect, useMemo, useState } from "react";
+import {
+  FileText,
+  Download,
+  Search,
+  Info,
+  FileSpreadsheet,
+  FileArchive,
   FileCode,
-  Newspaper
 } from "lucide-react";
-import { mockDocument, mockDocumentCategory } from "@/lib/mock";
+
+type DocumentCategory = {
+  id: string;
+  name: string;
+};
+
+type DocumentItem = {
+  id: string;
+  judul: string;
+  file_url: string;
+  size?: string | null;
+  format?: string | null;
+  published_at: string;
+  category_id: string;
+  category: {
+    id: string;
+    name: string;
+  };
+};
 
 export default function PpidPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Semua");
+  const [documents, setDocuments] = useState<DocumentItem[]>([]);
+  const [categories, setCategories] = useState<DocumentCategory[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Get format icons dynamically
-  const getFormatIcon = (format: string) => {
-    const fmt = format.toUpperCase();
-    if (fmt === "XLSX" || fmt === "XLS") return <FileSpreadsheet className="text-emerald-600 dark:text-emerald-400" size={20} />;
-    if (fmt === "ZIP" || fmt === "RAR") return <FileArchive className="text-amber-600 dark:text-amber-400" size={20} />;
-    if (fmt === "JSON" || fmt === "CSV") return <FileCode className="text-indigo-600 dark:text-indigo-400" size={20} />;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [documentsRes, categoriesRes] = await Promise.all([
+          fetch("/api/documents"),
+          fetch("/api/documents/categories"),
+        ]);
+
+        if (!documentsRes.ok || !categoriesRes.ok) {
+          throw new Error("Gagal memuat data PPID");
+        }
+
+        const documentsJson = await documentsRes.json();
+        const categoriesJson = await categoriesRes.json();
+
+        setDocuments(documentsJson.data ?? []);
+        setCategories(categoriesJson.data ?? []);
+      } catch (error) {
+        console.error("PPID load error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const getFormatIcon = (format: string | null | undefined) => {
+    const fmt = (format ?? "PDF").toUpperCase();
+    if (fmt === "XLSX" || fmt === "XLS")
+      return <FileSpreadsheet className="text-emerald-600 dark:text-emerald-400" size={20} />;
+    if (fmt === "ZIP" || fmt === "RAR")
+      return <FileArchive className="text-amber-600 dark:text-amber-400" size={20} />;
+    if (fmt === "JSON" || fmt === "CSV")
+      return <FileCode className="text-indigo-600 dark:text-indigo-400" size={20} />;
     return <FileText className="text-primary" size={20} />;
   };
 
-  // Map category ID to Category Name
   const getCategoryName = (categoryId: string) => {
-    const cat = mockDocumentCategory.find((c) => c.id === categoryId);
-    return cat ? cat.name : "Lainnya";
+    const category = categories.find((cat) => cat.id === categoryId);
+    return category ? category.name : "Lainnya";
   };
 
-  // Filter documents based on search term and category
   const filteredDocuments = useMemo(() => {
-    return mockDocument.filter((doc) => {
+    return documents.filter((doc) => {
       const matchesSearch = doc.judul.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = 
-        selectedCategory === "Semua" || 
+      const matchesCategory =
+        selectedCategory === "Semua" ||
         getCategoryName(doc.category_id).toLowerCase() === selectedCategory.toLowerCase();
-      
+
       return matchesSearch && matchesCategory;
     });
-  }, [searchTerm, selectedCategory]);
+  }, [documents, searchTerm, selectedCategory]);
 
   return (
     <main className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-24 pb-16 px-4 md:px-6">
       <div className="container mx-auto max-w-6xl">
-        
-        {/* Header Section */}
         <div className="mb-12 border-b border-slate-200 dark:border-slate-800 pb-8">
           <div className="flex items-center gap-2 text-primary font-bold uppercase tracking-wider text-xs mb-3">
             <Info size={18} />
@@ -63,24 +107,21 @@ export default function PpidPage() {
           </p>
         </div>
 
-        {/* Filter and Search Bar */}
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm mb-8">
-          
-          {/* Search Input */}
           <div className="relative w-full md:max-w-md">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-            <input 
-              type="text" 
-              placeholder="Cari nama dokumen..." 
+            <input
+              type="text"
+              placeholder="Cari nama dokumen..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50 text-slate-900 dark:text-white transition-all text-sm"
             />
           </div>
 
-          {/* Category Quick Filters */}
           <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto scrollbar-hide py-1">
             <button
+              type="button"
               onClick={() => setSelectedCategory("Semua")}
               className={`shrink-0 px-4 py-2 rounded-full text-xs font-semibold border transition-all ${
                 selectedCategory === "Semua"
@@ -90,9 +131,10 @@ export default function PpidPage() {
             >
               Semua Kategori
             </button>
-            {mockDocumentCategory.map((cat) => (
+            {categories.map((cat) => (
               <button
                 key={cat.id}
+                type="button"
                 onClick={() => setSelectedCategory(cat.name)}
                 className={`shrink-0 px-4 py-2 rounded-full text-xs font-semibold border transition-all ${
                   selectedCategory === cat.name
@@ -106,7 +148,6 @@ export default function PpidPage() {
           </div>
         </div>
 
-        {/* Table / Document List */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200/85 dark:border-slate-850 rounded-3xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto w-full">
             <table className="w-full text-left border-collapse min-w-[800px]">
@@ -122,49 +163,44 @@ export default function PpidPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
-                {filteredDocuments.length > 0 ? (
+                {loading ? (
+                  <tr>
+                    <td colSpan={7} className="py-20 text-center text-slate-500 dark:text-slate-400">
+                      Memuat dokumen...
+                    </td>
+                  </tr>
+                ) : filteredDocuments.length > 0 ? (
                   filteredDocuments.map((doc, index) => (
-                    <tr 
-                      key={doc.id} 
+                    <tr
+                      key={doc.id}
                       className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors group"
                     >
-                      {/* Number Column */}
                       <td className="py-4 px-6 text-center text-sm font-semibold text-slate-400 dark:text-slate-600">
                         {index + 1}
                       </td>
-
-                      {/* Title Column */}
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-slate-50 dark:bg-slate-950 rounded-xl flex items-center justify-center shrink-0 border border-slate-200/50 dark:border-slate-800/50 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                            {getFormatIcon(doc.format || "PDF")}
+                            {getFormatIcon(doc.format)}
                           </div>
                           <span className="font-semibold text-slate-800 dark:text-slate-200 group-hover:text-primary transition-colors line-clamp-1 leading-tight">
                             {doc.judul}
                           </span>
                         </div>
                       </td>
-
-                      {/* Category Column */}
                       <td className="py-4 px-6">
                         <span className="inline-block px-2.5 py-1 bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 text-xs font-bold rounded-lg border border-slate-200/50 dark:border-slate-800/50">
-                          {getCategoryName(doc.category_id)}
+                          {doc.category?.name ?? getCategoryName(doc.category_id)}
                         </span>
                       </td>
-
-                      {/* Format Column */}
                       <td className="py-4 px-6">
                         <span className="font-bold text-xs tracking-wider text-slate-500 uppercase">
                           {doc.format || "PDF"}
                         </span>
                       </td>
-
-                      {/* Size Column */}
                       <td className="py-4 px-6 text-sm text-slate-600 dark:text-slate-400 font-medium">
                         {doc.size || "-"}
                       </td>
-
-                      {/* Release Date Column */}
                       <td className="py-4 px-6 text-sm text-slate-500 dark:text-slate-500">
                         {new Date(doc.published_at).toLocaleDateString("id-ID", {
                           year: "numeric",
@@ -172,11 +208,9 @@ export default function PpidPage() {
                           day: "numeric",
                         })}
                       </td>
-
-                      {/* Download Link Column */}
                       <td className="py-4 px-6 text-right">
-                        <a 
-                          href={doc.file_url} 
+                        <a
+                          href={doc.file_url}
                           download
                           className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-slate-100 hover:bg-primary hover:text-white dark:bg-slate-800 dark:hover:bg-primary text-slate-700 dark:text-slate-300 font-bold text-xs transition-all shadow-sm hover:shadow"
                         >
@@ -205,7 +239,6 @@ export default function PpidPage() {
             </table>
           </div>
         </div>
-
       </div>
     </main>
   );
