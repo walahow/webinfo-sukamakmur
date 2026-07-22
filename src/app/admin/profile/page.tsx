@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Save, Plus, Trash2, Edit, X, Upload } from 'lucide-react';
-import { profileAPI } from '@/lib/api';
+import { profileAPI, infografisAPI } from '@/lib/api';
 import { RichTextEditor } from '@/components/ui/RichTextEditor';
 
 export default function ProfileAdmin() {
@@ -18,6 +18,8 @@ export default function ProfileAdmin() {
     misi: [] as string[],
     sambutan_kepdes: '',
     jumlah_penduduk: 0,
+    laki_laki: 0,
+    perempuan: 0,
     luas_wilayah: '',
     batas_desa: '',
     koordinat: '',
@@ -25,6 +27,7 @@ export default function ProfileAdmin() {
     realisasi_dana_desa_persen: 0,
     umkm_aktif: 0,
   });
+  const [pendudukId, setPendudukId] = useState<string | null>(null);
 
   const [aparaturList, setAparaturList] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,20 +44,31 @@ export default function ProfileAdmin() {
       setLoading(true);
       setError(null);
 
-      const [profileRes, strukturRes] = await Promise.all([
+      const [profileRes, strukturRes, pendudukRes] = await Promise.all([
         profileAPI.get(),
         profileAPI.getStruktur(),
+        infografisAPI.getPenduduk(),
       ]);
 
       if (profileRes.success && profileRes.data?.profile) {
         const profile = profileRes.data.profile;
+        let lakiLaki = 0;
+        let perempuan = 0;
+        if (pendudukRes.success && Array.isArray(pendudukRes.data) && pendudukRes.data.length > 0) {
+          const pd = pendudukRes.data[0];
+          lakiLaki = pd.laki_laki || 0;
+          perempuan = pd.perempuan || 0;
+          setPendudukId(pd.id);
+        }
         setProfilUmum({
           id: profile.id,
           sejarah: profile.sejarah || '',
           visi: profile.visi || '',
           misi: Array.isArray(profile.misi) ? profile.misi : [],
           sambutan_kepdes: profile.sambutan_kepdes || '',
-          jumlah_penduduk: profile.jumlah_penduduk || 0,
+          jumlah_penduduk: lakiLaki + perempuan || profile.jumlah_penduduk || 0,
+          laki_laki: lakiLaki,
+          perempuan: perempuan,
           luas_wilayah: profile.luas_wilayah || '',
           batas_desa: profile.batas_desa || '',
           koordinat: profile.koordinat || '',
@@ -96,7 +110,10 @@ export default function ProfileAdmin() {
       setSaving(true);
       setError(null);
 
-      const result = await profileAPI.update({
+      const totalPenduduk = profilUmum.laki_laki + profilUmum.perempuan;
+
+      // Simpan profile
+      const profileResult = await profileAPI.update({
         sejarah: profilUmum.sejarah,
         visi: profilUmum.visi,
         misi: profilUmum.misi,
@@ -105,15 +122,31 @@ export default function ProfileAdmin() {
         batas_desa: profilUmum.batas_desa,
         koordinat: profilUmum.koordinat,
         peta_url: profilUmum.peta_url,
-        jumlah_penduduk: profilUmum.jumlah_penduduk,
+        jumlah_penduduk: totalPenduduk,
         realisasi_dana_desa_persen: profilUmum.realisasi_dana_desa_persen,
         umkm_aktif: profilUmum.umkm_aktif,
       });
 
-      if (result.success) {
+      // Simpan data kependudukan (laki & perempuan) ke tabel penduduk_stat
+      const tahunIni = new Date().getFullYear();
+      const pendudukPayload = {
+        tahun: tahunIni,
+        total_penduduk: totalPenduduk,
+        laki_laki: profilUmum.laki_laki,
+        perempuan: profilUmum.perempuan,
+        jumlah_kk: 0,
+      };
+      if (pendudukId) {
+        await infografisAPI.updatePenduduk({ id: pendudukId, ...pendudukPayload });
+      } else {
+        const created = await infografisAPI.createPenduduk(pendudukPayload);
+        if (created.success && created.data?.id) setPendudukId(created.data.id);
+      }
+
+      if (profileResult.success) {
         alert('✓ Profil Desa berhasil disimpan!');
       } else {
-        setError(result.error || 'Gagal menyimpan profil');
+        setError(profileResult.error || 'Gagal menyimpan profil');
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error';
@@ -336,20 +369,60 @@ export default function ProfileAdmin() {
               <hr className="my-8 border-slate-200" />
 
               <h3 className="text-lg font-semibold text-slate-800">Statistik Desa</h3>
+              <p className="text-sm text-slate-500 -mt-3">Data kependudukan akan otomatis tersinkron ke halaman Infografis.</p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* LAKI-LAKI */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Total Penduduk (Jiwa)</label>
+                  <label className="block text-sm font-medium mb-2 text-cyan-700 flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 inline-block"></span>
+                    Laki-laki (Jiwa)
+                  </label>
                   <input
                     type="number"
-                    value={profilUmum.jumlah_penduduk}
-                    onChange={(e) =>
-                      setProfilUmum({ ...profilUmum, jumlah_penduduk: parseInt(e.target.value) || 0 })
-                    }
-                    className="w-full px-3 py-2 border rounded-lg"
+                    min="0"
+                    value={profilUmum.laki_laki}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value) || 0;
+                      setProfilUmum({ ...profilUmum, laki_laki: val, jumlah_penduduk: val + profilUmum.perempuan });
+                    }}
+                    className="w-full px-3 py-2 border-2 border-cyan-200 bg-cyan-50 rounded-lg font-semibold text-cyan-900 focus:outline-none focus:ring-2 focus:ring-cyan-400"
                   />
                 </div>
 
+                {/* PEREMPUAN */}
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-pink-700 flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-pink-500 inline-block"></span>
+                    Perempuan (Jiwa)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={profilUmum.perempuan}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value) || 0;
+                      setProfilUmum({ ...profilUmum, perempuan: val, jumlah_penduduk: profilUmum.laki_laki + val });
+                    }}
+                    className="w-full px-3 py-2 border-2 border-pink-200 bg-pink-50 rounded-lg font-semibold text-pink-900 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                  />
+                </div>
+
+                {/* TOTAL — auto computed */}
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-blue-700 flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>
+                    Total Penduduk (Otomatis)
+                  </label>
+                  <input
+                    type="number"
+                    value={profilUmum.laki_laki + profilUmum.perempuan}
+                    readOnly
+                    className="w-full px-3 py-2 border-2 border-blue-200 bg-blue-50 rounded-lg font-black text-blue-800 cursor-not-allowed opacity-80"
+                  />
+                </div>
+
+                {/* REALISASI DANA */}
                 <div>
                   <label className="block text-sm font-medium mb-2">Realisasi Dana Desa (%)</label>
                   <div className="flex gap-2 items-center">
@@ -367,6 +440,7 @@ export default function ProfileAdmin() {
                   </div>
                 </div>
 
+                {/* UMKM */}
                 <div>
                   <label className="block text-sm font-medium mb-2">UMKM Aktif (Unit)</label>
                   <input
