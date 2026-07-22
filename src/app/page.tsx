@@ -213,7 +213,7 @@ export default async function Home() {
                     {featuredNews.judul}
                   </h4>
                   <p className="text-slate-300 line-clamp-2">
-                    {featuredNews.konten}
+                    {featuredNews.konten.replace(/<[^>]+>/g, '')}
                   </p>
                 </div>
               </Link>
@@ -285,7 +285,7 @@ export default async function Home() {
                         {beritaItem.judul}
                       </h4>
                       <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-3">
-                        {beritaItem.konten}
+                        {beritaItem.konten.replace(/<[^>]+>/g, '')}
                       </p>
                       <div className="inline-flex items-center gap-1.5 text-primary font-bold text-xs pt-4 mt-auto">
                         <span>Baca Berita</span>

@@ -88,7 +88,7 @@ export default async function BeritaDetailPage({ params }: BeritaDetailPageProps
             <p className="font-semibold text-slate-900 dark:text-white border-l-4 border-primary pl-4 py-1 italic">
               SUKA MAKMUR, {new Date(currentNews.tanggal_publikasi).toLocaleDateString("id-ID", { dateStyle: "long" })} – Kabar terkini dan resmi dari wilayah Desa Suka Makmur.
             </p>
-            <p>{currentNews.konten}</p>
+            <div dangerouslySetInnerHTML={{ __html: currentNews.konten }} />
             <p>
               Pemerintah Desa Suka Makmur senantiasa berkomitmen untuk membagikan informasi terkini, transparan, dan terpercaya bagi segenap warga desa serta masyarakat luas. Gotong royong dan sinergi bersama seluruh elemen masyarakat adalah kunci utama pembangunan yang inklusif dan berkelanjutan.
             </p>

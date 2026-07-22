@@ -7,6 +7,7 @@ const allowedMimeTypes = new Set([
   'image/png',
   'image/gif',
   'image/webp',
+  'image/avif',
   'image/svg+xml',
   'application/pdf',
   'application/msword',
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
     const type = file.type || '';
     const extension = file.name.split('.').pop()?.toLowerCase() || '';
 
-    const allowedExtensions = new Set(['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'pdf', 'doc', 'docx', 'xls', 'xlsx']);
+    const allowedExtensions = new Set(['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg', 'pdf', 'doc', 'docx', 'xls', 'xlsx']);
 
     if (!allowedMimeTypes.has(type) && !allowedExtensions.has(extension)) {
       return NextResponse.json(

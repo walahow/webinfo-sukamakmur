@@ -27,6 +27,7 @@ const acceptedTypes = [
   '.png',
   '.jpg',
   '.jpeg',
+  '.avif',
 ];
 
 export default function EditPpidPage() {

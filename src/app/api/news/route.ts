@@ -57,6 +57,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    let finalPenulisId = body.penulis_id;
+    if (finalPenulisId === "system") {
+      const defaultUser = await prisma.user.findFirst({ orderBy: { role: 'asc' } });
+      if (!defaultUser) {
+        return NextResponse.json(
+          { error: { message: "No users found in database to assign as author" } },
+          { status: 500 }
+        );
+      }
+      finalPenulisId = defaultUser.id;
+    }
+
     const news = await prisma.news.create({
       data: {
         judul: body.judul,
@@ -67,7 +79,7 @@ export async function POST(req: NextRequest) {
           ? new Date(body.tanggal_publikasi)
           : new Date(),
         cover_url: body.cover_url,
-        penulis_id: body.penulis_id,
+        penulis_id: finalPenulisId,
       },
     });
 

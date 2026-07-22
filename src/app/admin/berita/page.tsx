@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Plus, Edit, Trash2, Search, Eye } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 export default async function AdminBeritaPage() {
   let berita: any[] = [];
@@ -91,7 +92,12 @@ export default async function AdminBeritaPage() {
                       <form
                         action={async () => {
                           'use server';
-                          await prisma.news.delete({ where: { slug: item.slug } });
+                          try {
+                            await prisma.news.delete({ where: { slug: item.slug } });
+                            revalidatePath('/admin/berita');
+                          } catch (error) {
+                            console.error('Delete failed', error);
+                          }
                         }}
                         className="inline"
                       >

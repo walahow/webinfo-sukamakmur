@@ -75,7 +75,7 @@ export default async function BeritaPage() {
                   {featuredNews.judul}
                 </h3>
                 <p className="text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-4">
-                  {featuredNews.konten}
+                  {featuredNews.konten.replace(/<[^>]+>/g, '')}
                 </p>
                 <div className="inline-flex items-center gap-2 text-primary font-bold text-sm pt-2">
                   <span>Baca Selengkapnya</span>
@@ -124,7 +124,7 @@ export default async function BeritaPage() {
                         {berita.judul}
                       </h4>
                       <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-3">
-                        {berita.konten}
+                        {berita.konten.replace(/<[^>]+>/g, '')}
                       </p>
                       <div className="inline-flex items-center gap-1.5 text-primary font-bold text-xs mt-auto pt-4">
                         <span>Baca Berita</span>
@@ -180,7 +180,7 @@ export default async function BeritaPage() {
                       {berita.judul}
                     </h4>
                     <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-3">
-                      {berita.konten}
+                      {berita.konten.replace(/<[^>]+>/g, '')}
                     </p>
                     <div className="inline-flex items-center gap-1.5 text-primary font-bold text-xs mt-auto pt-4">
                       <span>Baca Berita</span>
