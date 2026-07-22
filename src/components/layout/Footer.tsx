@@ -1,17 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Phone, Mail, Play, MapPin, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { profileAPI } from '@/lib/api';
 
 export function Footer() {
   const [openSection, setOpenSection] = useState<string | null>(null);
+  const [kepalaDesaName, setKepalaDesaName] = useState('Kepala Desa (Bpk. Aldo)');
 
   const toggleSection = (section: string) => {
     setOpenSection(openSection === section ? null : section);
   };
+
+  useEffect(() => {
+    let mounted = true;
+    profileAPI.get().then((res) => {
+      if (!mounted) return;
+      if (res.success && res.data?.struktur) {
+        const kepalaDesa = (res.data.struktur as any[]).find((item) => item.urutan === 1);
+        if (kepalaDesa?.nama_pejabat) {
+          setKepalaDesaName(`Kepala Desa (Bpk. ${kepalaDesa.nama_pejabat})`);
+        }
+      }
+    });
+    return () => { mounted = false; };
+  }, []);
 
   return (
     <footer className="bg-slate-950 text-slate-300 pt-16 pb-8 border-t border-slate-800">
@@ -125,7 +141,7 @@ export function Footer() {
             )}>
               <ul className="space-y-5 text-sm pb-4 md:pb-0">
                 <li>
-                  <div className="font-medium text-slate-200 mb-1">Kepala Desa (Bpk. Aldo)</div>
+                  <div className="font-medium text-slate-200 mb-1">{kepalaDesaName}</div>
                   <a href="tel:08123456789" className="text-primary hover:text-primary/80 transition-colors">0812-3456-7890</a>
                 </li>
                 <li>

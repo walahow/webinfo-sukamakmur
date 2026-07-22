@@ -1,73 +1,208 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Calendar, ChevronDown, Users, MapPin, Wallet, Store, Info, FileText, Download } from "lucide-react";
+import { ArrowRight, ChevronDown, Users, MapPin, Wallet, Store, Info, FileText, Download } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import HomeHeroClient from "@/components/HomeHeroClient";
 import { ProfileImageStack } from "@/components/ui/ProfileImageStack";
 
-const stripHtml = (html: string | null | undefined) => {
-  if (!html) return "";
-  return html
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&quot;/g, '"')
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/\s+/g, " ")
-    .trim();
-};
+async function getSafeVillageProfile() {
+  try {
+    return await prisma.villageProfile.findFirst();
+  } catch (error) {
+    const cols: Array<{ column_name: string }> = await prisma.$queryRaw`
+      SELECT column_name
+      FROM information_schema.columns
+      WHERE lower(table_name) = 'villageprofile'
+    `;
+    const allowed = new Set(cols.map((c) => c.column_name));
+    const selectColumns = [
+      "id",
+      "sejarah",
+      "visi",
+      "misi",
+      "sambutan_kepdes",
+      "peta_url",
+      "koordinat",
+      "batas_desa",
+      "luas_wilayah",
+      "jumlah_penduduk",
+      "realisasi_dana_desa_persen",
+      "umkm_aktif",
+      "updatedAt",
+    ].filter((column) => allowed.has(column));
 
-export default async function Home() {
-  const [profile, struktur, berita, documents, katalogItems, katalogCount, latestApbdes] = await Promise.all([
-    prisma.villageProfile.findFirst({
-      select: {
-        sejarah: true,
-        visi: true,
-        misi: true,
-        sambutan_kepdes: true,
-        peta_url: true,
-        koordinat: true,
-        batas_desa: true,
-        luas_wilayah: true,
-        jumlah_penduduk: true,
-      },
-    }),
+    if (selectColumns.length === 0) {
+      return null;
+    }
+
+    const rawSql = `SELECT ${selectColumns.map((col) => `"${col}"`).join(", ")} FROM "VillageProfile" LIMIT 1;`;
+    const rows: any = await prisma.$queryRawUnsafe(rawSql);
+    const row = Array.isArray(rows) ? rows[0] : rows;
+    if (!row) return null;
+
+    let misiValue: any = row.misi;
+    try {
+      if (typeof misiValue === "string") {
+        misiValue = JSON.parse(misiValue);
+      }
+    } catch (e) {
+      // ignore parse errors
+    }
+
+    return {
+      ...row,
+      misi: Array.isArray(misiValue) ? misiValue : [],
+      realisasi_dana_desa_persen: row.realisasi_dana_desa_persen ?? 0,
+      umkm_aktif: row.umkm_aktif ?? 0,
+    };
+  }
+}
+
+async function getHomeData() {
+  const [profile, struktur, katalogItems, newsItems, documentItems] = await Promise.all([
+    getSafeVillageProfile(),
     prisma.strukturOrganisasi.findMany({ orderBy: { urutan: "asc" } }),
-    prisma.news.findMany({
-      where: { status: "PUBLISHED" },
-      orderBy: { tanggal_publikasi: "desc" },
-      take: 8,
-    }),
-    prisma.document.findMany({
-      include: { category: true },
-      orderBy: { published_at: "desc" },
-      take: 5,
-    }),
     prisma.katalog.findMany({
       include: { category: true },
       orderBy: { createdAt: "desc" },
-      take: 3,
+      take: 6,
     }),
-    prisma.katalog.count(),
-    prisma.apbdes.findFirst({ orderBy: { tahun: "desc" } }),
+    prisma.news.findMany({
+      where: { status: "PUBLISHED" },
+      orderBy: { tanggal_publikasi: "desc" },
+      take: 4,
+    }),
+    prisma.document.findMany({
+      orderBy: { published_at: "desc" },
+      take: 5,
+    }),
   ]);
 
-  const featuredNews = berita[0];
-  const secondaryNews = berita.slice(1, 4);
-  const otherNews = berita.slice(4);
+  return {
+    profile,
+    struktur,
+    katalogItems,
+    newsItems,
+    documentItems,
+  };
+}
 
-  const totalPenduduk = profile?.jumlah_penduduk ?? 0;
-  const luasWilayah = profile?.luas_wilayah || "Belum tersedia";
-  const realisasiDanaPercent = latestApbdes && latestApbdes.pendapatan > 0
-    ? Math.round((Number(latestApbdes.belanja) / Number(latestApbdes.pendapatan)) * 100)
-    : 0;
-  const umkmAktif = katalogCount;
+export default async function Home() {
+  const { profile, struktur, katalogItems, newsItems, documentItems } = await getHomeData();
+  const kepalaDesa = struktur.find((item) => item.urutan === 1);
+  const latestNews = newsItems[0];
+  const moreNews = newsItems.slice(1);
 
   return (
     <main className="flex min-h-screen flex-col items-center overflow-x-hidden">
       
-      <HomeHeroClient />
+      {/* 1. HERO SECTION */}
+      <section 
+        id="hero" 
+        className="relative w-full min-h-screen flex flex-col justify-center items-center text-center px-4"
+      >
+        <div className="absolute inset-0 bg-slate-900/60 z-10" />
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/mock-data/hero-bg.jpg')" }} 
+        />
+        
+        <div className="relative z-20 max-w-4xl flex flex-col items-center gap-6 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <div className="px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white text-sm font-medium">
+            Selamat Datang di
+          </div>
+          <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-tight">
+            Desa Suka Makmur
+          </h1>
+          <p className="text-lg md:text-xl text-slate-200 max-w-2xl font-light">
+            Mewujudkan tata kelola desa yang transparan, inovatif, dan responsif. Memadukan kearifan lokal dengan inovasi berkelanjutan.
+          </p>
+          <div className="mt-6 flex flex-col sm:flex-row gap-4">
+            <Link 
+              href="/#profile"
+              className="px-8 py-4 rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 flex items-center justify-center gap-2"
+            >
+              Kenali Kami Lebih Dekat
+            </Link>
+            <Link 
+              href="/#ppid"
+              className="px-8 py-4 rounded-full bg-white/10 backdrop-blur-sm text-white border border-white/20 font-medium hover:bg-white/20 transition-colors flex items-center justify-center gap-2"
+            >
+              Layanan Informasi Publik
+            </Link>
+          </div>
+        </div>
+
+        <a 
+          href="/#profile"
+          className="absolute bottom-10 z-20 text-white/70 hover:text-white transition-colors animate-bounce"
+        >
+          <ChevronDown size={32} />
+        </a>
+      </section>
+
+
+
+      {/* 2. SAMBUTAN & PROFIL TEASER */}
+      <section id="profile" className="w-full py-24 scroll-margin-top px-4 bg-white/60 dark:bg-black/60 backdrop-blur-sm">
+        <div className="container mx-auto max-w-6xl flex flex-col gap-12">
+          {/* Top: Title Centered */}
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Sekilas Profil</h2>
+            <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight">
+              Sejarah & Visi Misi Desa Suka Makmur
+            </h3>
+          </div>
+
+          {/* Middle: 2 Columns */}
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-stretch">
+            
+            {/* Left: Kepala Desa & Sambutan */}
+            <div className="flex-1 w-full flex flex-col items-center lg:items-start text-center lg:text-left bg-slate-50 dark:bg-slate-900/50 p-8 md:p-12 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 relative shadow-sm">
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-800 shadow-xl mb-6 relative ring-4 ring-primary/20 shrink-0">
+                {kepalaDesa?.foto_url ? (
+                  <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${kepalaDesa.foto_url}')` }} />
+                ) : (
+                  <div className="absolute inset-0 bg-slate-200 animate-pulse" />
+                )}
+              </div>
+              <div className="inline-flex px-4 py-1.5 rounded-full bg-primary/10 text-primary font-bold text-xs tracking-wide uppercase mb-3">
+                {kepalaDesa?.jabatan || "Kepala Desa"}
+              </div>
+              <h4 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-6">
+                {kepalaDesa?.nama_pejabat || "Belum tersedia"}
+              </h4>
+              <p className="text-slate-600 dark:text-slate-400 text-base md:text-lg italic leading-relaxed relative">
+                <span className="text-5xl text-primary/20 absolute -top-4 -left-4 font-serif">&quot;</span>
+                {profile?.sambutan_kepdes ?? 'Selamat datang di situs resmi Desa Suka Makmur. Informasi terbaru terkait pemerintah desa akan ditampilkan di sini.'}
+                <span className="text-5xl text-primary/20 absolute -bottom-6 -right-2 font-serif">&quot;</span>
+              </p>
+            </div>
+
+            {/* Right: Images and Desc */}
+            <div className="flex-1 w-full flex flex-col space-y-6 justify-center">
+              <div className="hidden sm:block py-2">
+                 <ProfileImageStack />
+              </div>
+
+              <div>
+                <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed line-clamp-4 text-center lg:text-left">
+                  {profile?.sejarah ?? 'Sejarah Desa Suka Makmur belum tersedia. Silakan perbarui data profil desa di admin.'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom: Action Centered */}
+          <div className="flex justify-center mt-2">
+            <Link 
+              href="/profil" 
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 border border-primary hover:border-primary/90 ring-1 ring-primary hover:ring-primary/90 transform-gpu"
+            >
+              Baca Selengkapnya <ArrowRight size={18} />
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* 3. INFOGRAFIS SECTION */}
       <section id="infografis" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-sm">
@@ -84,8 +219,8 @@ export default async function Home() {
                 <Users size={28} />
               </div>
               <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Total Penduduk</p>
-              <h4 className="text-4xl font-black text-slate-900 dark:text-white">{totalPenduduk.toLocaleString("id-ID")}</h4>
-              <p className="text-xs text-slate-400 mt-2">Jiwa di desa ini</p>
+              <h4 className="text-4xl font-black text-slate-900 dark:text-white">2,450</h4>
+              <p className="text-xs text-slate-400 mt-2">Jiwa tersebar di 4 dusun</p>
             </div>
             
             <div className="p-8 rounded-3xl bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex flex-col items-start group">
@@ -93,8 +228,8 @@ export default async function Home() {
                 <MapPin size={28} />
               </div>
               <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Luas Wilayah</p>
-              <h4 className="text-4xl font-black text-slate-900 dark:text-white">{luasWilayah || "—"}</h4>
-              <p className="text-xs text-slate-400 mt-2">Luas wilayah desa</p>
+              <h4 className="text-4xl font-black text-slate-900 dark:text-white">450</h4>
+              <p className="text-xs text-slate-400 mt-2">Hektar area produktif</p>
             </div>
 
             <div className="p-8 rounded-3xl bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex flex-col items-start group">
@@ -102,8 +237,8 @@ export default async function Home() {
                 <Wallet size={28} />
               </div>
               <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Realisasi Dana Desa</p>
-              <h4 className="text-4xl font-black text-slate-900 dark:text-white">{latestApbdes ? `${realisasiDanaPercent}%` : "-"}</h4>
-              <p className="text-xs text-slate-400 mt-2">Persen realisasi APBDes terakhir</p>
+              <h4 className="text-4xl font-black text-slate-900 dark:text-white">85<span className="text-2xl text-slate-400 font-bold">%</span></h4>
+              <p className="text-xs text-slate-400 mt-2">Terserap untuk pembangunan</p>
             </div>
 
             <div className="p-8 rounded-3xl bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex flex-col items-start group">
@@ -111,8 +246,8 @@ export default async function Home() {
                 <Store size={28} />
               </div>
               <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">UMKM Aktif</p>
-              <h4 className="text-4xl font-black text-slate-900 dark:text-white">{umkmAktif}</h4>
-              <p className="text-xs text-slate-400 mt-2">Jumlah usaha terdaftar</p>
+              <h4 className="text-4xl font-black text-slate-900 dark:text-white">45</h4>
+              <p className="text-xs text-slate-400 mt-2">Unit usaha terdaftar</p>
             </div>
           </div>
           
@@ -171,7 +306,7 @@ export default async function Home() {
                     </div>
                   )}
                   <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mt-auto pt-2">
-                    {stripHtml(item.deskripsi)}
+                    {item.deskripsi}
                   </p>
                 </div>
               </Link>
@@ -189,6 +324,7 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* 5. NEWS SECTION (SKELETON) */}
       <section id="news" className="w-full py-24 scroll-margin-top px-4 bg-slate-50/60 dark:bg-slate-950/60 backdrop-blur-sm">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
@@ -197,107 +333,57 @@ export default async function Home() {
             <p className="text-slate-600 dark:text-slate-400 mt-4">Ikuti perkembangan terbaru dan informasi terkini dari desa kami.</p>
           </div>
 
-          {featuredNews ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {latestNews ? (
               <Link
-                href={`/berita/${featuredNews.slug}`}
+                href={`/berita/${latestNews.slug}`}
                 className="aspect-square md:aspect-[4/3] lg:aspect-auto rounded-3xl bg-slate-200 dark:bg-slate-800 bg-cover bg-center relative overflow-hidden group cursor-pointer block"
-                style={{ backgroundImage: featuredNews.cover_url ? `url('${featuredNews.cover_url}')` : undefined }}
+                style={{ backgroundImage: latestNews.cover_url ? `url('${latestNews.cover_url}')` : undefined }}
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-8">
                   <div className="text-primary font-bold text-sm mb-3">
-                    {new Date(featuredNews.tanggal_publikasi).toLocaleDateString('id-ID', { dateStyle: 'long' })}
+                    {new Date(latestNews.tanggal_publikasi).toLocaleDateString('id-ID', { dateStyle: 'long' })}
                   </div>
                   <h4 className="text-2xl md:text-3xl font-bold text-white mb-3 group-hover:text-primary transition-colors">
-                    {featuredNews.judul}
+                    {latestNews.judul}
                   </h4>
                   <p className="text-slate-300 line-clamp-2">
-                    {featuredNews.konten.replace(/<[^>]+>/g, '')}
+                    {latestNews.konten.replace(/<[^>]+>/g, '').slice(0, 200)}
                   </p>
                 </div>
               </Link>
+            ) : (
+              <div className="rounded-3xl bg-slate-100 dark:bg-slate-900 p-12 flex items-center justify-center text-center text-slate-600 dark:text-slate-300">
+                Belum ada berita yang dipublikasikan.
+              </div>
+            )}
 
-              <div className="flex flex-col gap-8 justify-between">
-                {secondaryNews.map((beritaItem) => (
-                  <Link href={`/berita/${beritaItem.slug}`} key={beritaItem.id} className="flex gap-6 items-center group cursor-pointer">
+            <div className="flex flex-col gap-8 justify-between">
+              {moreNews.length > 0 ? (
+                moreNews.map((berita) => (
+                  <Link href={`/berita/${berita.slug}`} key={berita.id} className="flex gap-6 items-center group cursor-pointer">
                     <div
                       className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl shrink-0 bg-slate-200 dark:bg-slate-800 bg-cover bg-center"
-                      style={{ backgroundImage: beritaItem.cover_url ? `url('${beritaItem.cover_url}')` : undefined }}
+                      style={{ backgroundImage: berita.cover_url ? `url('${berita.cover_url}')` : undefined }}
                     />
                     <div className="space-y-2 flex-1">
                       <div className="text-primary font-semibold text-xs md:text-sm">
-                        {new Date(beritaItem.tanggal_publikasi).toLocaleDateString('id-ID', { dateStyle: 'long' })}
+                        {new Date(berita.tanggal_publikasi).toLocaleDateString('id-ID', { dateStyle: 'long' })}
                       </div>
                       <h4 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                        {beritaItem.judul}
+                        {berita.judul}
                       </h4>
                     </div>
                   </Link>
-                ))}
-              </div>
+                ))
+              ) : (
+                <div className="rounded-3xl bg-slate-100 dark:bg-slate-900 p-12 text-slate-600 dark:text-slate-300">
+                  Tidak ada berita tambahan saat ini.
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-12 text-center">
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Belum ada berita tersedia</h3>
-              <p className="text-slate-500 dark:text-slate-400 mt-4">Berita akan muncul otomatis setelah admin mempublikasikannya.</p>
-            </div>
-          )}
-
-          {otherNews.length > 0 && (
-            <div className="mt-16">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Berita Lainnya</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {otherNews.map((beritaItem) => (
-                  <Link
-                    key={beritaItem.id}
-                    href={`/berita/${beritaItem.slug}`}
-                    className="group flex flex-col h-full bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200/60 dark:border-slate-800/60 hover:shadow-lg transition-all duration-300"
-                  >
-                    <div className="aspect-[16/10] bg-slate-100 dark:bg-slate-800 relative overflow-hidden">
-                      {beritaItem.cover_url ? (
-                        <Image
-                          src={beritaItem.cover_url}
-                          alt={beritaItem.judul}
-                          fill
-                          className="object-cover transition-transform duration-700 group-hover:scale-105"
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-slate-400">
-                          <Info size={48} />
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300" />
-                    </div>
-                    <div className="p-6 flex flex-col flex-1 space-y-4">
-                      <div className="flex items-center gap-3 text-[11px] font-semibold text-slate-400 dark:text-slate-500">
-                        <span className="flex items-center gap-1">
-                          <Calendar size={12} className="text-primary" />
-                          {new Date(beritaItem.tanggal_publikasi).toLocaleDateString('id-ID', { dateStyle: 'medium' })}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700"></span>
-                          Admin
-                        </span>
-                      </div>
-                      <h4 className="text-lg font-bold text-slate-900 dark:text-white leading-snug group-hover:text-primary transition-colors line-clamp-2">
-                        {beritaItem.judul}
-                      </h4>
-                      <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-3">
-                        {beritaItem.konten.replace(/<[^>]+>/g, '')}
-                      </p>
-                      <div className="inline-flex items-center gap-1.5 text-primary font-bold text-xs pt-4 mt-auto">
-                        <span>Baca Berita</span>
-                        <ArrowRight size={14} className="transform group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-
+          </div>
           <div className="mt-12 text-center">
             <Link 
               href="/berita" 
@@ -338,38 +424,46 @@ export default async function Home() {
                     </tr>
                   </thead>
                   <tbody className="flex flex-col gap-4 md:table-row-group md:gap-0 divide-y-0 md:divide-y divide-slate-100 dark:divide-slate-800/50">
-                    {documents.map((doc) => (
-                      <tr key={doc.id} className="flex flex-col md:table-row hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 md:bg-transparent md:border-none md:dark:bg-transparent md:dark:border-none rounded-2xl md:rounded-none p-5 md:p-0 shadow-sm md:shadow-none">
-                        <td className="md:py-4 md:px-6 block md:table-cell pb-4 border-b border-slate-100 dark:border-slate-800 md:border-none">
-                          <div className="flex items-center gap-4 md:gap-3">
-                            <div className="w-12 h-12 md:w-10 md:h-10 bg-primary/10 dark:bg-primary/20 rounded-xl md:rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shrink-0">
-                              <FileText size={20} className="md:w-5 md:h-5 w-6 h-6" />
+                    {documentItems.length > 0 ? (
+                      documentItems.map((doc) => (
+                        <tr key={doc.id} className="flex flex-col md:table-row hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 md:bg-transparent md:border-none md:dark:bg-transparent md:dark:border-none rounded-2xl md:rounded-none p-5 md:p-0 shadow-sm md:shadow-none">
+                          <td className="md:py-4 md:px-6 block md:table-cell pb-4 border-b border-slate-100 dark:border-slate-800 md:border-none">
+                            <div className="flex items-center gap-4 md:gap-3">
+                              <div className="w-12 h-12 md:w-10 md:h-10 bg-primary/10 dark:bg-primary/20 rounded-xl md:rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shrink-0">
+                                <FileText size={20} className="md:w-5 md:h-5 w-6 h-6" />
+                              </div>
+                              <span className="font-bold md:font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors line-clamp-2 leading-tight">{doc.judul}</span>
                             </div>
-                            <span className="font-bold md:font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors line-clamp-2 leading-tight">{doc.judul}</span>
-                          </div>
-                        </td>
-                        <td className="md:py-4 md:px-6 flex justify-between items-center md:table-cell py-3 border-b border-slate-100 dark:border-slate-800 md:border-none">
-                          <span className="md:hidden text-sm font-medium text-slate-500">Format</span>
-                          <span className="px-3 py-1 md:px-2.5 md:py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-md border border-slate-200 dark:border-slate-700">
-                            {doc.format || 'PDF'}
-                          </span>
-                        </td>
-                        <td className="md:py-4 md:px-6 flex justify-between items-center md:table-cell py-3 border-b border-slate-100 dark:border-slate-800 md:border-none text-slate-600 dark:text-slate-400 text-sm whitespace-nowrap font-medium md:font-normal">
-                          <span className="md:hidden text-sm font-medium text-slate-500">Ukuran</span>
-                          <span>{doc.size || '-'}</span>
-                        </td>
-                        <td className="md:py-4 md:px-6 flex justify-between items-center md:table-cell py-3 border-b border-slate-100 dark:border-slate-800 md:border-none text-slate-600 dark:text-slate-400 text-sm whitespace-nowrap font-medium md:font-normal">
-                          <span className="md:hidden text-sm font-medium text-slate-500">Tanggal Rilis</span>
-                          <span>{new Date(doc.published_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
-                        </td>
-                        <td className="md:py-4 md:px-6 flex justify-end md:table-cell pt-4 text-right">
-                          <a href={doc.file_url} className="inline-flex w-full md:w-auto justify-center items-center gap-2 px-4 py-2.5 md:py-2 rounded-xl md:rounded-lg bg-primary/10 text-primary md:bg-slate-100 md:dark:bg-slate-800 md:text-slate-700 md:dark:text-slate-300 hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-colors text-sm font-semibold">
-                            <Download size={16} />
-                            <span>Unduh Dokumen</span>
-                          </a>
+                          </td>
+                          <td className="md:py-4 md:px-6 flex justify-between items-center md:table-cell py-3 border-b border-slate-100 dark:border-slate-800 md:border-none">
+                            <span className="md:hidden text-sm font-medium text-slate-500">Format</span>
+                            <span className="px-3 py-1 md:px-2.5 md:py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-md border border-slate-200 dark:border-slate-700">
+                              {doc.format || 'PDF'}
+                            </span>
+                          </td>
+                          <td className="md:py-4 md:px-6 flex justify-between items-center md:table-cell py-3 border-b border-slate-100 dark:border-slate-800 md:border-none text-slate-600 dark:text-slate-400 text-sm whitespace-nowrap font-medium md:font-normal">
+                            <span className="md:hidden text-sm font-medium text-slate-500">Ukuran</span>
+                            <span>{doc.size || '-'}</span>
+                          </td>
+                          <td className="md:py-4 md:px-6 flex justify-between items-center md:table-cell py-3 border-b border-slate-100 dark:border-slate-800 md:border-none text-slate-600 dark:text-slate-400 text-sm whitespace-nowrap font-medium md:font-normal">
+                            <span className="md:hidden text-sm font-medium text-slate-500">Tanggal Rilis</span>
+                            <span>{new Date(doc.published_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                          </td>
+                          <td className="md:py-4 md:px-6 flex justify-end md:table-cell pt-4 text-right">
+                            <a href={doc.file_url} className="inline-flex w-full md:w-auto justify-center items-center gap-2 px-4 py-2.5 md:py-2 rounded-xl md:rounded-lg bg-primary/10 text-primary md:bg-slate-100 md:dark:bg-slate-800 md:text-slate-700 md:dark:text-slate-300 hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-colors text-sm font-semibold">
+                              <Download size={16} />
+                              <span>Unduh Dokumen</span>
+                            </a>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr className="flex flex-col md:table-row bg-slate-100 dark:bg-slate-900 rounded-2xl p-8">
+                        <td colSpan={5} className="text-center text-slate-600 dark:text-slate-300">
+                          Belum ada dokumen PPID yang tersedia.
                         </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>
