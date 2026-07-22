@@ -362,14 +362,23 @@ export default function AdminInboxPage() {
 
               {/* Message Content */}
               <div>
-                {item.judul && item.judul !== "Masukan dari Warga" && (
-                  <h5 className="font-bold text-slate-800 dark:text-slate-200 text-sm mb-1">
-                    {item.judul}
-                  </h5>
+                {item.judul &&
+                item.judul !== "Masukan dari Warga" &&
+                item.judul.trim().toLowerCase() !== item.deskripsi.trim().toLowerCase() &&
+                !item.deskripsi.toLowerCase().startsWith(item.judul.replace(/\.\.\.$/, "").trim().toLowerCase()) ? (
+                  <>
+                    <h5 className="font-bold text-slate-900 dark:text-white text-base mb-1">
+                      {item.judul}
+                    </h5>
+                    <p className="font-semibold text-slate-800 dark:text-slate-200 text-sm whitespace-pre-line leading-relaxed">
+                      {item.deskripsi}
+                    </p>
+                  </>
+                ) : (
+                  <p className="font-bold text-slate-900 dark:text-white text-base whitespace-pre-line leading-relaxed">
+                    {item.deskripsi}
+                  </p>
                 )}
-                <p className="text-slate-600 dark:text-slate-300 text-sm whitespace-pre-line leading-relaxed">
-                  {item.deskripsi}
-                </p>
               </div>
             </div>
           ))}

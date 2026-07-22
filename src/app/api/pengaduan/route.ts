@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
 
     const nama_pelapor = body.nama_pelapor?.trim() || "Warga (Anonim)";
     const kontak = body.kontak?.trim() || "-";
-    const judul = body.judul?.trim() || (deskripsi.trim().substring(0, 40) + (deskripsi.trim().length > 40 ? "..." : ""));
+    const judul = body.judul?.trim() || deskripsi.trim();
 
     const pengaduan = await prisma.pengaduan.create({
       data: {
