@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import KatalogClient from "@/components/katalog/KatalogClient";
 import { Metadata } from "next";
+import { stripHtml } from "@/lib/utils";
 
 export const revalidate = 60;
 
@@ -53,7 +54,7 @@ export default async function KatalogPage({
     nama: item.nama,
     slug: item.slug,
     category: { id: item.category.id, nama: item.category.nama, icon: item.category.icon },
-    deskripsi: item.deskripsi,
+    deskripsi: stripHtml(item.deskripsi),
     dusun: item.dusun,
     fotoUrl: item.fotoUrl,
     latitude: item.latitude,

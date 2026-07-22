@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import MapWrapper from "@/components/katalog/MapWrapper";
 import { prisma } from "@/lib/prisma";
-
+import { stripHtml } from "@/lib/utils";
 import { ArrowLeft, MapPin, Phone, Calendar, Store, Share2, FileText } from "lucide-react";
 
 export const revalidate = 60;
@@ -28,10 +28,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     return {
       title: `${item.nama} | ${item.category.nama} Desa Suka Makmur`,
-      description: item.deskripsi.substring(0, 160),
+      description: stripHtml(item.deskripsi).substring(0, 160),
       openGraph: {
         title: item.nama,
-        description: item.deskripsi.substring(0, 160),
+        description: stripHtml(item.deskripsi).substring(0, 160),
         images: item.fotoUrl ? [item.fotoUrl] : [],
       },
     };

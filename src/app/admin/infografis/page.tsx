@@ -66,18 +66,19 @@ export default function AdminInfografisPage() {
       const results = [];
 
       if (penduduk) {
+        const computedTotal = (penduduk.laki_laki || 0) + (penduduk.perempuan || 0);
         const res = penduduk.id
           ? await infografisAPI.updatePenduduk({
               id: penduduk.id,
               tahun: penduduk.tahun,
-              total_penduduk: penduduk.total_penduduk,
+              total_penduduk: computedTotal,
               laki_laki: penduduk.laki_laki,
               perempuan: penduduk.perempuan,
               jumlah_kk: penduduk.jumlah_kk,
             })
           : await infografisAPI.createPenduduk({
               tahun: penduduk.tahun,
-              total_penduduk: penduduk.total_penduduk,
+              total_penduduk: computedTotal,
               laki_laki: penduduk.laki_laki,
               perempuan: penduduk.perempuan,
               jumlah_kk: penduduk.jumlah_kk,
@@ -171,45 +172,75 @@ export default function AdminInfografisPage() {
             </div>
             
             <div className="p-6 md:p-8 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Auto-compute total */}
+              <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl text-sm text-blue-700 dark:text-blue-300">
+                💡 <strong>Total Penduduk</strong> dihitung otomatis dari <strong>Laki-laki + Perempuan</strong>.
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* LAKI-LAKI */}
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Total Penduduk</label>
+                  <label className="text-sm font-semibold text-cyan-700 dark:text-cyan-400 flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full bg-cyan-500 inline-block"></span>
+                    Laki-laki (Jiwa)
+                  </label>
                   <input 
-                    type="number" 
-                    value={penduduk?.total_penduduk || 0}
-                    onChange={(e) => setPenduduk({...penduduk, total_penduduk: Number(e.target.value)})}
-                    disabled={saving}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 focus:ring-2 focus:ring-primary/50 outline-none font-bold disabled:opacity-50" 
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Laki-laki</label>
-                  <input 
-                    type="number" 
+                    type="number"
+                    min="0"
                     value={penduduk?.laki_laki || 0}
-                    onChange={(e) => setPenduduk({...penduduk, laki_laki: Number(e.target.value)})}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      const perempuan = penduduk?.perempuan || 0;
+                      setPenduduk({...penduduk, laki_laki: val, total_penduduk: val + perempuan});
+                    }}
                     disabled={saving}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 focus:ring-2 focus:ring-primary/50 outline-none font-bold disabled:opacity-50" 
+                    className="w-full px-4 py-3 rounded-xl border-2 border-cyan-200 dark:border-cyan-800 bg-cyan-50 dark:bg-cyan-900/20 focus:ring-2 focus:ring-cyan-400 outline-none font-bold text-cyan-900 dark:text-cyan-100 disabled:opacity-50" 
                   />
                 </div>
+                {/* PEREMPUAN */}
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Perempuan</label>
+                  <label className="text-sm font-semibold text-pink-700 dark:text-pink-400 flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full bg-pink-500 inline-block"></span>
+                    Perempuan (Jiwa)
+                  </label>
                   <input 
-                    type="number" 
+                    type="number"
+                    min="0"
                     value={penduduk?.perempuan || 0}
-                    onChange={(e) => setPenduduk({...penduduk, perempuan: Number(e.target.value)})}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      const lakiLaki = penduduk?.laki_laki || 0;
+                      setPenduduk({...penduduk, perempuan: val, total_penduduk: lakiLaki + val});
+                    }}
                     disabled={saving}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 focus:ring-2 focus:ring-primary/50 outline-none font-bold disabled:opacity-50" 
+                    className="w-full px-4 py-3 rounded-xl border-2 border-pink-200 dark:border-pink-800 bg-pink-50 dark:bg-pink-900/20 focus:ring-2 focus:ring-pink-400 outline-none font-bold text-pink-900 dark:text-pink-100 disabled:opacity-50" 
                   />
                 </div>
+                {/* TOTAL — auto computed */}
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Jumlah KK</label>
+                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>
+                    Total Penduduk (Otomatis)
+                  </label>
                   <input 
-                    type="number" 
+                    type="number"
+                    value={(penduduk?.laki_laki || 0) + (penduduk?.perempuan || 0)}
+                    readOnly
+                    className="w-full px-4 py-3 rounded-xl border-2 border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 outline-none font-black text-blue-800 dark:text-blue-300 cursor-not-allowed opacity-80" 
+                  />
+                </div>
+                {/* JUMLAH KK */}
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-amber-700 dark:text-amber-400 flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                    Jumlah KK (Kepala Keluarga)
+                  </label>
+                  <input 
+                    type="number"
+                    min="0"
                     value={penduduk?.jumlah_kk || 0}
                     onChange={(e) => setPenduduk({...penduduk, jumlah_kk: Number(e.target.value)})}
                     disabled={saving}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 focus:ring-2 focus:ring-primary/50 outline-none font-bold disabled:opacity-50" 
+                    className="w-full px-4 py-3 rounded-xl border-2 border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 focus:ring-2 focus:ring-amber-400 outline-none font-bold text-amber-900 dark:text-amber-100 disabled:opacity-50" 
                   />
                 </div>
               </div>
