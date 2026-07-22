@@ -93,7 +93,7 @@ export default function AdminInfografisPage() {
               tahun: apbdes.tahun,
               pendapatan: apbdes.pendapatan,
               belanja: apbdes.belanja,
-              pembiayaan: apbdes.pembiayaan,
+              lebih_kurang: apbdes.lebih_kurang,
               kategori_belanja: apbdes.kategori_belanja,
             })
           : await infografisAPI.createApbdes({
