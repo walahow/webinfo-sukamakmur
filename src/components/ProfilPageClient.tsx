@@ -138,7 +138,14 @@ export default function ProfilPageClient() {
                 <Image src="/mock-data/village-profile.jpg" alt="Sejarah Desa Suka Makmur" fill className="object-cover transition-transform duration-700 hover:scale-105" sizes="(max-width: 768px) 100vw, 50vw" />
               </div>
               <div className="flex flex-col justify-center">
-                <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed text-justify">{profile.sejarah ?? 'Sejarah belum tersedia.'}</p>
+                {profile.sejarah ? (
+                  <div 
+                    className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed text-justify prose-p:mb-4 last:prose-p:mb-0"
+                    dangerouslySetInnerHTML={{ __html: profile.sejarah }}
+                  />
+                ) : (
+                  <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed text-justify">Sejarah belum tersedia.</p>
+                )}
               </div>
             </div>
           </section>

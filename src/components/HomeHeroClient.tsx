@@ -60,7 +60,7 @@ export default function HomeHeroClient() {
         <div className="container mx-auto max-w-6xl flex flex-col gap-12">
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Sekilas Profil</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight">Sejarah & Visi Misi Desa Suka Makmur</h3>
+            <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight">Profil Desa Suka Makmur</h3>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-stretch">
@@ -86,7 +86,9 @@ export default function HomeHeroClient() {
                 <ProfileImageStack />
               </div>
               <div>
-                <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed line-clamp-4 text-center lg:text-left">{profile?.sejarah ?? 'Sejarah desa belum tersedia.'}</p>
+                <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed line-clamp-4 text-center lg:text-left font-medium">
+                  {profile?.visi ? `"${profile.visi}"` : 'Profil desa belum tersedia.'}
+                </p>
               </div>
             </div>
           </div>

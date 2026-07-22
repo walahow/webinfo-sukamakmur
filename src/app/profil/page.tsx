@@ -73,8 +73,8 @@ export default async function ProfilPage() {
     prisma.strukturOrganisasi.findMany({ orderBy: { urutan: "asc" } }),
   ]);
 
-  const kepalaDesa = struktur.find((item) => item.urutan === 1);
-  const perangkatLain = struktur.filter((item) => item.urutan !== 1);
+  const kepalaDesa = struktur.find((item) => item.jabatan?.trim().toLowerCase() === 'kepala desa') || struktur[0];
+  const perangkatLain = struktur.filter((item) => item.id !== kepalaDesa?.id);
 
   return (
     <main className="flex min-h-screen flex-col items-center overflow-x-hidden">
@@ -187,9 +187,16 @@ export default async function ProfilPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-6">
                 <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Sejarah Desa Suka Makmur</h3>
-                <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed">
-                  {profile?.sejarah ?? "Sejarah desa akan ditampilkan ketika data profil tersedia."}
-                </p>
+                {profile?.sejarah ? (
+                  <div 
+                    className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed prose-p:mb-4 last:prose-p:mb-0 break-words"
+                    dangerouslySetInnerHTML={{ __html: profile.sejarah.replace(/&nbsp;/g, ' ') }}
+                  />
+                ) : (
+                  <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed">
+                    Sejarah desa akan ditampilkan ketika data profil tersedia.
+                  </p>
+                )}
               </div>
               <div className="rounded-3xl overflow-hidden bg-slate-100 dark:bg-slate-900 h-96 shadow-sm border border-slate-200 dark:border-slate-800">
                 {profile?.peta_url ? (
@@ -199,8 +206,14 @@ export default async function ProfilPage() {
                     className="w-full h-full border-0"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-slate-400 dark:text-slate-500">
-                    Peta desa belum tersedia.
+                  <div className="w-full h-full relative">
+                    <Image 
+                      src="/shytes.jpeg" 
+                      alt="Peta Desa Suka Makmur" 
+                      fill 
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 50vw" 
+                    />
                   </div>
                 )}
               </div>
