@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ChevronDown, Users, MapPin, Wallet, Store, Info, FileText, Download } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { stripHtml } from "@/lib/utils";
 import { ProfileImageStack } from "@/components/ui/ProfileImageStack";
 
 async function getSafeVillageProfile() {
@@ -320,7 +321,7 @@ export default async function Home() {
                     </div>
                   )}
                   <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mt-auto pt-2">
-                    {item.deskripsi}
+                    {stripHtml(item.deskripsi)}
                   </p>
                 </div>
               </Link>
