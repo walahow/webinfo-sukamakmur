@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Save, Plus, Trash2, Edit, X, Upload } from 'lucide-react';
 import { profileAPI } from '@/lib/api';
+import { RichTextEditor } from '@/components/ui/RichTextEditor';
 
 export default function ProfileAdmin() {
   const [activeTab, setActiveTab] = useState<'umum' | 'aparatur'>('umum');
@@ -96,6 +97,9 @@ export default function ProfileAdmin() {
       setError(null);
 
       const result = await profileAPI.update({
+        sejarah: profilUmum.sejarah,
+        visi: profilUmum.visi,
+        misi: profilUmum.misi,
         jumlah_penduduk: profilUmum.jumlah_penduduk,
         realisasi_dana_desa_persen: profilUmum.realisasi_dana_desa_persen,
         umkm_aktif: profilUmum.umkm_aktif,
@@ -269,6 +273,63 @@ export default function ProfileAdmin() {
 
           {activeTab === 'umum' && (
             <form onSubmit={handleSaveProfil} className="bg-white p-6 rounded-xl space-y-6 shadow">
+              <h3 className="text-lg font-semibold text-slate-800">Sejarah & Visi Misi</h3>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Sejarah Desa</label>
+                  <div className="prose-editor">
+                    <RichTextEditor
+                      value={profilUmum.sejarah}
+                      onChange={(val) => setProfilUmum({ ...profilUmum, sejarah: val })}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Visi</label>
+                  <textarea
+                    value={profilUmum.visi}
+                    onChange={(e) => setProfilUmum({ ...profilUmum, visi: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-lg h-24"
+                    placeholder="Masukkan visi desa..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Misi</label>
+                  <div className="space-y-3">
+                    {profilUmum.misi.map((misiItem, index) => (
+                      <div key={index} className="flex gap-2">
+                        <input
+                          type="text"
+                          value={misiItem}
+                          onChange={(e) => handleMisiChange(index, e.target.value)}
+                          className="flex-1 px-3 py-2 border rounded-lg"
+                          placeholder={`Misi ${index + 1}`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveMisi(index)}
+                          className="p-2 bg-red-50 text-red-600 rounded-lg border border-red-100 hover:bg-red-100 transition-colors"
+                        >
+                          <X size={20} />
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={handleAddMisi}
+                      className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 flex items-center gap-2 text-sm font-medium transition-colors"
+                    >
+                      <Plus size={16} /> Tambah Misi
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <hr className="my-8 border-slate-200" />
+
               <h3 className="text-lg font-semibold text-slate-800">Statistik Desa</h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
