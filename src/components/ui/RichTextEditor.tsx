@@ -72,6 +72,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
   return (
     <div className="rich-text-container">
       <ReactQuill 
+        // @ts-expect-error - next/dynamic ref type mismatch
         ref={reactQuillRef}
         theme="snow" 
         value={value} 
