@@ -95,16 +95,21 @@ export default function InfografisPage() {
     kategori_belanja: {},
   };
 
-  const totalPenduduk = profile?.jumlah_penduduk ?? pendudukOverview.total;
+  // Gunakan pendudukStat sebagai sumber data utama, fallback ke profile
+  const totalPenduduk = pendudukOverview.total > 0
+    ? pendudukOverview.total
+    : (profile?.jumlah_penduduk ?? 0);
   const luasWilayah = profile?.luas_wilayah ?? 'Belum tersedia';
   const umkmAktif = profile?.umkm_aktif ?? 0;
   const realisasiDana = profile?.realisasi_dana_desa_persen ?? 0;
 
   const tableValue = (type: 'pendapatan' | 'belanja' | 'pembiayaan') => {
     if (type === 'pendapatan') {
+      // Anggaran = pendapatan, Realisasi = diasumsikan = belanja (pengeluaran aktual)
+      // Lebih/Kurang = saldo = pendapatan - belanja
       return {
         anggaran: apbdes.pendapatan,
-        realisasi: apbdes.belanja,
+        realisasi: apbdes.pendapatan, // realisasi pendapatan = anggaran pendapatan
         lebihKurang: apbdes.pendapatan - apbdes.belanja,
       };
     }
