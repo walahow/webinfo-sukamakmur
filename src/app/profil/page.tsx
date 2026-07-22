@@ -199,23 +199,15 @@ export default async function ProfilPage() {
                 )}
               </div>
               <div className="rounded-3xl overflow-hidden bg-slate-100 dark:bg-slate-900 h-96 shadow-sm border border-slate-200 dark:border-slate-800">
-                {profile?.peta_url ? (
-                  <iframe
-                    src={profile.peta_url}
-                    title="Peta Desa"
-                    className="w-full h-full border-0"
+                <div className="w-full h-full relative">
+                  <Image 
+                    src="/shytes.jpeg" 
+                    alt="Sejarah Desa Suka Makmur" 
+                    fill 
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 50vw" 
                   />
-                ) : (
-                  <div className="w-full h-full relative">
-                    <Image 
-                      src="/shytes.jpeg" 
-                      alt="Peta Desa Suka Makmur" 
-                      fill 
-                      className="object-cover"
-                      sizes="(max-width: 1024px) 100vw, 50vw" 
-                    />
-                  </div>
-                )}
+                </div>
               </div>
             </div>
           </section>

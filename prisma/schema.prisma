@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,44 +8,36 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// ----------------------------------------------------------------------
-// 1. Core Profile & Organization
-// ----------------------------------------------------------------------
-
 model VillageProfile {
-  id                              String   @id @default(uuid())
-  sejarah                         String   @db.Text
-  visi                            String   @db.Text
-  misi                            String[] // PostgreSQL native array
-  sambutan_kepdes                 String   @db.Text
-  peta_url                        String?
-  koordinat                       String?
-  batas_desa                      String?
-  luas_wilayah                    String?
-  jumlah_penduduk                 Int?
-  realisasi_dana_desa_persen      Int      @default(0) // 0-100
-  umkm_aktif                      Int      @default(0)
-  updatedAt                       DateTime @updatedAt
+  id                         String   @id @default(uuid())
+  sejarah                    String
+  visi                       String
+  misi                       String[]
+  sambutan_kepdes            String
+  peta_url                   String?
+  koordinat                  String?
+  batas_desa                 String?
+  luas_wilayah               String?
+  jumlah_penduduk            Int?
+  realisasi_dana_desa_persen Int      @default(0)
+  umkm_aktif                 Int      @default(0)
+  updatedAt                  DateTime @updatedAt
 }
 
 model StrukturOrganisasi {
-  id           String @id @default(uuid())
+  id           String  @id @default(uuid())
   jabatan      String
   nama_pejabat String
-  urutan       Int    @default(0)
+  urutan       Int     @default(0)
   foto_url     String?
 }
-
-// ----------------------------------------------------------------------
-// 2. News & Publications
-// ----------------------------------------------------------------------
 
 model User {
   id       String @id @default(uuid())
   nama     String
   email    String @unique
   password String
-  role     String @default("EDITOR") // ADMIN or EDITOR
+  role     String @default("EDITOR")
   news     News[]
 }
 
@@ -56,68 +45,51 @@ model News {
   id                String   @id @default(uuid())
   judul             String
   slug              String   @unique
-  konten            String   @db.Text
-  status            String   @default("DRAFT") // DRAFT or PUBLISHED
+  konten            String
+  status            String   @default("DRAFT")
   tanggal_publikasi DateTime @default(now())
   cover_url         String?
-
-  penulis_id String
-  penulis    User   @relation(fields: [penulis_id], references: [id])
+  penulis_id        String
+  penulis           User     @relation(fields: [penulis_id], references: [id])
 }
-
-// ----------------------------------------------------------------------
-// 3. Katalog (UMKM & Wisata)
-// ----------------------------------------------------------------------
 
 model KatalogCategory {
   id      String    @id @default(uuid())
   nama    String
-  icon    String?   // Lucide icon name e.g. "Utensils", "MapPin"
+  icon    String?
   katalog Katalog[]
 }
 
 model Katalog {
-  id          String          @id @default(uuid())
-  nama        String
-  slug        String          @unique
-  deskripsi   String
-  latitude    Float
-  longitude   Float
-  dusun       String?
-  kontak      String?
-  fotoUrl     String?
-  categoryId  String
-  category    KatalogCategory @relation(fields: [categoryId], references: [id])
-  createdAt   DateTime        @default(now())
+  id         String          @id @default(uuid())
+  nama       String
+  slug       String          @unique
+  deskripsi  String
+  latitude   Float
+  longitude  Float
+  dusun      String?
+  kontak     String?
+  fotoUrl    String?
+  categoryId String
+  createdAt  DateTime        @default(now())
+  category   KatalogCategory @relation(fields: [categoryId], references: [id])
 }
 
-// ----------------------------------------------------------------------
-// 4. Gallery
-// ----------------------------------------------------------------------
-
 model Galeri {
-  id        String  @id @default(uuid())
-  foto_url  String
-  caption   String
+  id          String  @id @default(uuid())
+  foto_url    String
+  caption     String
   katalog_id  String?
   kegiatan_id String?
 }
 
-// ----------------------------------------------------------------------
-// 5. Kegiatan (Events)
-// ----------------------------------------------------------------------
-
 model Kegiatan {
-  id       String @id @default(uuid())
-  judul    String
+  id        String @id @default(uuid())
+  judul     String
   deskripsi String
-  tanggal  String // ISO date string
-  lokasi   String
+  tanggal   String
+  lokasi    String
 }
-
-// ----------------------------------------------------------------------
-// 6. PPID (Public Documents)
-// ----------------------------------------------------------------------
 
 model DocumentCategory {
   id        String     @id @default(uuid())
@@ -129,16 +101,12 @@ model Document {
   id           String           @id @default(uuid())
   judul        String
   file_url     String
-  size         String?          // e.g. "2.5 MB"
-  format       String?          // e.g. "PDF", "XLSX"
+  size         String?
+  format       String?
   published_at DateTime         @default(now())
   category_id  String
   category     DocumentCategory @relation(fields: [category_id], references: [id])
 }
-
-// ----------------------------------------------------------------------
-// 7. Pengaduan Warga
-// ----------------------------------------------------------------------
 
 model Pengaduan {
   id           String   @id @default(uuid())
@@ -146,13 +114,9 @@ model Pengaduan {
   kontak       String
   judul        String
   deskripsi    String
-  status       String   @default("PENDING") // PENDING, PROSES, SELESAI
+  status       String   @default("PENDING")
   created_at   DateTime @default(now())
 }
-
-// ----------------------------------------------------------------------
-// 8. Infografis / Statistics
-// ----------------------------------------------------------------------
 
 model PendudukStat {
   id             String @id @default(uuid())
@@ -169,20 +133,20 @@ model Apbdes {
   pendapatan       Float
   belanja          Float
   pembiayaan       Float
-  kategori_belanja Json  // JSONB in PostgreSQL
+  kategori_belanja Json
 }
 
 model IdmSdgScore {
   id         String @id @default(uuid())
   tahun      Int    @unique
   skor_idm   Float
-  status_idm String // 'Sangat Tertinggal' | 'Tertinggal' | 'Berkembang' | 'Maju' | 'Mandiri'
+  status_idm String
   skor_sdgs  Float
 }
 
 model StuntingBansos {
-  id               String @id @default(uuid())
-  tahun            Int    @unique
-  jumlah_stunting  Int
-  penerima_bansos  Int
+  id              String @id @default(uuid())
+  tahun           Int    @unique
+  jumlah_stunting Int
+  penerima_bansos Int
 }

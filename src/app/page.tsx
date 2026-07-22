@@ -162,7 +162,7 @@ export default async function Home() {
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="text-sm font-bold tracking-widest uppercase text-primary mb-3">Sekilas Profil</h2>
             <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight">
-              Sejarah & Visi Misi Desa Suka Makmur
+              Profil Desa Suka Makmur
             </h3>
           </div>
 
@@ -198,8 +198,8 @@ export default async function Home() {
               </div>
 
               <div>
-                <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed line-clamp-4 text-center lg:text-left">
-                  {profile?.sejarah ?? 'Sejarah Desa Suka Makmur belum tersedia. Silakan perbarui data profil desa di admin.'}
+                <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed line-clamp-4 text-center lg:text-left font-medium">
+                  {profile?.visi ? `"${profile.visi}"` : 'Profil Desa Suka Makmur belum tersedia.'}
                 </p>
               </div>
             </div>
