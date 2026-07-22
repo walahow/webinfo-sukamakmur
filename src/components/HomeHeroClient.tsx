@@ -33,7 +33,7 @@ export default function HomeHeroClient() {
 
   const profile = data.profile;
   const struktur = data.struktur || [];
-  const kepalaDesa = struktur.find((p: any) => p.urutan === 1);
+  const kepalaDesa = struktur.find((p: any) => p.jabatan?.trim().toLowerCase() === 'kepala desa') || struktur[0];
 
   return (
     <>

@@ -30,8 +30,8 @@ export default function ProfilPageClient() {
 
   const profile = data.profile || {};
   const struktur = data.struktur || [];
-  const kepalaDesa = struktur.find((p: any) => p.urutan === 1);
-  const perangkatLain = struktur.filter((p: any) => p.urutan !== 1);
+  const kepalaDesa = struktur.find((p: any) => p.jabatan?.trim().toLowerCase() === 'kepala desa') || struktur[0];
+  const perangkatLain = struktur.filter((p: any) => p.id !== kepalaDesa?.id);
 
   return (
     <main className="flex min-h-screen flex-col items-center overflow-x-hidden">
