@@ -85,36 +85,12 @@ export default function InfografisPage() {
     tahun: new Date().getFullYear(),
     pendapatan: 0,
     belanja: 0,
-    pembiayaan: 0,
+    lebih_kurang: 0,
     kategori_belanja: {},
   };
 
 
-  const tableValue = (type: 'pendapatan' | 'belanja' | 'pembiayaan') => {
-    if (type === 'pendapatan') {
-      // Anggaran = pendapatan, Realisasi = diasumsikan = belanja (pengeluaran aktual)
-      // Lebih/Kurang = saldo = pendapatan - belanja
-      return {
-        anggaran: apbdes.pendapatan,
-        realisasi: apbdes.pendapatan, // realisasi pendapatan = anggaran pendapatan
-        lebihKurang: apbdes.pendapatan - apbdes.belanja,
-      };
-    }
-
-    if (type === 'belanja') {
-      return {
-        anggaran: apbdes.belanja,
-        realisasi: apbdes.belanja,
-        lebihKurang: 0,
-      };
-    }
-
-    return {
-      anggaran: apbdes.pembiayaan,
-      realisasi: apbdes.pembiayaan,
-      lebihKurang: 0,
-    };
-  };
+  // Table values are now read directly from apbdes properties
 
   if (loading) {
     return (
@@ -249,9 +225,7 @@ export default function InfografisPage() {
                 <thead>
                   <tr className="bg-slate-100 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">
                     <th className="p-6 font-bold text-lg">Kategori</th>
-                    <th className="p-6 font-bold text-lg text-right">Anggaran</th>
-                    <th className="p-6 font-bold text-lg text-right">Realisasi</th>
-                    <th className="p-6 font-bold text-lg text-right">Lebih (Kurang)</th>
+                    <th className="p-6 font-bold text-lg text-right">Total</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
@@ -265,14 +239,8 @@ export default function InfografisPage() {
                         Pendapatan
                       </div>
                     </td>
-                    <td className="p-6 text-right font-mono text-slate-700 dark:text-slate-300">
-                      {formatCurrency(tableValue('pendapatan').anggaran)}
-                    </td>
-                    <td className="p-6 text-right font-mono text-emerald-600 dark:text-emerald-400 font-medium">
-                      {formatCurrency(tableValue('pendapatan').realisasi)}
-                    </td>
-                    <td className="p-6 text-right font-mono text-slate-500 dark:text-slate-400">
-                      {formatCurrency(tableValue('pendapatan').lebihKurang)}
+                    <td className="p-6 text-right font-mono text-emerald-600 dark:text-emerald-400 font-medium text-lg">
+                      {formatCurrency(apbdes.pendapatan)}
                     </td>
                   </tr>
                   
@@ -286,35 +254,23 @@ export default function InfografisPage() {
                         Belanja
                       </div>
                     </td>
-                    <td className="p-6 text-right font-mono text-slate-700 dark:text-slate-300">
-                      {formatCurrency(tableValue('belanja').anggaran)}
-                    </td>
-                    <td className="p-6 text-right font-mono text-rose-600 dark:text-rose-400 font-medium">
-                      {formatCurrency(tableValue('belanja').realisasi)}
-                    </td>
-                    <td className="p-6 text-right font-mono text-slate-500 dark:text-slate-400">
-                      {formatCurrency(tableValue('belanja').lebihKurang)}
+                    <td className="p-6 text-right font-mono text-rose-600 dark:text-rose-400 font-medium text-lg">
+                      {formatCurrency(apbdes.belanja)}
                     </td>
                   </tr>
 
-                  {/* PEMBIAYAAN */}
+                  {/* LEBIH KURANG */}
                   <tr className="hover:bg-white dark:hover:bg-slate-900 transition-colors">
                     <td className="p-6 font-semibold text-slate-900 dark:text-white">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
                           <TrendingUp size={18} />
                         </div>
-                        Pembiayaan
+                        Lebih / (Kurang)
                       </div>
                     </td>
-                    <td className="p-6 text-right font-mono text-slate-700 dark:text-slate-300">
-                      {formatCurrency(tableValue('pembiayaan').anggaran)}
-                    </td>
-                    <td className="p-6 text-right font-mono text-blue-600 dark:text-blue-400 font-medium">
-                      {formatCurrency(tableValue('pembiayaan').realisasi)}
-                    </td>
-                    <td className="p-6 text-right font-mono text-slate-500 dark:text-slate-400">
-                      {formatCurrency(tableValue('pembiayaan').lebihKurang)}
+                    <td className="p-6 text-right font-mono text-blue-600 dark:text-blue-400 font-medium text-lg">
+                      {formatCurrency(apbdes.lebih_kurang || 0)}
                     </td>
                   </tr>
                 </tbody>

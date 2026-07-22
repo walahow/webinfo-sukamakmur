@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
         tahun: body.tahun,
         pendapatan: body.pendapatan,
         belanja: body.belanja || 0,
-        pembiayaan: body.pembiayaan || 0,
+        lebih_kurang: body.lebih_kurang || 0,
         kategori_belanja: body.kategori_belanja || {},
       },
     });
@@ -76,7 +76,7 @@ export async function PUT(req: NextRequest) {
         tahun: body.tahun,
         pendapatan: body.pendapatan,
         belanja: body.belanja,
-        pembiayaan: body.pembiayaan,
+        lebih_kurang: body.lebih_kurang,
         kategori_belanja: body.kategori_belanja || {},
       },
     });

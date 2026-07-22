@@ -126,7 +126,7 @@ export interface Apbdes {
   tahun: number;
   pendapatan: number;
   belanja: number;
-  pembiayaan: number;
+  lebih_kurang: number;
   kategori_belanja: { nama: string; jumlah: number }[];
 }
 

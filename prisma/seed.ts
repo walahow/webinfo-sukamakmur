@@ -363,7 +363,7 @@ async function main() {
       tahun: 2026,
       pendapatan: 1500000000,
       belanja: 1450000000,
-      pembiayaan: 50000000,
+      lebih_kurang: 50000000,
       kategori_belanja: [
         { nama: "Penyelenggaraan Pemerintahan", jumlah: 450000000 },
         { nama: "Pelaksanaan Pembangunan", jumlah: 700000000 },

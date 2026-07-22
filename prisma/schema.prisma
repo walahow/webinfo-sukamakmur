@@ -132,7 +132,7 @@ model Apbdes {
   tahun            Int    @unique
   pendapatan       Float
   belanja          Float
-  pembiayaan       Float
+  lebih_kurang     Float  @default(0)
   kategori_belanja Json
 }
 

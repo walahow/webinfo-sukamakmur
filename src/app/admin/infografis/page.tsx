@@ -46,7 +46,7 @@ export default function AdminInfografisPage() {
           tahun,
           pendapatan: 0,
           belanja: 0,
-          pembiayaan: 0,
+          lebih_kurang: 0,
           kategori_belanja: {},
         });
       }
@@ -100,7 +100,7 @@ export default function AdminInfografisPage() {
               tahun: apbdes.tahun,
               pendapatan: apbdes.pendapatan,
               belanja: apbdes.belanja,
-              pembiayaan: apbdes.pembiayaan,
+              lebih_kurang: apbdes.lebih_kurang,
               kategori_belanja: apbdes.kategori_belanja,
             });
         results.push(res);
@@ -300,19 +300,19 @@ export default function AdminInfografisPage() {
                 </div>
               </div>
 
-              {/* PEMBIAYAAN */}
+              {/* LEBIH KURANG */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800">
                   <TrendingUp size={18} className="text-blue-500" />
-                  <h4 className="text-base font-bold text-slate-800 dark:text-white">Pembiayaan</h4>
+                  <h4 className="text-base font-bold text-slate-800 dark:text-white">Lebih / (Kurang)</h4>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Jumlah (Rp)</label>
                     <input 
                       type="number" 
-                      value={apbdes?.pembiayaan || 0}
-                      onChange={(e) => setApbdes({...apbdes, pembiayaan: Number(e.target.value)})}
+                      value={apbdes?.lebih_kurang || 0}
+                      onChange={(e) => setApbdes({...apbdes, lebih_kurang: Number(e.target.value)})}
                       disabled={saving}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 focus:ring-2 focus:ring-blue-500/50 outline-none font-mono disabled:opacity-50" 
                     />
