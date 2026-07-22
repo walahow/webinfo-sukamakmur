@@ -29,7 +29,7 @@ type KatalogItem = {
   id: string;
   nama: string;
   slug: string;
-  category: { id: string; nama: string };
+  category: { id: string; nama: string; icon: string | null };
   deskripsi: string;
   dusun: string | null;
   fotoUrl: string | null;

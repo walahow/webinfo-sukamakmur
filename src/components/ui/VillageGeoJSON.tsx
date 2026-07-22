@@ -120,9 +120,14 @@ export default function VillageGeoJSON({ variant = "profile" }: VillageGeoJSONPr
   };
 
   const featureFilter = (feature: any) => {
+    // Remove default POIs (Balai Desa, BUMDes) from all maps
+    if (feature.properties?.balaiDesa || feature.properties?.BUMDes) {
+      return false;
+    }
+
     if (variant === "katalog") {
-      // In katalog mode, only show the main boundary and POIs (hide dusun polygons)
-      return feature.properties?.visibility === false || feature.properties?.balaiDesa || feature.properties?.BUMDes;
+      // In katalog mode, only show the main boundary (hide dusun polygons)
+      return feature.properties?.visibility === false;
     }
     return true;
   };

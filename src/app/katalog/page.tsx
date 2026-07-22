@@ -52,7 +52,7 @@ export default async function KatalogPage({
     id: item.id,
     nama: item.nama,
     slug: item.slug,
-    category: { id: item.category.id, nama: item.category.nama },
+    category: { id: item.category.id, nama: item.category.nama, icon: item.category.icon },
     deskripsi: item.deskripsi,
     dusun: item.dusun,
     fotoUrl: item.fotoUrl,
