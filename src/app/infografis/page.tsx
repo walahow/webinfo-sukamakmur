@@ -1,11 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Users, Home, User, TrendingUp, Wallet } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
-import { infografisAPI, profileAPI } from "@/lib/api";
-import ProfileMapWrapper from "@/components/profil/ProfileMapWrapper";
+import { infografisAPI } from "@/lib/api";
+import Link from "next/link";
 
 const PIE_COLORS = ['#0ea5e9', '#ec4899'];
 
@@ -36,7 +35,6 @@ const defaultPendudukOverview = {
 };
 
 export default function InfografisPage() {
-  const [profile, setProfile] = useState<any>(null);
   const [pendudukOverview, setPendudukOverview] = useState(defaultPendudukOverview);
   const [apbdesRecord, setApbdesRecord] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -48,15 +46,11 @@ export default function InfografisPage() {
       setError(null);
 
       try {
-        const [profileRes, pendudukRes, apbdesRes] = await Promise.all([
-          profileAPI.get(),
+        const [pendudukRes, apbdesRes] = await Promise.all([
           infografisAPI.getPenduduk(),
           infografisAPI.getApbdes(),
         ]);
 
-        if (profileRes.success && profileRes.data?.profile) {
-          setProfile(profileRes.data.profile);
-        }
 
         if (pendudukRes.success && Array.isArray(pendudukRes.data) && pendudukRes.data.length > 0) {
           const latest = pendudukRes.data[0];
@@ -95,13 +89,6 @@ export default function InfografisPage() {
     kategori_belanja: {},
   };
 
-  // Gunakan pendudukStat sebagai sumber data utama, fallback ke profile
-  const totalPenduduk = pendudukOverview.total > 0
-    ? pendudukOverview.total
-    : (profile?.jumlah_penduduk ?? 0);
-  const luasWilayah = profile?.luas_wilayah ?? 'Belum tersedia';
-  const umkmAktif = profile?.umkm_aktif ?? 0;
-  const realisasiDana = profile?.realisasi_dana_desa_persen ?? 0;
 
   const tableValue = (type: 'pendapatan' | 'belanja' | 'pembiayaan') => {
     if (type === 'pendapatan') {
@@ -168,66 +155,8 @@ export default function InfografisPage() {
         </div>
       </header>
 
-      <section className="w-full py-20 bg-slate-50 dark:bg-slate-950">
-        <div className="container mx-auto max-w-6xl px-4 md:px-6">
-          <div className="grid gap-6 md:grid-cols-4">
-            {[
-              {
-                title: 'Total Penduduk',
-                value: totalPenduduk,
-                subtitle: 'Jiwa terdaftar',
-                icon: Users,
-                bg: 'bg-sky-50 text-sky-600',
-              },
-              {
-                title: 'Luas Wilayah',
-                value: luasWilayah,
-                subtitle: 'Hektar area produktif',
-                icon: Home,
-                bg: 'bg-emerald-50 text-emerald-600',
-              },
-              {
-                title: 'Realisasi Dana Desa',
-                value: `${realisasiDana}%`,
-                subtitle: 'Terserap untuk pembangunan',
-                icon: Wallet,
-                bg: 'bg-amber-50 text-amber-600',
-              },
-              {
-                title: 'UMKM Aktif',
-                value: umkmAktif,
-                subtitle: 'Unit usaha terdaftar',
-                icon: TrendingUp,
-                bg: 'bg-fuchsia-50 text-fuchsia-600',
-              },
-            ].map((card, idx) => {
-              const Icon = card.icon;
-              return (
-                <div key={idx} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all">
-                  <div className={`inline-flex items-center justify-center w-14 h-14 rounded-3xl ${card.bg} mb-5`}>
-                    <Icon size={24} />
-                  </div>
-                  <div className="text-3xl font-black text-slate-900 dark:text-white mb-2">
-                    {typeof card.value === 'number'
-                      ? new Intl.NumberFormat('id-ID').format(card.value)
-                      : card.value}
-                  </div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">{card.subtitle}</p>
-                </div>
-              );
-            })}
-          </div>
 
-          <div className="mt-10 text-center">
-            <Link href="#apbdes" className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/10 hover:bg-blue-700 transition-colors">
-              Lihat Laporan Lengkap
-              <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </div>
-      </section>
 
-      
 
       <section id="penduduk" className="w-full py-24 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800">
         <div className="container mx-auto max-w-6xl px-4 md:px-6">

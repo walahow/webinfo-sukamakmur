@@ -58,7 +58,7 @@ async function getSafeVillageProfile() {
 }
 
 async function getHomeData() {
-  const [profile, struktur, katalogItems, newsItems, documentItems] = await Promise.all([
+  const [profile, struktur, katalogItems, newsItems, documentItems, pendudukStat, katalogCount] = await Promise.all([
     getSafeVillageProfile(),
     prisma.strukturOrganisasi.findMany({ orderBy: { urutan: "asc" } }),
     prisma.katalog.findMany({
@@ -75,6 +75,8 @@ async function getHomeData() {
       orderBy: { published_at: "desc" },
       take: 5,
     }),
+    prisma.pendudukStat.findFirst({ orderBy: { tahun: "desc" } }),
+    prisma.katalog.count(),
   ]);
 
   return {
@@ -83,14 +85,21 @@ async function getHomeData() {
     katalogItems,
     newsItems,
     documentItems,
+    pendudukStat,
+    katalogCount,
   };
 }
 
 export default async function Home() {
-  const { profile, struktur, katalogItems, newsItems, documentItems } = await getHomeData();
+  const { profile, struktur, katalogItems, newsItems, documentItems, pendudukStat, katalogCount } = await getHomeData();
   const kepalaDesa = struktur.find((item) => item.urutan === 1);
   const latestNews = newsItems[0];
   const moreNews = newsItems.slice(1);
+
+  const totalPenduduk = profile?.jumlah_penduduk ?? pendudukStat?.total_penduduk ?? 0;
+  const luasWilayah = profile?.luas_wilayah || "Belum diisi";
+  const realisasiDana = profile?.realisasi_dana_desa_persen ?? 0;
+  const umkmAktif = profile?.umkm_aktif || katalogCount || 0;
 
   return (
     <main className="flex min-h-screen flex-col items-center overflow-x-hidden">
@@ -219,8 +228,10 @@ export default async function Home() {
                 <Users size={28} />
               </div>
               <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Total Penduduk</p>
-              <h4 className="text-4xl font-black text-slate-900 dark:text-white">2,450</h4>
-              <p className="text-xs text-slate-400 mt-2">Jiwa tersebar di 4 dusun</p>
+              <h4 className="text-4xl font-black text-slate-900 dark:text-white">
+                {typeof totalPenduduk === 'number' ? totalPenduduk.toLocaleString('id-ID') : totalPenduduk}
+              </h4>
+              <p className="text-xs text-slate-400 mt-2">Jiwa terdaftar di desa</p>
             </div>
             
             <div className="p-8 rounded-3xl bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex flex-col items-start group">
@@ -228,8 +239,8 @@ export default async function Home() {
                 <MapPin size={28} />
               </div>
               <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Luas Wilayah</p>
-              <h4 className="text-4xl font-black text-slate-900 dark:text-white">450</h4>
-              <p className="text-xs text-slate-400 mt-2">Hektar area produktif</p>
+              <h4 className="text-4xl font-black text-slate-900 dark:text-white">{luasWilayah}</h4>
+              <p className="text-xs text-slate-400 mt-2">Area wilayah desa</p>
             </div>
 
             <div className="p-8 rounded-3xl bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex flex-col items-start group">
@@ -237,7 +248,7 @@ export default async function Home() {
                 <Wallet size={28} />
               </div>
               <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Realisasi Dana Desa</p>
-              <h4 className="text-4xl font-black text-slate-900 dark:text-white">85<span className="text-2xl text-slate-400 font-bold">%</span></h4>
+              <h4 className="text-4xl font-black text-slate-900 dark:text-white">{realisasiDana}<span className="text-2xl text-slate-400 font-bold">%</span></h4>
               <p className="text-xs text-slate-400 mt-2">Terserap untuk pembangunan</p>
             </div>
 
@@ -246,7 +257,7 @@ export default async function Home() {
                 <Store size={28} />
               </div>
               <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">UMKM Aktif</p>
-              <h4 className="text-4xl font-black text-slate-900 dark:text-white">45</h4>
+              <h4 className="text-4xl font-black text-slate-900 dark:text-white">{umkmAktif}</h4>
               <p className="text-xs text-slate-400 mt-2">Unit usaha terdaftar</p>
             </div>
           </div>

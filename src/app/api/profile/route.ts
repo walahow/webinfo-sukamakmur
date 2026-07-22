@@ -11,7 +11,7 @@ export async function GET() {
       // query only the known-safe columns directly.
       console.warn('Prisma findFirst failed, falling back to raw query:', innerErr);
       const rows: any = await prisma.$queryRaw`
-        SELECT "id", "sejarah", "visi", "misi", "sambutan_kepdes", "peta_url", "koordinat", "batas_desa", "luas_wilayah", "jumlah_penduduk"
+        SELECT "id", "sejarah", "visi", "misi", "sambutan_kepdes", "peta_url", "koordinat", "batas_desa", "luas_wilayah", "jumlah_penduduk", "realisasi_dana_desa_persen", "umkm_aktif"
         FROM "VillageProfile"
         LIMIT 1
       `;
@@ -37,9 +37,8 @@ export async function GET() {
           batas_desa: row.batas_desa,
           luas_wilayah: row.luas_wilayah,
           jumlah_penduduk: row.jumlah_penduduk,
-          // statistics missing in DB -> default to 0
-          realisasi_dana_desa_persen: 0,
-          umkm_aktif: 0,
+          realisasi_dana_desa_persen: row.realisasi_dana_desa_persen ?? 0,
+          umkm_aktif: row.umkm_aktif ?? 0,
         };
       }
     }
