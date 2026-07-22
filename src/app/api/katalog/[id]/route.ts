@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
@@ -122,6 +123,9 @@ export async function DELETE(
     const { id } = await params;
 
     await prisma.katalog.delete({ where: { id } });
+
+    revalidatePath("/katalog");
+    revalidatePath("/");
 
     return NextResponse.json({ data: { success: true }, meta: { total: 0 } });
   } catch (error) {

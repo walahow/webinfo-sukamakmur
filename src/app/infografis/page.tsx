@@ -98,9 +98,7 @@ export default function InfografisPage() {
   const totalPenduduk = profile?.jumlah_penduduk ?? pendudukOverview.total;
   const luasWilayah = profile?.luas_wilayah ?? 'Belum tersedia';
   const umkmAktif = profile?.umkm_aktif ?? 0;
-  const realisasiDana = apbdes.pendapatan > 0
-    ? Math.round((Number(apbdes.belanja) / Number(apbdes.pendapatan)) * 100)
-    : 0;
+  const realisasiDana = profile?.realisasi_dana_desa_persen ?? 0;
 
   const tableValue = (type: 'pendapatan' | 'belanja' | 'pembiayaan') => {
     if (type === 'pendapatan') {

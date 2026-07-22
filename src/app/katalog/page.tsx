@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import KatalogClient from "@/components/katalog/KatalogClient";
 import { Metadata } from "next";
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "Katalog Desa - Potensi UMKM & Wisata",
   description: "Jelajahi potensi lokal, UMKM, kerajinan, dan destinasi wisata di Desa Suka Makmur.",

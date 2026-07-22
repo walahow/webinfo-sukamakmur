@@ -96,15 +96,7 @@ export default function ProfileAdmin() {
       setError(null);
 
       const result = await profileAPI.update({
-        sejarah: profilUmum.sejarah,
-        visi: profilUmum.visi,
-        misi: profilUmum.misi.filter(m => m.trim() !== ''),
-        sambutan_kepdes: profilUmum.sambutan_kepdes,
         jumlah_penduduk: profilUmum.jumlah_penduduk,
-        luas_wilayah: profilUmum.luas_wilayah,
-        batas_desa: profilUmum.batas_desa,
-        koordinat: profilUmum.koordinat,
-        peta_url: profilUmum.peta_url,
         realisasi_dana_desa_persen: profilUmum.realisasi_dana_desa_persen,
         umkm_aktif: profilUmum.umkm_aktif,
       });
@@ -278,7 +270,7 @@ export default function ProfileAdmin() {
           {activeTab === 'umum' && (
             <form onSubmit={handleSaveProfil} className="bg-white p-6 rounded-xl space-y-6 shadow">
               <h3 className="text-lg font-semibold text-slate-800">Statistik Desa</h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium mb-2">Total Penduduk (Jiwa)</label>
@@ -288,45 +280,6 @@ export default function ProfileAdmin() {
                     onChange={(e) =>
                       setProfilUmum({ ...profilUmum, jumlah_penduduk: parseInt(e.target.value) || 0 })
                     }
-                    className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">Luas Wilayah (Hektar)</label>
-                  <input
-                    type="text"
-                    value={profilUmum.luas_wilayah}
-                    onChange={(e) =>
-                      setProfilUmum({ ...profilUmum, luas_wilayah: e.target.value })
-                    }
-                    placeholder="Contoh: 450"
-                    className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">Koordinat</label>
-                  <input
-                    type="text"
-                    value={profilUmum.koordinat}
-                    onChange={(e) =>
-                      setProfilUmum({ ...profilUmum, koordinat: e.target.value })
-                    }
-                    placeholder="Contoh: 3.514,-98.678"
-                    className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">Batas Desa</label>
-                  <input
-                    type="text"
-                    value={profilUmum.batas_desa}
-                    onChange={(e) =>
-                      setProfilUmum({ ...profilUmum, batas_desa: e.target.value })
-                    }
-                    placeholder="Contoh: Utara: Medan Johor"
                     className="w-full px-3 py-2 border rounded-lg"
                   />
                 </div>
@@ -348,19 +301,6 @@ export default function ProfileAdmin() {
                   </div>
                 </div>
 
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium mb-2">Embed URL Peta</label>
-                  <input
-                    type="text"
-                    value={profilUmum.peta_url}
-                    onChange={(e) =>
-                      setProfilUmum({ ...profilUmum, peta_url: e.target.value })
-                    }
-                    placeholder="Contoh: https://www.google.com/maps/embed?..."
-                    className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
-
                 <div>
                   <label className="block text-sm font-medium mb-2">UMKM Aktif (Unit)</label>
                   <input
@@ -372,67 +312,6 @@ export default function ProfileAdmin() {
                     className="w-full px-3 py-2 border rounded-lg"
                   />
                 </div>
-              </div>
-
-              <hr className="my-6" />
-              <h3 className="text-lg font-semibold text-slate-800">Informasi Desa</h3>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Sejarah</label>
-                <textarea
-                  rows={5}
-                  value={profilUmum.sejarah}
-                  onChange={(e) => setProfilUmum({ ...profilUmum, sejarah: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Visi</label>
-                <textarea
-                  rows={3}
-                  value={profilUmum.visi}
-                  onChange={(e) => setProfilUmum({ ...profilUmum, visi: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Misi</label>
-                {profilUmum.misi.map((m, i) => (
-                  <div key={i} className="flex gap-3 mb-2">
-                    <input
-                      value={m}
-                      onChange={(e) => handleMisiChange(i, e.target.value)}
-                      className="flex-1 px-3 py-2 border rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveMisi(i)}
-                      className="px-3 py-2 bg-red-100 text-red-700 rounded-lg"
-                    >
-                      Hapus
-                    </button>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={handleAddMisi}
-                  className="px-3 py-2 bg-green-100 text-green-700 rounded-lg"
-                >
-                  <Plus size={18} className="inline mr-1" />
-                  Tambah Misi
-                </button>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Sambutan Kepdes</label>
-                <textarea
-                  rows={5}
-                  value={profilUmum.sambutan_kepdes}
-                  onChange={(e) => setProfilUmum({ ...profilUmum, sambutan_kepdes: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg"
-                />
               </div>
 
               <button

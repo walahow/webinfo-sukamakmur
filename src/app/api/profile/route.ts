@@ -54,31 +54,10 @@ export async function GET() {
       );
     }
 
-    // Try to enrich statistics from infografis and katalog
-    let latestApbdes = null;
-    let katalogCount = 0;
-    try {
-      latestApbdes = await prisma.apbdes.findFirst({ orderBy: { tahun: 'desc' } });
-    } catch (e) {
-      // ignore - we'll fallback to defaults
-    }
-
-    try {
-      katalogCount = await prisma.katalog.count();
-    } catch (e) {
-      // ignore
-    }
-
-    // compute realisasi percent from APBDes if available
-    const computedRealisasi = latestApbdes && latestApbdes.pendapatan > 0
-      ? Math.round((Number(latestApbdes.belanja) / Number(latestApbdes.pendapatan)) * 100)
-      : 0;
-
-    // Ensure profile has the statistics fields (use profile value if present, otherwise computed)
     const finalProfile = {
       ...profile,
-      realisasi_dana_desa_persen: (profile as any).realisasi_dana_desa_persen ?? computedRealisasi,
-      umkm_aktif: (profile as any).umkm_aktif ?? katalogCount,
+      realisasi_dana_desa_persen: (profile as any).realisasi_dana_desa_persen ?? 0,
+      umkm_aktif: (profile as any).umkm_aktif ?? 0,
     };
 
     return NextResponse.json({

@@ -158,11 +158,11 @@ export default function AdminKatalogPage() {
                       <td className="px-6 py-4">{item.dusun || '-'}</td>
                       <td className="px-6 py-4 font-mono text-xs">{item.kontak || '-'}</td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Link href={`/admin/katalog/${item.id}/edit`} className="p-2 text-slate-400 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-colors inline-block" title="Edit">
+                        <div className="flex items-center justify-end gap-2 transition-colors">
+                          <Link href={`/admin/katalog/${item.id}/edit`} className="p-2 text-slate-500 hover:text-emerald-500 hover:bg-emerald-50 dark:text-slate-300 dark:hover:bg-emerald-900/20 rounded-lg transition-colors inline-block" title="Edit">
                             <Edit size={18} />
                           </Link>
-                          <button onClick={() => handleDelete(item.id)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors" title="Hapus">
+                          <button onClick={() => handleDelete(item.id)} className="p-2 text-slate-500 hover:text-red-500 hover:bg-red-50 dark:text-slate-300 dark:hover:bg-red-900/20 rounded-lg transition-colors" title="Hapus">
                             <Trash2 size={18} />
                           </button>
                         </div>

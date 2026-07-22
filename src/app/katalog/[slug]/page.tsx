@@ -7,6 +7,8 @@ import { prisma } from "@/lib/prisma";
 
 import { ArrowLeft, MapPin, Phone, Calendar, Store, Share2, FileText } from "lucide-react";
 
+export const revalidate = 60;
+
 interface Props {
   params: Promise<{ slug: string }>;
 }

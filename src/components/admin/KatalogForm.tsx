@@ -138,7 +138,7 @@ export default function KatalogForm({ item, mode }: KatalogFormProps) {
       }
 
       const uploadData = await uploadRes.json();
-      setFotoUrl(uploadData.url || uploadData.url || '');
+      setFotoUrl(uploadData.url || '');
     } catch (err) {
       console.error('Upload error', err);
       setError(err instanceof Error ? err.message : 'Gagal upload gambar');
@@ -149,6 +149,18 @@ export default function KatalogForm({ item, mode }: KatalogFormProps) {
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleOpenMap = () => {
+    if (!latitude || !longitude) {
+      setError('Masukkan koordinat latitude dan longitude terlebih dahulu.');
+      return;
+    }
+
+    const lat = latitude.trim();
+    const lng = longitude.trim();
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${lat},${lng}`)}`;
+    window.open(url, '_blank');
   };
 
   const parseOptionalFloat = (value: string) => {
@@ -311,6 +323,10 @@ export default function KatalogForm({ item, mode }: KatalogFormProps) {
               <option value="Dusun II">Dusun II</option>
               <option value="Dusun III">Dusun III</option>
               <option value="Dusun IV">Dusun IV</option>
+              <option value="Dusun V">Dusun V</option>
+              <option value="Dusun VI">Dusun VI</option>
+              <option value="Dusun VII">Dusun VII</option>
+              <option value="Dusun VIII">Dusun VIII</option>
             </select>
           </div>
 
@@ -325,9 +341,13 @@ export default function KatalogForm({ item, mode }: KatalogFormProps) {
           </div>
 
           <div className="space-y-3">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-3">
               <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Koordinat Peta</label>
-              <button type="button" className="text-xs text-emerald-600 dark:text-emerald-400 font-bold hover:underline flex items-center gap-1">
+              <button
+                type="button"
+                onClick={handleOpenMap}
+                className="text-xs text-emerald-600 dark:text-emerald-400 font-bold hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors flex items-center gap-1"
+              >
                 <MapPin size={12} /> Buka Peta
               </button>
             </div>

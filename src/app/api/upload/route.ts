@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
+import { put } from '@vercel/blob';
 import crypto from 'crypto';
 
 const allowedMimeTypes = new Set([
@@ -52,19 +51,16 @@ export async function POST(req: NextRequest) {
     const random = crypto.randomBytes(4).toString('hex');
     const ext = extension || 'bin';
     const filename = `${timestamp}-${random}.${ext}`;
+    const pathname = `uploads/${filename}`;
 
-    const uploadsDir = join(process.cwd(), 'public', 'uploads');
-    await mkdir(uploadsDir, { recursive: true });
-
-    const filepath = join(uploadsDir, filename);
-    const buffer = await file.arrayBuffer();
-    await writeFile(filepath, Buffer.from(buffer));
-
-    const publicUrl = `/uploads/${filename}`;
+    // Upload to Vercel Blob
+    const blob = await put(pathname, file, {
+      access: 'public',
+    });
 
     return NextResponse.json({
       success: true,
-      url: publicUrl,
+      url: blob.url,
       filename,
       size: file.size,
       type,

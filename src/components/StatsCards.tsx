@@ -15,32 +15,12 @@ export default function StatsCards() {
       try {
         setLoading(true);
         // Fetch profile (for penduduk/luas) and apbdes + katalog statistics
-        const [profileRes, apbdesRes, katalogRes] = await Promise.all([
-          profileAPI.get(),
-          // infografisAPIs are available on client
-          fetch('/api/infografis/apbdes').then(r => r.ok ? r.json() : null).catch(() => null),
-          fetch('/api/katalog?page=1&limit=1').then(r => r.ok ? r.json() : null).catch(() => null),
-        ]);
+const profileRes = await profileAPI.get();
 
-        if (!mounted) return;
+      if (!mounted) return;
 
-        if (profileRes?.success && profileRes.data?.profile) {
-          setProfile(profileRes.data.profile);
-        }
-
-        // compute realisasi from apbdes response
-        if (apbdesRes && Array.isArray(apbdesRes.data) && apbdesRes.data.length > 0) {
-          const apb = apbdesRes.data[0];
-          const pend = Number(apb.pendapatan || 0);
-          const bel = Number(apb.belanja || 0);
-          const comp = pend > 0 ? Math.round((bel / pend) * 100) : 0;
-          setProfile((prev: any) => ({ ...(prev || {}), realisasi_dana_desa_persen: comp }));
-        }
-
-        // get katalog total from katalogRes.meta.total
-        if (katalogRes && katalogRes.meta && typeof katalogRes.meta.total === 'number') {
-          const totalKatalog = katalogRes.meta.total;
-          setProfile((prev: any) => ({ ...(prev || {}), umkm_aktif: totalKatalog }));
+      if (profileRes?.success && profileRes.data?.profile) {
+        setProfile(profileRes.data.profile);
         }
 
       } catch (err) {

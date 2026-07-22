@@ -1,12 +1,22 @@
 import React from 'react';
 import { Users, Map, Newspaper, FileText, TrendingUp, AlertCircle } from 'lucide-react';
+import { prisma } from '@/lib/prisma';
+import Link from 'next/link';
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  const [newsCount, katalogCount, ppidCount] = await Promise.all([
+    prisma.news.count(),
+    prisma.katalog.count(),
+    prisma.document.count(),
+  ]).catch(async () => {
+    return [0, 0, 0];
+  });
+
   const stats = [
-    { name: 'Total Berita', value: '24', icon: Newspaper, color: 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/30' },
-    { name: 'Katalog UMKM/Wisata', value: '18', icon: Map, color: 'text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900/30' },
-    { name: 'Dokumen PPID', value: '45', icon: FileText, color: 'text-amber-600 bg-amber-100 dark:text-amber-400 dark:bg-amber-900/30' },
-    { name: 'Kunjungan Web (Bulan Ini)', value: '1.2k', icon: Users, color: 'text-purple-600 bg-purple-100 dark:text-purple-400 dark:bg-purple-900/30' },
+    { name: 'Total Berita', value: newsCount.toString(), icon: Newspaper, color: 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/30', href: '/admin/berita' },
+    { name: 'Katalog UMKM/Wisata', value: katalogCount.toString(), icon: Map, color: 'text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900/30', href: '/admin/katalog' },
+    { name: 'Dokumen PPID', value: ppidCount.toString(), icon: FileText, color: 'text-amber-600 bg-amber-100 dark:text-amber-400 dark:bg-amber-900/30', href: '/admin/ppid' },
+    { name: 'Kunjungan Web (Bulan Ini)', value: '—', icon: Users, color: 'text-purple-600 bg-purple-100 dark:text-purple-400 dark:bg-purple-900/30', href: '#' },
   ];
 
   return (
@@ -18,15 +28,17 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
-          <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${stat.color}`}>
-              <stat.icon size={24} />
+          <Link key={i} href={stat.href} className="group" title={stat.href !== '#' ? `Lihat ${stat.name}` : ''}>
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${stat.color}`}>
+                <stat.icon size={24} />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400">{stat.name}</h3>
+                <p className="text-3xl font-bold text-slate-900 dark:text-white">{stat.value}</p>
+              </div>
             </div>
-            <div className="space-y-1">
-              <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400">{stat.name}</h3>
-              <p className="text-3xl font-bold text-slate-900 dark:text-white">{stat.value}</p>
-            </div>
-          </div>
+          </Link>
         ))}
       </div>
 
@@ -38,22 +50,22 @@ export default function AdminDashboard() {
             Aksi Cepat
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <button className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary hover:bg-primary/5 transition-colors text-left flex flex-col gap-2 group">
+            <Link href="/admin/berita/create" className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary hover:bg-primary/5 transition-colors text-left flex flex-col gap-2 group">
               <Newspaper className="text-slate-400 group-hover:text-primary transition-colors" />
               <span className="font-semibold text-slate-700 dark:text-slate-200">Tulis Berita Baru</span>
-            </button>
-            <button className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-emerald-500 hover:bg-emerald-500/5 transition-colors text-left flex flex-col gap-2 group">
+            </Link>
+            <Link href="/admin/katalog/create" className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-emerald-500 hover:bg-emerald-500/5 transition-colors text-left flex flex-col gap-2 group">
               <Map className="text-slate-400 group-hover:text-emerald-500 transition-colors" />
               <span className="font-semibold text-slate-700 dark:text-slate-200">Tambah Katalog</span>
-            </button>
-            <button className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-amber-500 hover:bg-amber-500/5 transition-colors text-left flex flex-col gap-2 group">
+            </Link>
+            <Link href="/admin/ppid/create" className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-amber-500 hover:bg-amber-500/5 transition-colors text-left flex flex-col gap-2 group">
               <FileText className="text-slate-400 group-hover:text-amber-500 transition-colors" />
               <span className="font-semibold text-slate-700 dark:text-slate-200">Upload Dokumen PPID</span>
-            </button>
-            <button className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-blue-500 hover:bg-blue-500/5 transition-colors text-left flex flex-col gap-2 group">
+            </Link>
+            <Link href="/admin/infografis" className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-blue-500 hover:bg-blue-500/5 transition-colors text-left flex flex-col gap-2 group">
               <Users className="text-slate-400 group-hover:text-blue-500 transition-colors" />
               <span className="font-semibold text-slate-700 dark:text-slate-200">Update Infografis</span>
-            </button>
+            </Link>
           </div>
         </div>
 
