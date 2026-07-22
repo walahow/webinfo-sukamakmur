@@ -53,9 +53,21 @@ export async function POST(req: NextRequest) {
     const filename = `${timestamp}-${random}.${ext}`;
     const pathname = `uploads/${filename}`;
 
-    // Upload to Vercel Blob
+    // Ensure environment contains blob token
+    const BLOB_READ_WRITE_TOKEN = process.env.BLOB_READ_WRITE_TOKEN || process.env.VERCEL_BLOB_TOKEN;
+
+    if (!BLOB_READ_WRITE_TOKEN) {
+      console.error('Missing Vercel Blob credentials: BLOB_READ_WRITE_TOKEN');
+      return NextResponse.json(
+        { error: 'Server configuration error: missing blob credentials' },
+        { status: 500 }
+      );
+    }
+
+    // Upload to Vercel Blob using provided token
     const blob = await put(pathname, file, {
       access: 'public',
+      token: BLOB_READ_WRITE_TOKEN,
     });
 
     return NextResponse.json({
