@@ -8,22 +8,48 @@ import Link from "next/link";
 import { ArrowRight, MapPin } from "lucide-react";
 import VillageGeoJSON from "../ui/VillageGeoJSON";
 
-// Fix Leaflet icon issue
-const customIcon = new L.Icon({
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
+const ICON_SVGS: Record<string, string> = {
+  Store: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2v0a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12v0a2 2 0 0 1-2-2V7"/></svg>`,
+  MapPin: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`,
+  Utensils: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>`,
+  Brush: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08"/><path d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z"/></svg>`,
+  Default: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`,
+};
+
+const ICON_COLORS: Record<string, string> = {
+  Store: "#3b82f6", 
+  MapPin: "#10b981", 
+  Utensils: "#f97316", 
+  Brush: "#8b5cf6", 
+  Default: "#0ea5e9", 
+};
+
+const getCategoryIcon = (iconName: string | null) => {
+  const name = iconName && ICON_SVGS[iconName] ? iconName : "Default";
+  const svg = ICON_SVGS[name];
+  const color = ICON_COLORS[name];
+
+  return L.divIcon({
+    html: `
+      <div style="position: relative; width: 32px; height: 32px; transform: translate(-50%, -100%); cursor: pointer;">
+        <div style="background-color: ${color}; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border: 2px solid white; z-index: 2; position: relative;">
+          ${svg}
+        </div>
+        <div style="position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid ${color}; z-index: 1;"></div>
+      </div>
+    `,
+    className: "",
+    iconSize: [0, 0],
+    iconAnchor: [0, 0],
+    popupAnchor: [0, -36],
+  });
+};
 
 type KatalogItem = {
   id: string;
   nama: string;
   slug: string;
-  category: { id: string; nama: string };
+  category: { id: string; nama: string; icon: string | null };
   latitude: number;
   longitude: number;
   dusun: string | null;
@@ -58,7 +84,7 @@ export default function KatalogMap({ items }: { items: KatalogItem[] }) {
       <VillageGeoJSON variant="katalog" />
       
       {items.map(item => (
-        <Marker key={item.id} position={[item.latitude, item.longitude]} icon={customIcon}>
+        <Marker key={item.id} position={[item.latitude, item.longitude]} icon={getCategoryIcon(item.category.icon)}>
           <Popup>
             <div className="font-sans min-w-[180px]">
               <div className="text-[10px] font-bold text-primary mb-1 uppercase tracking-wider">{item.category.nama}</div>
